@@ -32,5 +32,5 @@ test("positionsFromCoord generate an array of positions", () => {
 });
 
 test("return the coordinates adjacent to ship from above", () => {
-  expect(checkPositionsIfValid("right", 0, 4)).toEqual([61, 62, 63, 64, 65, 66]);
+  expect(checkPositionsIfValid("right", 70, 4)).toEqual([61, 62, 63, 64, 65, 66]);
 });
