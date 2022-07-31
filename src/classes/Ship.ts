@@ -102,12 +102,13 @@ export function checkFit(coord: number, length: number, direction: Directions) {
     return 9 - roundToRowNumber >= 0 ? true : false;
   } else if (direction === "right") {
     const lastCoordRight = coord + (length - 1);
+    // ex. 12 -> 20
     const maxRowCoord = Math.ceil(coord / 10) * 10 - 1;
-    // example: 35
-    // 35 / 10 = 3.5
-    // Math.ceil(3.5) = 4
-    // 4 * 10 - 1 = 39 (finds the last row coordinate)
-    return lastCoordRight <= maxRowCoord ? true : false;
+    // ex. 12 -> 10
+    const minRowCoord = Math.floor(coord / 10) * 10;
+
+    // return true | false if it fits within min and max limits
+    return minRowCoord <= lastCoordRight && lastCoordRight <= maxRowCoord ? true : false;
   }
 }
 
