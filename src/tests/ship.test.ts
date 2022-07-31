@@ -1,4 +1,4 @@
-import Ship, { checkPositionsIfValid, positionsFromCoord } from "../classes/Ship";
+import Ship, { checkFit, checkPositionsIfValid, positionsFromCoord } from "../classes/Ship";
 import { describe, beforeEach, test, expect } from "vitest";
 let ship: Ship;
 
@@ -31,6 +31,13 @@ test("positionsFromCoord generate an array of positions", () => {
   expect(positionsFromCoord("right", 21, 3)).toEqual([21, 22, 23]);
 });
 
-test("return the coordinates adjacent to ship from above", () => {
-  expect(checkPositionsIfValid("right", 70, 4)).toEqual([61, 62, 63, 64, 65, 66]);
+// test("return the coordinates adjacent to ship from above", () => {
+// expect(checkPositionsIfValid("right", 70, 4)).toEqual([61, 62, 63, 64, 65, 66]);
+// });
+
+test("check the ship positions if it fits", () => {
+  expect(checkFit(21, 3, "right")).toBe(true);
+  expect(checkFit(99, 3, "down")).toBe(false);
+  expect(checkFit(99, 3, "right")).toBe(false);
+  expect(checkFit(51, 8, "down")).toBe(false);
 });
