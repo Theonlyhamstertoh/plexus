@@ -116,6 +116,8 @@ export const coordLocationData = (coord: number, length: number): CoordLocations
   const isFirstColumn = coord % 10 === 0;
   const isFirstRow = coord < 10;
   const isLastRow = coord > 89;
+  const isLastColumn = coord.toString().endsWith("9");
+
   // const isNormal = isLastRow === false && isFirstRow === false && isFirstColumn === false;
   const areaLengthToCheck = isFirstColumn ? length + 1 : length + 2;
 
@@ -123,6 +125,7 @@ export const coordLocationData = (coord: number, length: number): CoordLocations
     isFirstColumn,
     isFirstRow,
     isLastRow,
+    isLastColumn,
     areaLengthToCheck,
   };
 };
@@ -130,6 +133,7 @@ interface CoordLocations {
   isFirstColumn: boolean;
   isFirstRow: boolean;
   isLastRow: boolean;
+  isLastColumn: boolean;
   areaLengthToCheck: number;
 }
 
@@ -156,20 +160,24 @@ export function rowsToCheckIfFacingRight(coord: number, coordLocation: CoordLoca
 /**
  *
  * When direction is down, it will be the left, middle, and right columns
- *
+ * All coordinates here should already be validated if it fits in grid
  */
 export function rowsToCheckIfFacingDown(coord: number, coordLocation: CoordLocations): number[] {
   // if the coordinate......
-  const { isFirstColumn, isFirstRow, isLastRow } = coordLocation;
-  const lastColumn = coord.toString().endsWith("9");
+  const { isFirstColumn, isFirstRow, isLastColumn } = coordLocation;
 
-  // if you are 0, check middle and right column [FROM COORD]
-  if (isFirstColumn && isFirstRow) return [coord, coord + 1];
+  // if 0, check middle and right [FROM COORD ROW]
+  if (isFirstRow && isFirstColumn) return [coord, coord + 1];
+  // if first row [1 - 8], check left, middle, and right column [FROM COORD ROW]
+  if (isFirstRow && !isFirstColumn && !isLastColumn) return [coord - 1, coord, coord + 1];
+  // if 9, check left and middle column [FROM COORD ROW]
+  if (isLastColumn && isFirstRow) return [coord - 11, coord - 10];
+  // if [19, 29,..., 99] check left and middle column [FROM ONE ROW UP]
+  if (isLastColumn && !isFirstRow) return [coord - 11, coord - 10];
+  // if first column [10,..., 80, 90], check middle and right column [FROM ONE ROW UP]
+  if (isFirstColumn && isFirstRow === false) return [coord - 10, coord - 9];
 
-  // if [9, 19, 29,..., 99] check left and current column
-
-  // if it is not adjacent to any border! If it is normal
-  // check left, middle, and right row [FROM ONE ROW UP]
+  // if not restraint by any border, check left, middle, and right [FROM ONE ROW UP]
   return [coord - 11, coord - 10, coord - 9];
 }
 
