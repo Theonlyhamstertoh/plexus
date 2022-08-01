@@ -67,28 +67,22 @@ export function checkPositionsIfValid(
   let isNotValid = false;
 
   // check validity of positions by seeing if it fits inside grid.
-  // if it does not, the function returns
+  // if it does not fit, the function returns
   const coordFit = checkFit(coord, length, direction);
   if (coordFit === false) return false;
 
   // determine the ship's location data
   const coordLocation = coordLocationData(coord, length);
 
-  if (direction === "right") {
-    const rowsToCheck = rowsToCheckIfFacingRight(coord, coordLocation);
-    rowsToCheck.forEach((row) => {
-      // check each row | column to see if there is already a ship
-      for (let i = 0; i < coordLocation.areaLengthToCheck; i++) {
-        if (grid[row + i] === "s") return (isNotValid = true);
-      }
-    });
-    return rowsToCheck;
-  }
+  // create a common name to represent to simplify
+  const areaDirectionToCheck = direction === "right" ? getRightRowsToCheck : getColDownToCheck;
 
-  // find all coordinates surrounding it
-  // first find side
-  // then find corners
-  // then top
+  //
+  areaDirectionToCheck(coord, coordLocation).forEach((rowOrColumn) => {
+    for (let i = 0; i < coordLocation.areaLengthToCheck; i++) {
+      if (grid[rowOrColumn + i] === "s") return (isNotValid = true);
+    }
+  });
 }
 
 export function checkFit(coord: number, length: number, direction: Directions) {
@@ -137,7 +131,7 @@ interface CoordLocations {
   areaLengthToCheck: number;
 }
 
-export function rowsToCheckIfFacingRight(coord: number, coordLocation: CoordLocations): number[] {
+export function getRightRowsToCheck(coord: number, coordLocation: CoordLocations): number[] {
   // if the coordinate......
   const { isFirstColumn, isFirstRow, isLastRow } = coordLocation;
 
@@ -162,7 +156,7 @@ export function rowsToCheckIfFacingRight(coord: number, coordLocation: CoordLoca
  * When direction is down, it will be the left, middle, and right columns
  * All coordinates here should already be validated if it fits in grid
  */
-export function rowsToCheckIfFacingDown(coord: number, coordLocation: CoordLocations): number[] {
+export function getColDownToCheck(coord: number, coordLocation: CoordLocations): number[] {
   // if the coordinate......
   const { isFirstColumn, isFirstRow, isLastColumn } = coordLocation;
 
@@ -180,8 +174,6 @@ export function rowsToCheckIfFacingDown(coord: number, coordLocation: CoordLocat
   // if not restraint by any border, check left, middle, and right [FROM ONE ROW UP]
   return [coord - 11, coord - 10, coord - 9];
 }
-
-export function isNextToRightBorder(coord: number) {}
 
 // check if the length fits the board. If not, do not place
 // check when ship borders the right ship. If it does, one less length to check then.
