@@ -1,23 +1,4 @@
-type Directions = "down" | "right";
-
-interface CoordLocations {
-  isFirstColumn: boolean;
-  isFirstRow: boolean;
-  isLastRow: boolean;
-  isLastColumn: boolean;
-  areaLengthToCheck: number;
-  coord: number;
-}
-
-export function getPositionsFromCoord(direction: Directions, coord: number, length: number) {
-  let pos: number[] = [];
-  for (let i = 0; i < length; i++) {
-    if (direction === "down") pos.push(coord + 10 * i);
-    if (direction === "right") pos.push(coord + 1 * i);
-  }
-
-  return pos;
-}
+import { CoordLocations, Directions } from "../types/types";
 
 /**
  *

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Ship from "./Ship";
 
 export default class Gameboard {
   grid: string[][] = [];
@@ -12,6 +13,8 @@ export default class Gameboard {
       }
     }
   }
+
+  placeShipAt(ship: Ship, coord: number, direction: )
 }
 
 // '~' for water
