@@ -43,7 +43,7 @@ export function checkPositionsIfValid(
   coord: number,
   length: number,
   grid: string[]
-) {
+): boolean {
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
   const coordFit = checkFit(coord, length, direction);
@@ -67,7 +67,11 @@ export function checkPositionsIfValid(
   return isValidPosition;
 }
 
-export function checkFit(coord: number, length: number, direction: Directions) {
+export function checkFit(
+  coord: number,
+  length: number,
+  direction: Directions
+): boolean | undefined {
   if (direction === "down") {
     const lastCoordDown = (length - 1) * 10 + coord;
 
@@ -152,6 +156,5 @@ export function getColDownToCheck(coordLocation: CoordLocations): number[] {
   if (isFirstColumn && isFirstRow === false) return [coord - 10, coord - 9];
 
   // if not restraint by any border, check left, middle, and right [FROM ONE ROW UP]
-
   return [coord - 11, coord - 10, coord - 9];
 }
