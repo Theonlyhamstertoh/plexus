@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { checkPositionsIfValid } from "../helpers/positionValidator";
+import { Directions } from "../types/types";
 import Ship from "./Ship";
 
 export default class Gameboard {
@@ -14,7 +16,9 @@ export default class Gameboard {
     }
   }
 
-  placeShipAt(ship: Ship, coord: number, direction: )
+  placeShipAt(ship: Ship, coord: number, direction: Directions) {
+    checkPositionsIfValid(direction, coord, length, this.grid);
+  }
 }
 
 // '~' for water

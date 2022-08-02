@@ -1,11 +1,12 @@
 import {
   checkFit,
   checkPositionsIfValid,
+  convertCoordToMatrix,
   coordLocationData,
   getColDownToCheck,
-  getPositionsFromCoord,
   getRightRowsToCheck,
-} from "../positionValidator";
+} from "../helpers/positionValidator";
+import { getPositionsFromCoord } from "../helpers/getShipLocation";
 import { describe, test, expect } from "vitest";
 
 describe("ship position validator", () => {
@@ -45,6 +46,10 @@ describe("ship position validator", () => {
     expect(checkPositionsIfValid("right", 70, 4, grid)).toBe(true);
     expect(checkPositionsIfValid("down", 74, 4, grid)).not.toBe(true);
     expect(checkPositionsIfValid("down", 0, 4, grid)).toBe(true);
+  });
+
+  test("convert coord to matrix table usable", () => {
+    expect(convertCoordToMatrix(49)).toEqual([4, 9]);
   });
 });
 

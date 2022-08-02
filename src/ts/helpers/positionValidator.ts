@@ -23,7 +23,7 @@ export function checkPositionsIfValid(
   direction: Directions,
   coord: number,
   length: number,
-  grid: string[]
+  grid: string[][]
 ): boolean {
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
@@ -36,10 +36,11 @@ export function checkPositionsIfValid(
   // determine the ship's location data
   const coordLocation = coordLocationData(coord, length);
   // By using Array.Every, if only one of them return false, then there is no valid position
-  const isValidPosition = areaDirectionToCheck(coordLocation).every((rowOrColumn) => {
+  const isValidPosition = areaDirectionToCheck(coordLocation).every((coordToCheck) => {
     for (let i = 0; i < coordLocation.areaLengthToCheck; i++) {
-      const iterationByDir = direction === "right" ? i : i * 10;
-      if (grid[rowOrColumn + iterationByDir] === "s") return false;
+      const [row, col] = convertCoordToMatrix(coordToCheck);
+      if (direction === "right" && grid[row][col + i] === "s") return false;
+      if (direction === "down" && grid[row + i * 10][col] === "s") return false;
 
       // if it doesn't contain "s", then it is a valid coordinate
       return true;
@@ -138,4 +139,18 @@ export function getColDownToCheck(coordLocation: CoordLocations): number[] {
 
   // if not restraint by any border, check left, middle, and right [FROM ONE ROW UP]
   return [coord - 11, coord - 10, coord - 9];
+}
+
+export function convertCoordToMatrix(coord: number): [number, number] {
+  const coordAsString = coord.toString();
+
+  if (coordAsString.length === 1) {
+    const col = coordAsString.charAt(0);
+    return [0, parseInt(col)];
+  }
+
+  // if coord is length of 2, then do this by default.
+  const row = coordAsString.charAt(0);
+  const col = coord.toString().charAt(1);
+  return [parseInt(row), parseInt(col)];
 }

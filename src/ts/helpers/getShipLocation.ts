@@ -1,4 +1,4 @@
-import { Directions } from "./types/types";
+import { Directions } from "../types/types";
 
 export function getPositionsFromCoord(direction: Directions, coord: number, length: number) {
   let pos: number[] = [];
