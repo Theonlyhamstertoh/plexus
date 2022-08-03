@@ -37,16 +37,18 @@ export function checkPositionsIfValid(
   const coordLocation = coordLocationData(coord, length);
   // By using Array.Every, if only one of them return false, then there is no valid position
   const isValidPosition = areaDirectionToCheck(coordLocation).every((coordToCheck) => {
+    let isValid = true;
     for (let i = 0; i < coordLocation.areaLengthToCheck; i++) {
-      if (direction === "right" && grid[coordToCheck + i] === "s") return false;
-      if (direction === "down" && grid[coordToCheck + i * 10] === "s") return false;
+      if (direction === "down" && grid[coordToCheck + i * 10] === "s") return (isValid = false);
+      if (direction === "right" && grid[coordToCheck + i] === "s") return (isValid = false);
       // const [row, col] = convertCoordToMatrix(coordToCheck);
       // if (direction === "right" && grid[row][col + i] === "s") return false;
       // if (direction === "down" && grid[row + i * 10][col] === "s") return false;
 
       // if it doesn't contain "s", then it is a valid coordinate
-      return true;
+      // return true;
     }
+    return isValid;
   });
   return isValidPosition;
 }

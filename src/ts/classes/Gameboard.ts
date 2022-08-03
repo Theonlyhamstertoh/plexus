@@ -36,18 +36,20 @@ export default class Gameboard {
       return "NOT VALID POSITION";
     }
     // remove previous ship position and reset array
-    ship.positions.length = 0;
+    ship.positions = [];
 
     // placing ship at the coordinate
     ship.positions = getPositionsFromCoord(direction, coord, ship.length);
     ship.positions.forEach((tile) => {
       this.grid[tile] = "s";
     });
+    return ship.positions;
   }
 
   rotateShip(ship: Ship) {
+    if (ship.positions.length === 0) throw Error("SHIP NOT YET PLACED");
     const newDirection = flipShipDirection(ship.positions);
-    this.placeShipAt(ship.positions[0], newDirection, ship);
+    return this.placeShipAt(ship.positions[0], newDirection, ship);
   }
 }
 

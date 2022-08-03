@@ -14,10 +14,10 @@ export function getPositionsFromCoord(direction: Directions, coord: number, leng
   return pos;
 }
 
-export function getShipDirection(positions: number[]) {
+export function getShipDirection(positions: number[]): Directions {
   return positions[1] - positions[0] === 1 ? "right" : "down";
 }
 
-export function flipShipDirection(positions: number[]) {
+export function flipShipDirection(positions: number[]): Directions {
   return positions[1] - positions[0] === 1 ? "down" : "right";
 }

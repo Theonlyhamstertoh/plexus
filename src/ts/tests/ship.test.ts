@@ -5,7 +5,7 @@ let ship: Ship;
 
 describe("ship", () => {
   beforeEach(() => {
-    ship = new Ship(4, [0, 1, 2, 3]);
+    ship = new Ship(4);
   });
   test("ship should return total lives", () => {
     expect(ship.lives).toBe(4);
