@@ -1,4 +1,4 @@
-import { ShipPositions } from "../types/types";
+import { Directions, ShipPositions } from "../types/types";
 
 export default class Ship {
   readonly length: number;

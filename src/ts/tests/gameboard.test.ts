@@ -29,8 +29,10 @@ describe("placing and moving ships ", () => {
 
   test("place ship at specific coords", () => {
     const ship = new Ship(4);
-    gameboard.placeShipAt(ship, 0, "right");
-    gameboard.placeShipAt(ship, 20, "down");
+    const ship2 = new Ship(3);
+    gameboard.placeShipAt(0, "right", ship);
+    // can't place ship in same spot. But it should ignore its own.
+    gameboard.placeShipAt(5, "down", ship2);
     console.log(gameboard.showBoard());
     expect(gameboard.grid[0]).toBe("s");
   });

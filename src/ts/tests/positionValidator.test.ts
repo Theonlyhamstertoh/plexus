@@ -7,7 +7,7 @@ import {
   getRightRowsToCheck,
 } from "../helpers/positionValidator";
 import { describe, test, expect } from "vitest";
-import { getPositionsFromCoord } from "../helpers/getShipLocation";
+import { getPositionsFromCoord, getShipDirection } from "../helpers/getShipLocation";
 
 describe("ship position validator", () => {
   test("function should generate an array of positions", () => {
@@ -50,6 +50,11 @@ describe("ship position validator", () => {
 
   test("convert coord to matrix table usable", () => {
     expect(convertCoordToMatrix(49)).toEqual([4, 9]);
+  });
+
+  test("get the ship direction based on position", () => {
+    expect(getShipDirection([4, 5, 6])).toBe("right");
+    expect(getShipDirection([4, 14, 24])).not.toBe("right");
   });
 });
 

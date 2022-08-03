@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { getPositionsFromCoord } from "../helpers/getShipLocation";
+import {
+  flipShipDirection,
+  getPositionsFromCoord,
+  getShipDirection,
+} from "../helpers/getShipLocation";
 import { checkPositionsIfValid } from "../helpers/positionValidator";
 import { Directions } from "../types/types";
 import Ship from "./Ship";
@@ -21,10 +25,18 @@ export default class Gameboard {
     return board.map((arr) => JSON.stringify(arr));
   }
 
-  placeShipAt(ship: Ship, coord: number, direction: Directions) {
+  placeShipAt(coord: number, direction: Directions, ship: Ship) {
+    // convert to '~' (water) to pass validity check
+    ship.positions.forEach((tile) => (this.grid[tile] = "~"));
+
     // testing if the positions are valid
     const validity = checkPositionsIfValid(direction, coord, ship.length, this.grid);
-    if (validity === false) return;
+    if (validity === false) {
+      ship.positions.forEach((tile) => (this.grid[tile] = "s"));
+      return "NOT VALID POSITION";
+    }
+    // remove previous ship position and reset array
+    ship.positions.length = 0;
 
     // placing ship at the coordinate
     ship.positions = getPositionsFromCoord(direction, coord, ship.length);
@@ -32,10 +44,16 @@ export default class Gameboard {
       this.grid[tile] = "s";
     });
   }
+
+  rotateShip(ship: Ship) {
+    const newDirection = flipShipDirection(ship.positions);
+    this.placeShipAt(ship.positions[0], newDirection, ship);
+  }
 }
 
 // '~' for water
-// 's' for ship
+// '@' for ship being edited
+// '' for ship
 // 'o' for missed shots
 // 'x' for hit shots
 
