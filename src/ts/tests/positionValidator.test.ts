@@ -6,8 +6,8 @@ import {
   getColDownToCheck,
   getRightRowsToCheck,
 } from "../helpers/positionValidator";
-import { getPositionsFromCoord } from "../helpers/getShipLocation";
 import { describe, test, expect } from "vitest";
+import { getPositionsFromCoord } from "../helpers/getShipLocation";
 
 describe("ship position validator", () => {
   test("function should generate an array of positions", () => {

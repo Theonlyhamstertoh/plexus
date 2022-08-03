@@ -1,23 +1,36 @@
 import { useState } from "react";
+import { getPositionsFromCoord } from "../helpers/getShipLocation";
 import { checkPositionsIfValid } from "../helpers/positionValidator";
 import { Directions } from "../types/types";
 import Ship from "./Ship";
 
 export default class Gameboard {
-  grid: string[][] = [];
+  grid: string[] = [];
   constructor() {}
 
   createBoard(num: number = 10) {
-    for (let col = 0; col < num; col++) {
-      this.grid[col] = [];
-      for (let row = 0; row < num; row++) {
-        this.grid[col][row] = "~";
-      }
+    this.grid = [...Array(num * num).fill("~")];
+  }
+
+  showBoard() {
+    const board = [];
+    for (let i = 0; i < Math.sqrt(this.grid.length); i++) {
+      board.push(this.grid.slice(i * 10, i * 10 + 10));
+      if (this.grid.length === 0) break;
     }
+    return board.map((arr) => JSON.stringify(arr));
   }
 
   placeShipAt(ship: Ship, coord: number, direction: Directions) {
-    checkPositionsIfValid(direction, coord, length, this.grid);
+    // testing if the positions are valid
+    const validity = checkPositionsIfValid(direction, coord, ship.length, this.grid);
+    if (validity === false) return;
+
+    // placing ship at the coordinate
+    ship.positions = getPositionsFromCoord(direction, coord, ship.length);
+    ship.positions.forEach((tile) => {
+      this.grid[tile] = "s";
+    });
   }
 }
 

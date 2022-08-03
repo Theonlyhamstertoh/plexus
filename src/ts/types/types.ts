@@ -8,3 +8,5 @@ export interface CoordLocations {
   areaLengthToCheck: number;
   coord: number;
 }
+
+export type ShipPositions = { x: number; y: number }[];

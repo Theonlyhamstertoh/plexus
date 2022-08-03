@@ -1,7 +1,7 @@
 import { CoordLocations, Directions } from "../types/types";
 
 /**
- *
+ *  USING INDEX VALUES, NOT ORDER PAIRS. ORDER PAIRS USED IN BOARD
  *
  *  The positions of the ship, given by the first coordinate,
  *  are validated by scanning the three rows: top, middle (the ship),
@@ -23,7 +23,7 @@ export function checkPositionsIfValid(
   direction: Directions,
   coord: number,
   length: number,
-  grid: string[][]
+  grid: string[]
 ): boolean {
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
@@ -38,9 +38,11 @@ export function checkPositionsIfValid(
   // By using Array.Every, if only one of them return false, then there is no valid position
   const isValidPosition = areaDirectionToCheck(coordLocation).every((coordToCheck) => {
     for (let i = 0; i < coordLocation.areaLengthToCheck; i++) {
-      const [row, col] = convertCoordToMatrix(coordToCheck);
-      if (direction === "right" && grid[row][col + i] === "s") return false;
-      if (direction === "down" && grid[row + i * 10][col] === "s") return false;
+      if (direction === "right" && grid[coordToCheck + i] === "s") return false;
+      if (direction === "down" && grid[coordToCheck + i * 10] === "s") return false;
+      // const [row, col] = convertCoordToMatrix(coordToCheck);
+      // if (direction === "right" && grid[row][col + i] === "s") return false;
+      // if (direction === "down" && grid[row + i * 10][col] === "s") return false;
 
       // if it doesn't contain "s", then it is a valid coordinate
       return true;

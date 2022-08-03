@@ -1,11 +1,12 @@
+import { ShipPositions } from "../types/types";
+
 export default class Ship {
   readonly length: number;
   positions: number[] = [];
   #lives: number;
   isDestroyed: boolean = false;
-  constructor(length: number, positions: number[]) {
+  constructor(length: number) {
     this.#lives = this.length = length;
-    this.positions = positions;
   }
 
   isHit() {
