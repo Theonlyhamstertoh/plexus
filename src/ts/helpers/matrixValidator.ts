@@ -60,7 +60,7 @@ export function checkPositionsIfValid(
   const areaDirectionToCheck = direction === "right" ? getRightRowsToCheck : getColDownToCheck;
 
   // determine the ship's location data
-  const coordLocation = coordLocationData(coord, length);
+  const coordLocation = coordLocationData(coord, length, grid);
   // By using Array.Every, if only one of them return false, then there is no valid position
   const isValidPosition = areaDirectionToCheck(coordLocation).every((coordToCheck) => {
     let isValid = true;
@@ -95,7 +95,7 @@ export function checkFit(coord: Coord, length: number, direction: Directions, gr
   }
 }
 
-export const coordLocationData = (coord: Coord, length: number, grid: Grid) => {
+export const coordLocationData = (coord: Coord, length: number, grid: Grid): CoordLocations => {
   const yMax = grid.length;
   const xMax = grid[0].length;
 
@@ -117,24 +117,34 @@ export const coordLocationData = (coord: Coord, length: number, grid: Grid) => {
 
 // get the rows to check based on the Coord
 // the Coord passed in has to be validated to fit inside grid. The function will not be able to determine if it does not fit.
-export function getRightRowsToCheck(coordLocation: CoordLocations): number[] {
+export function getRightRowsToCheck(coordLocation: CoordLocations): Coord[] {
   // if the Coord......
   const { isFirstColumn, isFirstRow, isLastRow, coord } = coordLocation;
 
-  // if you are 0, check middle and bottom row [FROM COORD POSITION]
-  if (isFirstColumn && isFirstRow) return [coord, coord + 10];
-  // if you are 90, check top and middle row [FROM COORD POSITION]
-  if (isFirstColumn && isLastRow) return [coord - 10, coord];
-  // if [10, 20, 30, 40, 50 , 60, 70, 80] check top, middle, and bottom row [FROM COORD POSITION]
-  if (isFirstColumn) return [coord - 10, coord, coord + 10];
-  // if [1-9], check middle and bottom row [FROM ONE COL LEFT]
-  if (isFirstRow) return [coord - 1, coord + 9];
-  // if [91 - 99], set to check top and middle row [FROM ONE COL LEFT]
-  if (isLastRow) return [coord - 11, coord - 1];
+  // imagine a grid where the top left is [0, 0]
+  // Up   === negative | down  === positive
+  // left === negative | right === positive
+  // we need to find adjacent coord positions to find which rows to check
+  const coordDown = new Coord(coord.y + 1, coord.x);
+  const coordTop = new Coord(coord.y - 1, coord.x);
+  const coordLeft = new Coord(coord.y, coord.x - 1);
+  const coordTopLeft = new Coord(coord.y - 1, coord.x - 1);
+  const coordDownLeft = new Coord(coord.y + 1, coord.x - 1);
+
+  // no check for lastColumn because ship would never fit
+  // checks top left corner border
+  if (isFirstColumn && isFirstRow) return [coord, coordDown];
+  // check bottom left corner border
+  if (isFirstColumn && isLastRow) return [coordTop, coord];
+  // checks top border coords after first column
+  if (isFirstRow && !isFirstColumn) return [coordLeft, coordDownLeft];
+  // checks left border coords that are after first row
+  if (isFirstColumn && !isFirstRow && !isLastRow) return [coordTop, coord, coordDown];
+  // check bottom border after first column
+  if (isLastRow && !isFirstColumn) return [coordTopLeft, coordLeft];
 
   // if it is not adjacent to any border! If it is normal
-  // check top, middle, and bottom row [FROM ONE COL LEFT]
-  return [coord - 11, coord - 1, coord + 9];
+  return [coordTopLeft, coordLeft, coordDownLeft];
 }
 
 /**
@@ -144,23 +154,30 @@ export function getRightRowsToCheck(coordLocation: CoordLocations): number[] {
  *
  */
 
-export function getColDownToCheck(coordLocation: CoordLocations): number[] {
+export function getColDownToCheck(coordLocation: CoordLocations): Coord[] {
   // if the Coord......
-  const { isFirstColumn, isFirstRow, isLastColumn, coord } = coordLocation;
+  const { isFirstColumn, isFirstRow, isLastColumn, isLastRow, coord } = coordLocation;
 
-  // if 0, check middle and right [FROM COORD ROW]
-  if (isFirstRow && isFirstColumn) return [coord, coord + 1];
-  // if first row [1 - 8], check left, middle, and right column [FROM COORD ROW]
-  if (isFirstRow && !isFirstColumn && !isLastColumn) return [coord - 1, coord, coord + 1];
-  // if 9, check left and middle column [FROM COORD ROW]
-  if (isLastColumn && isFirstRow) return [coord - 11, coord - 10];
-  // if [19, 29,..., 99] check left and middle column [FROM ONE ROW UP]
-  if (isLastColumn && !isFirstRow) return [coord - 11, coord - 10];
-  // if first column [10,..., 80, 90], check middle and right column [FROM ONE ROW UP]
-  if (isFirstColumn && isFirstRow === false) return [coord - 10, coord - 9];
+  const coordTop = new Coord(coord.y - 1, coord.x);
+  const coordTopLeft = new Coord(coord.y - 1, coord.x - 1);
+  const coordTopRight = new Coord(coord.y + 1, coord.x - 1);
+  const coordLeft = new Coord(coord.y, coord.x - 1);
+  const coordRight = new Coord(coord.y, coord.x + 1);
 
-  // if not restraint by any border, check left, middle, and right [FROM ONE ROW UP]
-  return [coord - 11, coord - 10, coord - 9];
+  // there is no check for last row because ship would never pass fit check if down
+  // checks top left corner border
+  if (isFirstRow && isFirstColumn) return [coord, coordRight];
+  // check top right corner border
+  if (isFirstRow && isLastColumn) return [coordLeft, coord];
+  // checks top border coords that are between first and last column
+  if (isFirstRow && !isFirstColumn && !isLastColumn) return [coordLeft, coord, coordRight];
+  // checks left border coords that are after first row
+  if (isFirstColumn && !isFirstRow) return [coordTop, coordTopRight];
+  // check right border coords that are after first row
+  if (isLastColumn && !isFirstRow) return [coordTopLeft, coordTop];
+
+  // if not restraint by any border, start check from one row above
+  return [coordTopLeft, coordTop, coordTopRight];
 }
 
 export function convertCoordToMatrix(coord: number): [number, number] {

@@ -1,3 +1,5 @@
+import { Coord } from "../helpers/matrixValidator";
+
 export type Directions = "down" | "right";
 
 export interface CoordLocations {
@@ -5,8 +7,7 @@ export interface CoordLocations {
   isFirstRow: boolean;
   isLastRow: boolean;
   isLastColumn: boolean;
-  areaLengthToCheck: number;
-  coord: number;
+  coord: Coord;
 }
 
 export type ShipPositions = { x: number; y: number }[];
