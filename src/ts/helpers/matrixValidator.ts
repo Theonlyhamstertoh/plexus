@@ -105,14 +105,12 @@ export const coordLocationData = (coord: Coord, length: number, grid: Grid) => {
   const isLastColumn = coord.x === xMax;
 
   // const isNormal = isLastRow === false && isFirstRow === false && isFirstColumn === false;
-  const areaLengthToCheck = isFirstColumn ? length + 1 : length + 2;
 
   return {
     isFirstColumn,
     isFirstRow,
     isLastRow,
     isLastColumn,
-    areaLengthToCheck,
     coord,
   };
 };

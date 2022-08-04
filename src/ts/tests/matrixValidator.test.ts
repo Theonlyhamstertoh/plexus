@@ -1,5 +1,10 @@
 import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
-import Gameboard, { checkFit, Coord, getPositionsFromCoord } from "../helpers/matrixValidator";
+import Gameboard, {
+  checkFit,
+  Coord,
+  coordLocationData,
+  getPositionsFromCoord,
+} from "../helpers/matrixValidator";
 
 describe("ship position validator", () => {
   let gameboard: Gameboard;
@@ -31,7 +36,12 @@ describe("ship position validator", () => {
     expect(checkFit(new Coord(19, 1), 3, "right", gameboard.grid)).toBe(false);
   });
 
-  test.todo("gather coord location data", () => {});
+  test("gather coord location data", () => {
+    const coordLocation = coordLocationData(new Coord(4, 0), 4, gameboard.grid);
+    expect(coordLocation.isFirstColumn).toBe(true);
+    expect(coordLocation.isLastColumn).toBe(false);
+    expect(coordLocation.isLastRow).toBe(false);
+  });
   test.todo("get column coords for checking", () => {});
 
   test.todo("get row coords for checking", () => {});
