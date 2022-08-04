@@ -3,6 +3,7 @@ import { CoordLocations, Directions } from "../types/types";
 // y = row
 // x = column
 
+type Grid = string[][];
 export class Coord {
   readonly y: number;
   readonly x: number;
@@ -48,12 +49,12 @@ export function checkPositionsIfValid(
   direction: Directions,
   coord: Coord,
   length: number,
-  grid: string[][]
+  grid: Grid
 ): boolean {
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
-  // const coordFit = checkFit(coord, length, direction);
-  // if (coordFit === false) return false;
+  const coordFit = checkFit(coord, length, direction, grid);
+  if (coordFit === false) return false;
 
   // create a common name to represent to simplify
   const areaDirectionToCheck = direction === "right" ? getRightRowsToCheck : getColDownToCheck;
@@ -77,10 +78,12 @@ export function checkPositionsIfValid(
   return isValidPosition;
 }
 
-export function checkFit(coord: Coord, length: number, direction: Directions, grid: string[][]) {
+export function checkFit(coord: Coord, length: number, direction: Directions, grid: Grid) {
   const { x, y } = coord;
   const yMax = grid.length;
   const xMax = grid[0].length;
+  if (y >= yMax || x >= yMax) return false;
+  if (x < 0 || y < 0) return false;
   if (direction === "down") {
     const shipLastCoord = new Coord(y + (length - 1), x);
     // If the last row number (yMax) >= 0, then it is within border.
@@ -92,11 +95,14 @@ export function checkFit(coord: Coord, length: number, direction: Directions, gr
   }
 }
 
-export const coordLocationData = (coord: number, length: number): CoordLocations => {
-  const isFirstColumn = coord % 10 === 0;
-  const isFirstRow = coord < 10;
-  const isLastRow = coord > 89;
-  const isLastColumn = coord.toString().endsWith("9");
+export const coordLocationData = (coord: Coord, length: number, grid: Grid) => {
+  const yMax = grid.length;
+  const xMax = grid[0].length;
+
+  const isFirstColumn = coord.x === 0;
+  const isFirstRow = coord.y === 0;
+  const isLastRow = coord.y === yMax;
+  const isLastColumn = coord.x === xMax;
 
   // const isNormal = isLastRow === false && isFirstRow === false && isFirstColumn === false;
   const areaLengthToCheck = isFirstColumn ? length + 1 : length + 2;

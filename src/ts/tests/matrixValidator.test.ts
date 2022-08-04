@@ -26,8 +26,9 @@ describe("ship position validator", () => {
     );
   });
   test("check the ship positions if it fits", () => {
-    console.log(gameboard.showBoard());
-    expect(checkFit(new Coord(8, 1), 3, "down", gameboard.grid));
+    gameboard.showBoard();
+    expect(checkFit(new Coord(10, 1), 3, "down", gameboard.grid)).toBe(true);
+    expect(checkFit(new Coord(19, 1), 3, "right", gameboard.grid)).toBe(false);
   });
 
   test.todo("gather coord location data", () => {});
