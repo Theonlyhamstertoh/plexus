@@ -1,9 +1,8 @@
-import { CoordLocations, Directions } from "../types/types";
+import { CoordLocations, Directions, Grid } from "../types/types";
 
 // y = row
 // x = column
 
-type Grid = string[][];
 export class Coord {
   readonly y: number;
   readonly x: number;
@@ -164,33 +163,4 @@ export function columnsToCheck(coordLocation: CoordLocations): Coord[] {
 
   // if not restraint by any border, start check from one row above
   return [coordTopLeft, coordTop, coordTopRight];
-}
-
-type boardLengthParams = [number, number];
-interface GameBoardParams {
-  boardLength: boardLengthParams;
-}
-export default class Gameboard {
-  grid: string[][] = [];
-  constructor({ boardLength }: GameBoardParams) {
-    this.createBoard(boardLength);
-  }
-
-  createBoard(boardLength: boardLengthParams = [10, 10]) {
-    for (let y = 0; y < boardLength[0]; y++) {
-      this.grid[y] = [];
-      for (let x = 0; x < boardLength[1]; x++) {
-        this.grid[y][x] = "~";
-      }
-    }
-    return this.grid;
-  }
-
-  showBoard() {
-    console.log(
-      this.grid.map((row) => {
-        return JSON.stringify(row);
-      })
-    );
-  }
 }

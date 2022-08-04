@@ -1,24 +1,31 @@
-import { useState } from "react";
 import { flipShipDirection, getPositionsFromCoord, getShipDirection } from "../helpers/getShipLocation";
-import { checkPositionsIfValid } from "../helpers/positionValidator";
-import { Directions } from "../types/types";
+import { Directions, Grid, BoardLength, GameBoardParams } from "../types/types";
 import Ship from "./Ship";
 
 export default class Gameboard {
-  grid: string[] = [];
-  constructor() {}
+  grid: Grid = [];
+  length: BoardLength;
+  constructor({ length }: GameBoardParams) {
+    this.length = length;
+    this.newBoard(length);
+  }
 
-  createBoard(num: number = 10) {
-    this.grid = [...Array(num * num).fill("~")];
+  newBoard(length: BoardLength) {
+    // reset grid
+    this.grid = [];
+    for (let y = 0; y < length[0]; y++) {
+      this.grid[y] = [];
+      for (let x = 0; x < length[1]; x++) {
+        this.grid[y][x] = "~";
+      }
+    }
+    return this.grid;
   }
 
   showBoard() {
-    const board = [];
-    for (let i = 0; i < Math.sqrt(this.grid.length); i++) {
-      board.push(this.grid.slice(i * 10, i * 10 + 10));
-      if (this.grid.length === 0) break;
-    }
-    return board.map((arr) => JSON.stringify(arr));
+    return this.grid.map((row) => {
+      return JSON.stringify(row);
+    });
   }
 
   placeShipAt(coord: number, direction: Directions, ship: Ship) {

@@ -1,6 +1,7 @@
 import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
+import Gameboard from "../classes/Gameboard";
 import { flipShipDirection, getShipDirection } from "../helpers/getShipLocation";
-import Gameboard, {
+import {
   checkFit,
   checkPositionsIfValid,
   columnsToCheck,
@@ -9,10 +10,9 @@ import Gameboard, {
   getPositionsFromCoord,
   rowsToCheck,
 } from "../helpers/matrixValidator";
-
 let gameboard: Gameboard;
 beforeEach(() => {
-  gameboard = new Gameboard({ boardLength: [12, 18] });
+  gameboard = new Gameboard({ length: [12, 18] });
 });
 
 describe("ship position validator", () => {
