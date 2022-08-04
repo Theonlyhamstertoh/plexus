@@ -8,6 +8,7 @@ export interface CoordLocations {
   isLastRow: boolean;
   isLastColumn: boolean;
   coord: Coord;
+  areaLength: number;
 }
 
 export type ShipPositions = { x: number; y: number }[];

@@ -53,29 +53,22 @@ export function checkPositionsIfValid(
 ): boolean {
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
-  const coordFit = checkFit(coord, length, direction, grid);
-  if (coordFit === false) return false;
-
-  // create a common name to represent to simplify
-  const areaDirectionToCheck = direction === "right" ? getRightRowsToCheck : getColDownToCheck;
+  const isWithinBorder = checkFit(coord, length, direction, grid);
+  if (isWithinBorder === false) return false;
 
   // determine the ship's location data
-  const coordLocation = coordLocationData(coord, length, grid);
+  const coordLocation = coordLocationData(coord, length, direction, grid);
+
+  // create a representative name to simplify code
+  const checkArea = direction === "right" ? rowsToCheck : columnsToCheck;
   // By using Array.Every, if only one of them return false, then there is no valid position
-  const isValidPosition = areaDirectionToCheck(coordLocation).every((coordToCheck) => {
-    let isValid = true;
-    for (let i = 0; i < coordLocation.areaLengthToCheck; i++) {
-      // if (direction === "down" && grid[coordToCheck + i * 10] === "s") return (isValid = false);
-      // if (direction === "right" && grid[coordToCheck + i] === "s") return (isValid = false);
-      // const [row, col] = convertCoordToMatrix(coordToCheck);
-      // if (direction === "right" && grid[row][col + i] === "s") return false;
-      // if (direction === "down" && grid[row + i * 10][col] === "s") return false;
-      // if it doesn't contain "s", then it is a valid Coord
-      // return true;
+  return checkArea(coordLocation).every(({ y, x }: Coord) => {
+    for (let i = 0; i < coordLocation.areaLength; i++) {
+      if (direction === "right" && grid[y][x + i] === "s") return false;
+      if (direction === "down" && grid[y + i * 10][x] === "s") return false;
     }
-    return isValid;
+    return true;
   });
-  return isValidPosition;
 }
 
 export function checkFit(coord: Coord, length: number, direction: Directions, grid: Grid) {
@@ -95,7 +88,12 @@ export function checkFit(coord: Coord, length: number, direction: Directions, gr
   }
 }
 
-export const coordLocationData = (coord: Coord, length: number, grid: Grid): CoordLocations => {
+export const coordLocationData = (
+  coord: Coord,
+  length: number,
+  direction: Directions,
+  grid: Grid
+): CoordLocations => {
   const yMax = grid.length;
   const xMax = grid[0].length;
 
@@ -106,18 +104,22 @@ export const coordLocationData = (coord: Coord, length: number, grid: Grid): Coo
 
   // const isNormal = isLastRow === false && isFirstRow === false && isFirstColumn === false;
 
+  const checkRightLength = isFirstColumn ? length - 1 : length;
+  const checkDownLength = isFirstRow ? length - 1 : length;
+  const areaLength = direction === "right" ? checkRightLength : checkDownLength;
   return {
     isFirstColumn,
     isFirstRow,
     isLastRow,
     isLastColumn,
     coord,
+    areaLength,
   };
 };
 
 // get the rows to check based on the Coord
 // the Coord passed in has to be validated to fit inside grid. The function will not be able to determine if it does not fit.
-export function getRightRowsToCheck(coordLocation: CoordLocations): Coord[] {
+export function rowsToCheck(coordLocation: CoordLocations): Coord[] {
   // if the Coord......
   const { isFirstColumn, isFirstRow, isLastRow, coord } = coordLocation;
 
@@ -154,7 +156,7 @@ export function getRightRowsToCheck(coordLocation: CoordLocations): Coord[] {
  *
  */
 
-export function getColDownToCheck(coordLocation: CoordLocations): Coord[] {
+export function columnsToCheck(coordLocation: CoordLocations): Coord[] {
   // if the Coord......
   const { isFirstColumn, isFirstRow, isLastColumn, isLastRow, coord } = coordLocation;
 
@@ -178,20 +180,6 @@ export function getColDownToCheck(coordLocation: CoordLocations): Coord[] {
 
   // if not restraint by any border, start check from one row above
   return [coordTopLeft, coordTop, coordTopRight];
-}
-
-export function convertCoordToMatrix(coord: number): [number, number] {
-  const coordAsString = coord.toString();
-
-  if (coordAsString.length === 1) {
-    const col = coordAsString.charAt(0);
-    return [0, parseInt(col)];
-  }
-
-  // if coord is length of 2, then do this by default.
-  const row = coordAsString.charAt(0);
-  const col = coord.toString().charAt(1);
-  return [parseInt(row), parseInt(col)];
 }
 
 type boardLengthParams = [number, number];
