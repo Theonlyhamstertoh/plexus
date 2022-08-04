@@ -1,17 +1,21 @@
 import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
+import { flipShipDirection, getShipDirection } from "../helpers/getShipLocation";
 import Gameboard, {
   checkFit,
+  checkPositionsIfValid,
   columnsToCheck,
   Coord,
   coordLocationData,
   getPositionsFromCoord,
+  rowsToCheck,
 } from "../helpers/matrixValidator";
 
+let gameboard: Gameboard;
+beforeEach(() => {
+  gameboard = new Gameboard({ boardLength: [12, 18] });
+});
+
 describe("ship position validator", () => {
-  let gameboard: Gameboard;
-  beforeEach(() => {
-    gameboard = new Gameboard({ boardLength: [12, 18] });
-  });
   test("function should generate an array of positions", () => {
     expect(getPositionsFromCoord("down", new Coord(3, 1), 4)).toEqual(
       // prettier-ignore
@@ -36,21 +40,60 @@ describe("ship position validator", () => {
     expect(coordLocation.isLastColumn).toBe(false);
     expect(coordLocation.isLastRow).toBe(false);
   });
-  test.todo("get column coords for checking", () => {
-    const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
 
+  test("check if position is valid", () => {
+    expect(checkPositionsIfValid("right", new Coord(7, 0), 4, gameboard.grid)).toBe(true);
+    expect(checkPositionsIfValid("down", new Coord(0, 0), 4, gameboard.grid)).toBe(true);
+    expect(checkPositionsIfValid("down", new Coord(10, 0), 4, gameboard.grid)).toBe(false);
+  });
+
+  test("get the ship direction based on position", () => {
+    const positions = getPositionsFromCoord("down", new Coord(3, 1), 4);
+    expect(getShipDirection(positions)).toBe("down");
+  });
+
+  test("flip ship direction", () => {
+    const positions = getPositionsFromCoord("down", new Coord(3, 1), 4);
+    expect(flipShipDirection(positions)).toBe("right");
+  });
+});
+
+describe("column checking coords are correctly returned", () => {
+  test("get column coords for checking", () => {
+    const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
     // prettier-ignore
     const coords = arrayToCoords([[2, 0], [2, 1], [2, 2]]);
     expect(columnsToCheck(coordLocation)).toEqual(coords);
   });
 
-  test.todo("get row coords for checking", () => {});
+  test("another column coord", () => {
+    const coordLocation = coordLocationData(new Coord(0, 12), 4, gameboard.grid);
+    // prettier-ignore
+    const coords = arrayToCoords([[0, 11], [0, 12], [0, 13]]);
+    expect(columnsToCheck(coordLocation)).toEqual(coords);
+  });
+  test("a third column coord", () => {
+    const coordLocation = coordLocationData(new Coord(7, 0), 4, gameboard.grid);
+    // prettier-ignore
+    const coords = arrayToCoords([[6, 0], [6, 1]]);
+    expect(columnsToCheck(coordLocation)).toEqual(coords);
+  });
+});
 
-  test.todo("check if position is valid", () => {});
+describe("row checking coords are correctly returned", () => {
+  test("get row coords for checking", () => {
+    const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
+    // prettier-ignore
+    const coords = arrayToCoords([[2, 0], [3, 0], [4, 0]]);
+    expect(rowsToCheck(coordLocation)).toEqual(coords);
+  });
 
-  test.todo("convert coord to matrix table usable", () => {});
-
-  test.todo("get the ship direction based on position", () => {});
+  test("another row coord", () => {
+    const coordLocation = coordLocationData(new Coord(0, 0), 4, gameboard.grid);
+    // prettier-ignore
+    const coords = arrayToCoords([[0, 0], [1, 0]]);
+    expect(rowsToCheck(coordLocation)).toEqual(coords);
+  });
 });
 
 function arrayToCoords(coords: number[][]) {

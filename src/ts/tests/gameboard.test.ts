@@ -39,13 +39,13 @@ describe("placing and moving ships ", () => {
     expect(gameboard.grid[0]).toBe("s");
   });
 
-  test("should not rotate a ship if not valid position", () => {
+  test.skip("should not rotate a ship if not valid position", () => {
     gameboard.placeShipAt(54, "right", ship);
     gameboard.placeShipAt(74, "right", ship2);
 
     expect(gameboard.rotateShip(ship)).toBe("NOT VALID POSITION");
   });
-  test("rotate a ship on valid position", () => {
+  test.skip("rotate a ship on valid position", () => {
     gameboard.placeShipAt(34, "right", ship);
     gameboard.placeShipAt(74, "right", ship2);
 

@@ -58,7 +58,7 @@ export function checkPositionsIfValid(direction: Directions, coord: Coord, lengt
   return checkArea(coordLocation).every(({ y, x }: Coord) => {
     for (let i = 0; i < areaLength; i++) {
       if (direction === "right" && grid[y][x + i] === "s") return false;
-      if (direction === "down" && grid[y + i * 10][x] === "s") return false;
+      if (direction === "down" && grid[y + i][x] === "s") return false;
     }
     return true;
   });
@@ -146,7 +146,7 @@ export function columnsToCheck(coordLocation: CoordLocations): Coord[] {
 
   const coordTop = new Coord(coord.y - 1, coord.x);
   const coordTopLeft = new Coord(coord.y - 1, coord.x - 1);
-  const coordTopRight = new Coord(coord.y + 1, coord.x - 1);
+  const coordTopRight = new Coord(coord.y - 1, coord.x + 1);
   const coordLeft = new Coord(coord.y, coord.x - 1);
   const coordRight = new Coord(coord.y, coord.x + 1);
 

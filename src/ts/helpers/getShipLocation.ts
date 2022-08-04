@@ -1,5 +1,5 @@
 import { Directions, ShipPositions } from "../types/types";
-import { convertCoordToMatrix } from "./positionValidator";
+import { Coord } from "./matrixValidator";
 
 export function getPositionsFromCoord(direction: Directions, coord: number, length: number) {
   let pos: number[] = [];
@@ -14,10 +14,10 @@ export function getPositionsFromCoord(direction: Directions, coord: number, leng
   return pos;
 }
 
-export function getShipDirection(positions: number[]): Directions {
-  return positions[1] - positions[0] === 1 ? "right" : "down";
+export function getShipDirection(positions: Coord[]): Directions {
+  return positions[1].x - positions[0].x === 1 ? "right" : "down";
 }
 
-export function flipShipDirection(positions: number[]): Directions {
-  return positions[1] - positions[0] === 1 ? "down" : "right";
+export function flipShipDirection(positions: Coord[]): Directions {
+  return positions[1].x - positions[0].x === 1 ? "down" : "right";
 }

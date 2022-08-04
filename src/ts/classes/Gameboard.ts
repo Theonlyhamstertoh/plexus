@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  flipShipDirection,
-  getPositionsFromCoord,
-  getShipDirection,
-} from "../helpers/getShipLocation";
+import { flipShipDirection, getPositionsFromCoord, getShipDirection } from "../helpers/getShipLocation";
 import { checkPositionsIfValid } from "../helpers/positionValidator";
 import { Directions } from "../types/types";
 import Ship from "./Ship";
