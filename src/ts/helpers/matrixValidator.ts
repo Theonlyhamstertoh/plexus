@@ -12,11 +12,7 @@ export class Coord {
     this.x = x;
   }
 }
-export function getPositionsFromCoord(
-  direction: Directions,
-  { y, x }: Coord,
-  length: number
-): Coord[] {
+export function getPositionsFromCoord(direction: Directions, { y, x }: Coord, length: number): Coord[] {
   let pos: Coord[] = [];
   for (let i = 0; i < length; i++) {
     if (direction === "down") pos.push(new Coord(y + i, x));
@@ -45,25 +41,22 @@ export function getPositionsFromCoord(
  *
  */
 
-export function checkPositionsIfValid(
-  direction: Directions,
-  coord: Coord,
-  length: number,
-  grid: Grid
-): boolean {
+export function checkPositionsIfValid(direction: Directions, coord: Coord, length: number, grid: Grid): boolean {
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
   const isWithinBorder = checkFit(coord, length, direction, grid);
   if (isWithinBorder === false) return false;
 
   // determine the ship's location data
-  const coordLocation = coordLocationData(coord, length, direction, grid);
+  const coordLocation = coordLocationData(coord, length, grid);
 
+  const isBlockByBorder = direction === "right" ? coordLocation.isFirstColumn : coordLocation.isFirstRow;
+  const areaLength = isBlockByBorder ? length - 1 : length;
   // create a representative name to simplify code
   const checkArea = direction === "right" ? rowsToCheck : columnsToCheck;
   // By using Array.Every, if only one of them return false, then there is no valid position
   return checkArea(coordLocation).every(({ y, x }: Coord) => {
-    for (let i = 0; i < coordLocation.areaLength; i++) {
+    for (let i = 0; i < areaLength; i++) {
       if (direction === "right" && grid[y][x + i] === "s") return false;
       if (direction === "down" && grid[y + i * 10][x] === "s") return false;
     }
@@ -88,12 +81,7 @@ export function checkFit(coord: Coord, length: number, direction: Directions, gr
   }
 }
 
-export const coordLocationData = (
-  coord: Coord,
-  length: number,
-  direction: Directions,
-  grid: Grid
-): CoordLocations => {
+export const coordLocationData = (coord: Coord, length: number, grid: Grid): CoordLocations => {
   const yMax = grid.length;
   const xMax = grid[0].length;
 
@@ -104,16 +92,12 @@ export const coordLocationData = (
 
   // const isNormal = isLastRow === false && isFirstRow === false && isFirstColumn === false;
 
-  const checkRightLength = isFirstColumn ? length - 1 : length;
-  const checkDownLength = isFirstRow ? length - 1 : length;
-  const areaLength = direction === "right" ? checkRightLength : checkDownLength;
   return {
     isFirstColumn,
     isFirstRow,
     isLastRow,
     isLastColumn,
     coord,
-    areaLength,
   };
 };
 

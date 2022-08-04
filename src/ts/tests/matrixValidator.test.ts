@@ -1,6 +1,7 @@
 import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
 import Gameboard, {
   checkFit,
+  columnsToCheck,
   Coord,
   coordLocationData,
   getPositionsFromCoord,
@@ -13,21 +14,14 @@ describe("ship position validator", () => {
   });
   test("function should generate an array of positions", () => {
     expect(getPositionsFromCoord("down", new Coord(3, 1), 4)).toEqual(
-      arrayToCoords([
-        [3, 1],
-        [4, 1],
-        [5, 1],
-        [6, 1],
+      // prettier-ignore
+      arrayToCoords([[3, 1], [4, 1], [5, 1], [6, 1],
       ])
     );
 
     expect(getPositionsFromCoord("right", new Coord(1, 4), 4)).toEqual(
-      arrayToCoords([
-        [1, 4],
-        [1, 5],
-        [1, 6],
-        [1, 7],
-      ])
+      // prettier-ignore
+      arrayToCoords([[1, 4], [1, 5], [1, 6], [1, 7]])
     );
   });
   test("check the ship positions if it fits", () => {
@@ -42,7 +36,13 @@ describe("ship position validator", () => {
     expect(coordLocation.isLastColumn).toBe(false);
     expect(coordLocation.isLastRow).toBe(false);
   });
-  test.todo("get column coords for checking", () => {});
+  test.todo("get column coords for checking", () => {
+    const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
+
+    // prettier-ignore
+    const coords = arrayToCoords([[2, 0], [2, 1], [2, 2]]);
+    expect(columnsToCheck(coordLocation)).toEqual(coords);
+  });
 
   test.todo("get row coords for checking", () => {});
 
