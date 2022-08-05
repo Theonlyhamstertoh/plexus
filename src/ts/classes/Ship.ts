@@ -1,8 +1,9 @@
+import { Coord } from "../helpers/matrixValidator";
 import { Directions, ShipPositions } from "../types/types";
 
 export default class Ship {
   readonly length: number;
-  positions: number[] = [];
+  positions: Coord[] = [];
   #lives: number;
   isDestroyed: boolean = false;
   constructor(length: number) {

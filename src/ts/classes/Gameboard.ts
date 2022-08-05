@@ -1,4 +1,5 @@
-import { flipShipDirection, getPositionsFromCoord, getShipDirection } from "../helpers/getShipLocation";
+import { createShipPositions, flipShipDirection, getShipDirection } from "../helpers/getShipLocation";
+import { checkPositionsIfValid, Coord } from "../helpers/matrixValidator";
 import { Directions, Grid, BoardLength, GameBoardParams } from "../types/types";
 import Ship from "./Ship";
 
@@ -28,31 +29,42 @@ export default class Gameboard {
     });
   }
 
-  placeShipAt(coord: number, direction: Directions, ship: Ship) {
-    // convert to '~' (water) to pass validity check
-    ship.positions.forEach((tile) => (this.grid[tile] = "~"));
+  placeShip(coord: Coord, direction: Directions, ship: Ship) {
+    // change ship marks to @ to symbolize it is being edited
+    // and to prevent validator to mistake it for another ship
+    // if a new ship, then it wouldn't matter because array is empty
+    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = "@"));
 
-    // testing if the positions are valid
+    // test if the position are valid
     const validity = checkPositionsIfValid(direction, coord, ship.length, this.grid);
-    if (validity === false) {
-      ship.positions.forEach((tile) => (this.grid[tile] = "s"));
-      return "NOT VALID POSITION";
+    if (!validity) {
+      // if ship cannot be move to new position, return to previous position
+      ship.positions.forEach(({ y, x }) => (this.grid[y][x] = "s"));
+      // new ship will simply be denied placement
+      return null;
     }
-    // remove previous ship position and reset array
+    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = "~"));
+
+    // if valid, hide it away
+
+    /**                                           **/
+    /**       SHIP IS VALIDATED BEYOND HERE       **/
+    /**                                           **/
+
+    // remove previous ship positions if it was already placed
     ship.positions = [];
 
-    // placing ship at the coordinate
-    ship.positions = getPositionsFromCoord(direction, coord, ship.length);
-    ship.positions.forEach((tile) => {
-      this.grid[tile] = "s";
-    });
+    // get ship coords
+    ship.positions = createShipPositions(direction, coord, ship.length);
+    ship.positions.forEach(({ y, x }: Coord) => (this.grid[y][x] = "s"));
     return ship.positions;
   }
 
+  editMode() {}
   rotateShip(ship: Ship) {
     if (ship.positions.length === 0) throw Error("SHIP NOT YET PLACED");
     const newDirection = flipShipDirection(ship.positions);
-    return this.placeShipAt(ship.positions[0], newDirection, ship);
+    return this.placeShip(ship.positions[0], newDirection, ship);
   }
 }
 

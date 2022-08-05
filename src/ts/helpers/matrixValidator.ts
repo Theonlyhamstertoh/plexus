@@ -11,15 +11,6 @@ export class Coord {
     this.x = x;
   }
 }
-export function getPositionsFromCoord(direction: Directions, { y, x }: Coord, length: number): Coord[] {
-  let pos: Coord[] = [];
-  for (let i = 0; i < length; i++) {
-    if (direction === "down") pos.push(new Coord(y + i, x));
-    if (direction === "right") pos.push(new Coord(y, x + i));
-  }
-
-  return pos;
-}
 
 /**
  *  USING INDEX VALUES, NOT ORDER PAIRS. ORDER PAIRS USED IN BOARD
@@ -50,7 +41,7 @@ export function checkPositionsIfValid(direction: Directions, coord: Coord, lengt
   const coordLocation = coordLocationData(coord, length, grid);
 
   const isBlockByBorder = direction === "right" ? coordLocation.isFirstColumn : coordLocation.isFirstRow;
-  const areaLength = isBlockByBorder ? length - 1 : length;
+  const areaLength = isBlockByBorder ? length + 1 : length + 2;
   // create a representative name to simplify code
   const checkArea = direction === "right" ? rowsToCheck : columnsToCheck;
   // By using Array.Every, if only one of them return false, then there is no valid position
