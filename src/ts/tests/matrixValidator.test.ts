@@ -29,9 +29,9 @@ describe("ship position validator", () => {
     );
   });
   test("check the ship positions if it fits", () => {
-    gameboard.showBoard();
-    expect(checkFit(new Coord(10, 1), 3, "down", gameboard.grid)).toBe(true);
-    expect(checkFit(new Coord(19, 1), 3, "right", gameboard.grid)).toBe(false);
+    expect(checkFit(new Coord(10, 1), 3, "down", gameboard.grid)).toBe(false);
+    expect(checkFit(new Coord(19, 2), 3, "right", gameboard.grid)).toBe(false);
+    expect(checkFit(new Coord(2, 14), 3, "down", gameboard.grid)).toBe(true);
   });
 
   test("gather coord location data", () => {
@@ -63,20 +63,20 @@ describe("column checking coords are correctly returned", () => {
     const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
     // prettier-ignore
     const coords = arrayToCoords([[2, 0], [2, 1], [2, 2]]);
-    expect(columnsToCheck(coordLocation)).toEqual(coords);
+    expect(columnsToCheck(coordLocation, new Coord(3, 1))).toEqual(coords);
   });
 
   test("another column coord", () => {
     const coordLocation = coordLocationData(new Coord(0, 12), 4, gameboard.grid);
     // prettier-ignore
     const coords = arrayToCoords([[0, 11], [0, 12], [0, 13]]);
-    expect(columnsToCheck(coordLocation)).toEqual(coords);
+    expect(columnsToCheck(coordLocation, new Coord(0, 12))).toEqual(coords);
   });
   test("a third column coord", () => {
     const coordLocation = coordLocationData(new Coord(7, 0), 4, gameboard.grid);
     // prettier-ignore
     const coords = arrayToCoords([[6, 0], [6, 1]]);
-    expect(columnsToCheck(coordLocation)).toEqual(coords);
+    expect(columnsToCheck(coordLocation, new Coord(7, 0))).toEqual(coords);
   });
 });
 
@@ -85,14 +85,14 @@ describe("row checking coords are correctly returned", () => {
     const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
     // prettier-ignore
     const coords = arrayToCoords([[2, 0], [3, 0], [4, 0]]);
-    expect(rowsToCheck(coordLocation)).toEqual(coords);
+    expect(rowsToCheck(coordLocation, new Coord(3, 1))).toEqual(coords);
   });
 
   test("another row coord", () => {
     const coordLocation = coordLocationData(new Coord(0, 0), 4, gameboard.grid);
     // prettier-ignore
     const coords = arrayToCoords([[0, 0], [1, 0]]);
-    expect(rowsToCheck(coordLocation)).toEqual(coords);
+    expect(rowsToCheck(coordLocation, new Coord(0, 0))).toEqual(coords);
   });
 });
 

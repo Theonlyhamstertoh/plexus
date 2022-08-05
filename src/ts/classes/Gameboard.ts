@@ -11,6 +11,10 @@ export default class Gameboard {
     this.newBoard(length);
   }
 
+  changeShipGridPosTo(mode: Mode, ship: Ship) {
+    if (ship.positions.length === 0) return;
+    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = modeTypes[mode]));
+  }
   newBoard(length: BoardLength) {
     // reset grid
     this.grid = [];
@@ -30,28 +34,24 @@ export default class Gameboard {
   }
 
   placeShip(coord: Coord, direction: Directions, ship: Ship) {
-    // change ship marks to @ to symbolize it is being edited
-    // and to prevent validator to mistake it for another ship
-    // if a new ship, then it wouldn't matter because array is empty
-    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = "@"));
-
+    // if new ship, nothing happens, function returns
+    this.changeShipGridPosTo("edit", ship);
     // test if the position are valid
     const validity = checkPositionsIfValid(direction, coord, ship.length, this.grid);
-    if (!validity) {
+    if (validity === false) {
       // if ship cannot be move to new position, return to previous position
-      ship.positions.forEach(({ y, x }) => (this.grid[y][x] = "s"));
-      // new ship will simply be denied placement
+      this.changeShipGridPosTo("show", ship);
+      // new ship will be denied placement
       return null;
     }
-    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = "~"));
-
-    // if valid, hide it away
 
     /**                                           **/
     /**       SHIP IS VALIDATED BEYOND HERE       **/
     /**                                           **/
 
     // remove previous ship positions if it was already placed
+    // if new, nothing happens
+    this.changeShipGridPosTo("clear", ship);
     ship.positions = [];
 
     // get ship coords
@@ -60,13 +60,19 @@ export default class Gameboard {
     return ship.positions;
   }
 
-  editMode() {}
   rotateShip(ship: Ship) {
     if (ship.positions.length === 0) throw Error("SHIP NOT YET PLACED");
     const newDirection = flipShipDirection(ship.positions);
     return this.placeShip(ship.positions[0], newDirection, ship);
   }
 }
+
+const modeTypes = {
+  edit: "@",
+  show: "s",
+  clear: "~",
+};
+type Mode = "edit" | "show" | "clear";
 
 // '~' for water
 // '@' for ship being edited

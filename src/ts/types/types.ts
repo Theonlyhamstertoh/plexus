@@ -7,7 +7,7 @@ export interface CoordLocations {
   isFirstRow: boolean;
   isLastRow: boolean;
   isLastColumn: boolean;
-  coord: Coord;
+  isNormal: boolean;
 }
 
 export type BoardLength = [number, number];
