@@ -1,17 +1,5 @@
+import { Coord } from "../classes/Coord";
 import { CoordLocations, Directions, Grid } from "../types/types";
-
-// y = row
-// x = column
-
-export class Coord {
-  readonly y: number;
-  readonly x: number;
-  constructor(y: number, x: number) {
-    this.y = y;
-    this.x = x;
-  }
-}
-
 /**
  *  USING INDEX VALUES, NOT ORDER PAIRS. ORDER PAIRS USED IN BOARD
  *

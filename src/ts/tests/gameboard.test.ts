@@ -2,8 +2,8 @@ import Gameboard from "../classes/Gameboard";
 
 import { describe, beforeEach, test, expect } from "vitest";
 import Ship from "../classes/Ship";
-import { checkFit, Coord, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
-
+import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
+import { Coord } from "../classes/Coord";
 describe("grid matrix array ", () => {
   let gameboard: Gameboard;
   beforeEach(() => {
@@ -38,15 +38,11 @@ describe("placing and moving ships ", () => {
   });
   test("rotate a ship on valid position", () => {
     gameboard.placeShip(new Coord(2, 16), "down", ship);
-    // expect(coordLocationData(new Coord(6, 19), ship.length, gameboard.grid)).toBe(5);
-
     gameboard.rotateShip(ship);
     console.log(gameboard.showBoard());
-
     expect(gameboard.grid[2][19]).toBe("s");
   });
 
-  test.todo("update ship position and clear out old coords");
   test.todo("remove a ship from position");
   test.todo("rotate a ship");
 

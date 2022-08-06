@@ -1,15 +1,14 @@
 import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
+import { Coord } from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
 import { createShipPositions, flipShipDirection, getShipDirection } from "../helpers/getShipLocation";
 import {
   checkFit,
   checkPositionsIfValid,
   columnsToCheck,
-  Coord,
   coordLocationData,
   rowsToCheck,
 } from "../helpers/matrixValidator";
-
 let gameboard: Gameboard;
 beforeEach(() => {
   gameboard = new Gameboard({ length: [12, 18] });

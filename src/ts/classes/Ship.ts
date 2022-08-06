@@ -1,11 +1,14 @@
-import { Coord } from "../helpers/matrixValidator";
+import { nanoid } from "nanoid";
 import { Directions, ShipPositions } from "../types/types";
+import { Coord } from "./Coord";
 
 export default class Ship {
   readonly length: number;
+  readonly id: string = nanoid();
   positions: Coord[] = [];
   #lives: number;
   isDestroyed: boolean = false;
+  readonly id: string = nanoid();
   constructor(length: number) {
     this.#lives = this.length = length;
   }
