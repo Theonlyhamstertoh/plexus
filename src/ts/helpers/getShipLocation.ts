@@ -1,5 +1,5 @@
+import { Coord } from "../classes/Coord";
 import { Directions, ShipPositions } from "../types/types";
-import { Coord } from "./matrixValidator";
 
 export function createShipPositions(direction: Directions, { y, x }: Coord, length: number): Coord[] {
   let pos: Coord[] = [];

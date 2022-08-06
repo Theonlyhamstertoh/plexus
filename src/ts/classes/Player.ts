@@ -1,10 +1,11 @@
 import { nanoid } from "nanoid";
 import Ship from "./Ship";
 
+const TEST_SHIPS = [new Ship(4), new Ship(3), new Ship(5), new Ship(3), new Ship(2)];
 export class Player {
   readonly id: string = nanoid();
   readonly name: string;
-  ships: Ship[] = [];
+  ships: Ship[] = TEST_SHIPS;
 
   constructor(name: string) {
     this.name = name;

@@ -28,36 +28,22 @@ describe("placing and moving ships ", () => {
 
   test("place ship at specific coords", () => {
     gameboard.placeShip(new Coord(0, 0), "right", ship);
-    // can't place ship in same spot. But it should ignore its own.
     expect(gameboard.grid[0][0]).toBe("s");
   });
 
-  test.skip("should not place a ship if not valid position", () => {
+  test("should not place a ship if not valid position", () => {
     gameboard.placeShip(new Coord(5, 4), "right", ship);
     expect(gameboard.placeShip(new Coord(5, 7), "right", ship2)).toBe(null);
   });
   test("rotate a ship on valid position", () => {
     gameboard.placeShip(new Coord(2, 16), "down", ship);
     gameboard.rotateShip(ship);
-    console.log(gameboard.showBoard());
     expect(gameboard.grid[2][19]).toBe("s");
   });
 
-  test.todo("remove a ship from position");
-  test.todo("rotate a ship");
-
-  test.todo("is game over");
-  test.todo("is ready to start");
+  test("clear a ship from position on grid", () => {
+    gameboard.placeShip(new Coord(2, 16), "down", ship);
+    gameboard.clearShipFromGrid(ship);
+    console.log(gameboard.showBoard());
+  });
 });
-const grid = [
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-  ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
-];
