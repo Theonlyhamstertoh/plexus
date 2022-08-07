@@ -33,7 +33,7 @@ describe("placing and moving ships ", () => {
 
   test("should not place a ship if not valid position", () => {
     gameboard.placeShip(new Coord(5, 4), "right", ship);
-    expect(gameboard.placeShip(new Coord(5, 7), "right", ship2)).toBe(null);
+    expect(gameboard.placeShip(new Coord(5, 7), "right", ship2)).toBe(false);
   });
   test("rotate a ship on valid position", () => {
     gameboard.placeShip(new Coord(2, 16), "down", ship);
@@ -46,4 +46,28 @@ describe("placing and moving ships ", () => {
     gameboard.clearShipFromGrid(ship);
     console.log(gameboard.showBoard());
   });
+});
+
+describe("gameboard players", () => {
+  test.todo("add player");
+  test.todo("remove player");
+  test.todo("add player ships");
+  test("randomly place player ships", () => {
+    const gameboard = new Gameboard({ length: [10, 10] });
+    for (let i = 0; i < 6; i++) {
+      const ship = new Ship(3);
+      gameboard.placeShipRandom(ship);
+    }
+    // }
+    console.log(gameboard.showBoard());
+    // console.log(gameboard.placeShipRandom(ship));
+    // expect(gameboard.grid[0].includes("s")).toBe(false);
+    // expect(ship.positions.length).toBeGreaterThan(0);
+    expect(2 + 2).toEqual(4);
+  });
+  test.todo("check if all player ships are placed");
+});
+
+describe("finding and attacking ships ", () => {
+  test("find ship placed", () => {});
 });

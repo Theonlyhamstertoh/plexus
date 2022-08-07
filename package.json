@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "test": "vitest --watch --reporter verbose",
+    "test": "vitest --watch --reporter default ",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

@@ -20,19 +20,17 @@ import { CoordLocations, Directions, Grid } from "../types/types";
  */
 
 export function checkPositionsIfValid(direction: Directions, coord: Coord, length: number, grid: Grid): boolean {
+  const coordData = coordLocationData(coord, grid);
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
-  const isWithinBorder = checkFit(coord, length, direction, grid);
+  const isWithinBorder = checkFit(coordData, direction, length);
   if (isWithinBorder === false) return false;
-
-  // determine the ship's location data
-  const coordLocation = coordLocationData(coord, length, grid);
 
   // create a representative name to simplify code
   const checkArea = direction === "right" ? rowsToCheck : columnsToCheck;
   // By using Array.Every, if only one of them return false, then there is no valid position
-  return checkArea(coordLocation, coord).every(({ y, x }: Coord) => {
-    for (let i = 0; i < getAreaLength(coordLocation, length); i++) {
+  return checkArea(coordData).every(({ y, x }: Coord) => {
+    for (let i = 0; i < getAreaLength(coordData, direction, length); i++) {
       if (direction === "right" && grid[y][x + i] === "s") return false;
       if (direction === "down" && grid[y + i][x] === "s") return false;
     }
@@ -40,14 +38,29 @@ export function checkPositionsIfValid(direction: Directions, coord: Coord, lengt
   });
 }
 
-export function getAreaLength({ isNormal }: CoordLocations, length: number): number {
-  return isNormal ? length + 2 : length + 1;
+export function getAreaLength(coordData: CoordLocations, direction: Directions, length: number): number {
+  const { isFirstRow, isFirstColumn, yMax, xMax, coord } = coordData;
+  const { y, x } = coord;
+  if (direction === "down") {
+    // LC === Last Coord
+    const downLastCoord = new Coord(y + (length - 1), x);
+    const isLC_LastRow = yMax - downLastCoord.y === 0;
+    return isLC_LastRow || isFirstRow ? length + 1 : length + 2;
+  }
+
+  // check right
+  const rightLastCoord = new Coord(y, x + (length - 1));
+  const isLC_LastColumn = xMax - rightLastCoord.x === 0;
+  return isLC_LastColumn || isFirstColumn ? length + 1 : length + 2;
 }
-export function checkFit(coord: Coord, length: number, direction: Directions, grid: Grid) {
-  const { x, y } = coord;
+export function checkFit(coordData: CoordLocations, direction: Directions, length: number) {
+  const {
+    yMax,
+    xMax,
+    coord: { y, x },
+  } = coordData;
+
   // grid starts at [0, 0], not [1, 1], thus substract 1 to get coord limits
-  const yMax = grid.length - 1;
-  const xMax = grid[0].length - 1;
   if (x < 0 || y < 0) return false;
   if (direction === "down") {
     const shipLastCoord = new Coord(y + (length - 1), x);
@@ -62,31 +75,31 @@ export function checkFit(coord: Coord, length: number, direction: Directions, gr
   }
 }
 
-export const coordLocationData = (coord: Coord, length: number, grid: Grid): CoordLocations => {
-  const yMax = grid.length;
-  const xMax = grid[0].length;
+export const coordLocationData = (coord: Coord, grid: Grid): CoordLocations => {
+  const yMax = grid.length - 1;
+  const xMax = grid[0].length - 1;
 
   const isFirstColumn = coord.x === 0;
   const isFirstRow = coord.y === 0;
-  const isLastRow = coord.y === yMax - 1;
-  const isLastColumn = coord.x === xMax - 1;
-
-  const isNormal = isLastRow === false && isFirstRow === false && isFirstColumn === false && isLastColumn === false;
+  const isLastRow = coord.y === yMax;
+  const isLastColumn = coord.x === xMax;
 
   return {
     isFirstColumn,
     isFirstRow,
     isLastRow,
     isLastColumn,
-    isNormal,
+    yMax,
+    xMax,
+    coord,
   };
 };
 
 // get the rows to check based on the Coord
 // the Coord passed in has to be validated to fit inside grid. The function will not be able to determine if it does not fit.
-export function rowsToCheck(coordLocation: CoordLocations, coord: Coord): Coord[] {
+export function rowsToCheck(coordData: CoordLocations): Coord[] {
   // if the Coord......
-  const { isFirstColumn, isFirstRow, isLastRow } = coordLocation;
+  const { isFirstColumn, isFirstRow, isLastRow, coord } = coordData;
 
   // imagine a grid where the top left is [0, 0]
   // Up   === negative | down  === positive
@@ -121,9 +134,9 @@ export function rowsToCheck(coordLocation: CoordLocations, coord: Coord): Coord[
  *
  */
 
-export function columnsToCheck(coordLocation: CoordLocations, coord: Coord): Coord[] {
+export function columnsToCheck(coordData: CoordLocations): Coord[] {
   // if the Coord......
-  const { isFirstColumn, isFirstRow, isLastColumn, isLastRow } = coordLocation;
+  const { isFirstColumn, isFirstRow, isLastColumn, coord } = coordData;
 
   const coordTop = new Coord(coord.y - 1, coord.x);
   const coordTopLeft = new Coord(coord.y - 1, coord.x - 1);

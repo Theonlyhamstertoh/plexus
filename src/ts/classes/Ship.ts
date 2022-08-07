@@ -8,7 +8,7 @@ export default class Ship {
   positions: Coord[] = [];
   #lives: number;
   isDestroyed: boolean = false;
-  readonly id: string = nanoid();
+  placed: boolean = false;
   constructor(length: number) {
     this.#lives = this.length = length;
   }

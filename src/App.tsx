@@ -1,16 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Gameboard from "./ts/classes/Gameboard";
+import Ship from "./ts/classes/Ship";
 
 function App() {
-  let grid: number[][] = [];
-  for (let x = 0; x < 10; x++) {
-    grid[x] = [];
-    for (let y = 0; y < 10; y++) {
-      grid[x][y] = x * 10 + y;
-    }
-  }
+  const [gameboard, setGameboard] = useState(new Gameboard({ length: [10, 10] }));
 
-  console.log(grid);
-  return <div className="App"></div>;
+  useEffect(() => {
+    gameboard.placeShipRandom(new Ship(3));
+  }, []);
+
+  return (
+    <div className="App">
+      <div className="grid">
+        {gameboard.grid.map((row, i) => {
+          return row.map((column, colI) => (
+            <div className="tile" key={`${i}, ${colI}`}>
+              ({i},{colI})
+            </div>
+          ));
+        })}
+      </div>
+    </div>
+  );
 }
 
 export default App;

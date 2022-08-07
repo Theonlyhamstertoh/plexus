@@ -1,5 +1,10 @@
-import { nanoid } from "nanoid";
-import { createShipPositions, flipShipDirection, getShipDirection } from "../helpers/getShipLocation";
+import { nanoid, random } from "nanoid";
+import {
+  createShipPositions,
+  flipDirection,
+  flipDirectionByCoords,
+  getShipDirection,
+} from "../helpers/getShipLocation";
 import { checkPositionsIfValid } from "../helpers/matrixValidator";
 import { Directions, Grid, BoardLength, GameBoardParams } from "../types/types";
 import { Coord } from "./Coord";
@@ -40,6 +45,7 @@ export default class Gameboard {
     if (ship.positions.length === 0) return;
     ship.positions.forEach(({ y, x }) => (this.grid[y][x] = modeTypes[mode]));
   }
+
   newBoard(length: BoardLength) {
     // reset grid
     this.length = length;
@@ -66,6 +72,22 @@ export default class Gameboard {
       return JSON.stringify(row);
     });
   }
+  placeShipRandom(ship: Ship) {
+    const coordY = getRandomCoord(this.length[0]);
+    const coordX = getRandomCoord(this.length[1]);
+    const direction = getRandomPosition();
+    const oppositeDirection = flipDirection(direction);
+    console.log(coordY, coordX, direction);
+    const placement = this.placeShip(new Coord(coordY, coordX), direction, ship);
+    console.log(placement);
+    // do {
+
+    // if (ship.placed === true) return;
+    // if (ship.placed === false) {
+    // ship.placed = this.placeShip(new Coord(coordY, coordX), oppositeDirection, ship);
+    // }
+    // } while (ship.placed === false);
+  }
 
   placeShip(coord: Coord, direction: Directions, ship: Ship) {
     // if new ship, nothing happens, function returns
@@ -74,7 +96,7 @@ export default class Gameboard {
     const validity = checkPositionsIfValid(direction, coord, ship.length, this.grid);
     if (validity === false) {
       this.changeShipGridPosTo("show", ship);
-      return null;
+      return false;
     }
 
     // remove previous ship positions if it was already placed
@@ -82,12 +104,12 @@ export default class Gameboard {
     ship.positions = [];
     ship.positions = createShipPositions(direction, coord, ship.length);
     ship.positions.forEach(({ y, x }: Coord) => (this.grid[y][x] = MARKS.SHIP));
-    return ship.positions;
+    return true;
   }
 
   rotateShip(ship: Ship) {
     if (ship.positions.length === 0) throw Error("SHIP NOT YET PLACED");
-    const newDirection = flipShipDirection(ship.positions);
+    const newDirection = flipDirectionByCoords(ship.positions);
     return this.placeShip(ship.positions[0], newDirection, ship);
   }
 
@@ -105,6 +127,11 @@ export default class Gameboard {
     return null;
   }
 }
+
+const getRandomCoord = (maxLength: number) => Math.floor(Math.random() * maxLength);
+const getRandomPosition = (): Directions => {
+  return !!Math.floor(Math.random() * 2) ? "right" : "down";
+};
 
 const modeTypes = {
   edit: "@",

@@ -1,4 +1,4 @@
-import { Coord } from "../helpers/matrixValidator";
+import { Coord } from "../classes/Coord";
 
 export type Directions = "down" | "right";
 export type Grid = string[][];
@@ -7,7 +7,9 @@ export interface CoordLocations {
   isFirstRow: boolean;
   isLastRow: boolean;
   isLastColumn: boolean;
-  isNormal: boolean;
+  yMax: number;
+  xMax: number;
+  coord: Coord;
 }
 
 export type BoardLength = [number, number];

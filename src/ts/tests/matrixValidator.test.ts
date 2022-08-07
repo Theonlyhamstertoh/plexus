@@ -1,14 +1,8 @@
 import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
 import { Coord } from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
-import { createShipPositions, flipShipDirection, getShipDirection } from "../helpers/getShipLocation";
-import {
-  checkFit,
-  checkPositionsIfValid,
-  columnsToCheck,
-  coordLocationData,
-  rowsToCheck,
-} from "../helpers/matrixValidator";
+import { createShipPositions, flipDirectionByCoords, getShipDirection } from "../helpers/getShipLocation";
+import { checkFit, checkPositionsIfValid, columnsToCheck, coordLocationData, rowsToCheck } from "../helpers/matrixValidator";
 let gameboard: Gameboard;
 beforeEach(() => {
   gameboard = new Gameboard({ length: [12, 18] });
@@ -28,22 +22,33 @@ describe("ship position validator", () => {
     );
   });
   test("check the ship positions if it fits", () => {
-    expect(checkFit(new Coord(10, 1), 3, "down", gameboard.grid)).toBe(false);
-    expect(checkFit(new Coord(19, 2), 3, "right", gameboard.grid)).toBe(false);
-    expect(checkFit(new Coord(2, 14), 3, "down", gameboard.grid)).toBe(true);
+    const coordData = coordLocationData(new Coord(10, 1), gameboard.grid);
+    expect(checkFit(coordData, "down", 3)).toBe(false);
   });
 
   test("gather coord location data", () => {
-    const coordLocation = coordLocationData(new Coord(4, 0), 4, gameboard.grid);
-    expect(coordLocation.isFirstColumn).toBe(true);
-    expect(coordLocation.isLastColumn).toBe(false);
-    expect(coordLocation.isLastRow).toBe(false);
+    const coordData = coordLocationData(new Coord(4, 0), gameboard.grid);
+    expect(coordData.isFirstColumn).toBe(true);
+    expect(coordData.isLastColumn).toBe(false);
+    expect(coordData.isLastRow).toBe(false);
   });
 
   test("check if position is valid", () => {
     expect(checkPositionsIfValid("right", new Coord(7, 0), 4, gameboard.grid)).toBe(true);
     expect(checkPositionsIfValid("down", new Coord(0, 0), 4, gameboard.grid)).toBe(true);
     expect(checkPositionsIfValid("down", new Coord(10, 0), 4, gameboard.grid)).toBe(false);
+  });
+
+  test("get column coords for checking", () => {
+    const coordLocation = coordLocationData(new Coord(3, 1), gameboard.grid);
+    // prettier-ignore
+    expect(columnsToCheck(coordLocation)).toEqual(arrayToCoords([[2, 0], [2, 1], [2, 2]]));
+  });
+
+  test("get row coords for checking", () => {
+    const coordLocation = coordLocationData(new Coord(3, 1), gameboard.grid);
+    // prettier-ignore
+    expect(rowsToCheck(coordLocation)).toEqual(arrayToCoords([[2, 0], [3, 0], [4, 0]]));
   });
 
   test("get the ship direction based on position", () => {
@@ -53,45 +58,7 @@ describe("ship position validator", () => {
 
   test("flip ship direction", () => {
     const positions = createShipPositions("down", new Coord(3, 1), 4);
-    expect(flipShipDirection(positions)).toBe("right");
-  });
-});
-
-describe("column checking coords are correctly returned", () => {
-  test("get column coords for checking", () => {
-    const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
-    // prettier-ignore
-    const coords = arrayToCoords([[2, 0], [2, 1], [2, 2]]);
-    expect(columnsToCheck(coordLocation, new Coord(3, 1))).toEqual(coords);
-  });
-
-  test("another column coord", () => {
-    const coordLocation = coordLocationData(new Coord(0, 12), 4, gameboard.grid);
-    // prettier-ignore
-    const coords = arrayToCoords([[0, 11], [0, 12], [0, 13]]);
-    expect(columnsToCheck(coordLocation, new Coord(0, 12))).toEqual(coords);
-  });
-  test("a third column coord", () => {
-    const coordLocation = coordLocationData(new Coord(7, 0), 4, gameboard.grid);
-    // prettier-ignore
-    const coords = arrayToCoords([[6, 0], [6, 1]]);
-    expect(columnsToCheck(coordLocation, new Coord(7, 0))).toEqual(coords);
-  });
-});
-
-describe("row checking coords are correctly returned", () => {
-  test("get row coords for checking", () => {
-    const coordLocation = coordLocationData(new Coord(3, 1), 4, gameboard.grid);
-    // prettier-ignore
-    const coords = arrayToCoords([[2, 0], [3, 0], [4, 0]]);
-    expect(rowsToCheck(coordLocation, new Coord(3, 1))).toEqual(coords);
-  });
-
-  test("another row coord", () => {
-    const coordLocation = coordLocationData(new Coord(0, 0), 4, gameboard.grid);
-    // prettier-ignore
-    const coords = arrayToCoords([[0, 0], [1, 0]]);
-    expect(rowsToCheck(coordLocation, new Coord(0, 0))).toEqual(coords);
+    expect(flipDirectionByCoords(positions)).toBe("right");
   });
 });
 

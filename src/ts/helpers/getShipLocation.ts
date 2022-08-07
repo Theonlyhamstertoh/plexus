@@ -15,6 +15,9 @@ export function getShipDirection(positions: Coord[]): Directions {
   return positions[1].x - positions[0].x === 1 ? "right" : "down";
 }
 
-export function flipShipDirection(positions: Coord[]): Directions {
+export function flipDirectionByCoords(positions: Coord[]): Directions {
   return positions[1].x - positions[0].x === 1 ? "down" : "right";
+}
+export function flipDirection(direction: string) {
+  return direction === "right" ? "down" : "right";
 }
