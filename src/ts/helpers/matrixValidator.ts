@@ -29,7 +29,8 @@ export function checkPositionsIfValid(direction: Directions, coord: Coord, lengt
   // create a representative name to simplify code
   const checkArea = direction === "right" ? rowsToCheck : columnsToCheck;
   // By using Array.Every, if only one of them return false, then there is no valid position
-  return checkArea(coordData).every(({ y, x }: Coord) => {
+  const area = checkArea(coordData);
+  return area.every(({ y, x }: Coord) => {
     for (let i = 0; i < getAreaLength(coordData, direction, length); i++) {
       if (direction === "right" && grid[y][x + i] === "s") return false;
       if (direction === "down" && grid[y + i][x] === "s") return false;

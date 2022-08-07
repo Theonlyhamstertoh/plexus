@@ -1,10 +1,5 @@
 import { nanoid, random } from "nanoid";
-import {
-  createShipPositions,
-  flipDirection,
-  flipDirectionByCoords,
-  getShipDirection,
-} from "../helpers/getShipLocation";
+import { createShipPositions, flipDirection, flipDirectionByCoords, getShipDirection } from "../helpers/getShipLocation";
 import { checkPositionsIfValid } from "../helpers/matrixValidator";
 import { Directions, Grid, BoardLength, GameBoardParams } from "../types/types";
 import { Coord } from "./Coord";
@@ -73,20 +68,19 @@ export default class Gameboard {
     });
   }
   placeShipRandom(ship: Ship) {
-    const coordY = getRandomCoord(this.length[0]);
-    const coordX = getRandomCoord(this.length[1]);
-    const direction = getRandomPosition();
-    const oppositeDirection = flipDirection(direction);
-    console.log(coordY, coordX, direction);
-    const placement = this.placeShip(new Coord(coordY, coordX), direction, ship);
-    console.log(placement);
-    // do {
+    let attempts = 0;
+    do {
+      if (attempts > 500) throw Error("Attempt exceeded limits of 1000");
+      attempts++;
+      const coordY = getRandomCoord(this.length[0]);
+      const coordX = getRandomCoord(this.length[1]);
+      const direction = getRandomPosition();
+      const oppositeDirection = flipDirection(direction);
+      ship.placed = this.placeShip(new Coord(coordY, coordX), direction, ship);
 
-    // if (ship.placed === true) return;
-    // if (ship.placed === false) {
-    // ship.placed = this.placeShip(new Coord(coordY, coordX), oppositeDirection, ship);
-    // }
-    // } while (ship.placed === false);
+      if (ship.placed === true) return;
+      ship.placed = this.placeShip(new Coord(coordY, coordX), oppositeDirection, ship);
+    } while (!ship.placed);
   }
 
   placeShip(coord: Coord, direction: Directions, ship: Ship) {

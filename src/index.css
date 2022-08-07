@@ -18,14 +18,21 @@
 .grid {
   display: grid;
 
-  grid-template-columns: repeat(10, 50px);
-  gap: 1.25px;
+  grid-template-columns: repeat(20, 50px);
+  gap: 3px;
   grid-template-rows: repeat(10, 50px);
 }
 .tile {
-  border: 0.5px white solid;
+  /* border: 0.5px white solid; */
   display: flex;
   justify-content: center;
   align-items: center;
-  color: rgb(110, 131, 132);
+  background-color: blueviolet;
+}
+
+.ship {
+  background-color: rgb(57, 28, 98);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

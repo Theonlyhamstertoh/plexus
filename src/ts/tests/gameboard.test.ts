@@ -54,7 +54,7 @@ describe("gameboard players", () => {
   test.todo("add player ships");
   test("randomly place player ships", () => {
     const gameboard = new Gameboard({ length: [10, 10] });
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 12; i++) {
       const ship = new Ship(3);
       gameboard.placeShipRandom(ship);
     }
