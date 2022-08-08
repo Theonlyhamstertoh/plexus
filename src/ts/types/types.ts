@@ -1,4 +1,4 @@
-import { Coord } from "../classes/Coord";
+import Coord from "../classes/Coord";
 
 export type Directions = "down" | "right";
 export type Grid = string[][];
@@ -17,4 +17,23 @@ export interface GameBoardParams {
   length: BoardLength;
 }
 
-export type ShipPositions = { x: number; y: number }[];
+export const MARKS = {
+  WATER: "~",
+  EDIT: "@",
+  SHIP: "s",
+  MISS_HIT: "o",
+  HIT: "x",
+};
+
+const gameMode = {
+  spectate: "spectate",
+  disconnected: "disconnected",
+  alive: "alive",
+};
+
+export const modeTypes = {
+  edit: "@",
+  show: "s",
+  clear: "~",
+};
+export type Mode = keyof typeof modeTypes;

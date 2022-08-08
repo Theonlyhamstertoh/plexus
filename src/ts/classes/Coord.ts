@@ -1,7 +1,4 @@
-// y = row
-// x = column
-
-export class Coord {
+export default class Coord {
   readonly y: number;
   readonly x: number;
   constructor(y: number, x: number) {
@@ -9,3 +6,6 @@ export class Coord {
     this.x = x;
   }
 }
+
+// y = row
+// x = column

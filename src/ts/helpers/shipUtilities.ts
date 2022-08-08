@@ -1,5 +1,5 @@
-import { Coord } from "../classes/Coord";
-import { Directions, ShipPositions } from "../types/types";
+import Coord from "../classes/Coord";
+import { Directions } from "../types/types";
 
 export function createShipPositions(direction: Directions, { y, x }: Coord, length: number): Coord[] {
   let pos: Coord[] = [];
@@ -18,6 +18,12 @@ export function getShipDirection(positions: Coord[]): Directions {
 export function flipDirectionByCoords(positions: Coord[]): Directions {
   return positions[1].x - positions[0].x === 1 ? "down" : "right";
 }
-export function flipDirection(direction: string) {
+export function flipDirection(direction: string): Directions {
   return direction === "right" ? "down" : "right";
 }
+
+export const getRandomCoord = (maxLength: number) => Math.floor(Math.random() * maxLength);
+
+export const getRandomPosition = (): Directions => {
+  return !!Math.floor(Math.random() * 2) ? "right" : "down";
+};

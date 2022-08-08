@@ -3,20 +3,9 @@ import Gameboard from "../classes/Gameboard";
 import { describe, beforeEach, test, expect } from "vitest";
 import Ship from "../classes/Ship";
 import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
-import { Coord } from "../classes/Coord";
-describe("grid matrix array ", () => {
-  let gameboard: Gameboard;
-  beforeEach(() => {
-    gameboard = new Gameboard({ length: [10, 10] });
-  });
-  test("generate a 10x12 gameboard array", () => {
-    gameboard.newBoard([10, 12]);
-    expect(gameboard.grid.length).toEqual(10);
-    expect(gameboard.grid[0].length).toEqual(12);
-  });
-});
+import Coord from "../classes/Coord";
 
-describe("placing and moving ships ", () => {
+describe("gameboard ship placement", () => {
   let gameboard: Gameboard;
   let ship: Ship;
   let ship2: Ship;
@@ -24,6 +13,12 @@ describe("placing and moving ships ", () => {
     gameboard = new Gameboard({ length: [10, 20] });
     ship = new Ship(4);
     ship2 = new Ship(3);
+  });
+
+  test("generate a 10x12 gameboard array", () => {
+    gameboard.newBoard([10, 12]);
+    expect(gameboard.grid.length).toEqual(10);
+    expect(gameboard.grid[0].length).toEqual(12);
   });
 
   test("place ship at specific coords", () => {
@@ -43,8 +38,8 @@ describe("placing and moving ships ", () => {
 
   test("clear a ship from position on grid", () => {
     gameboard.placeShip(new Coord(2, 16), "down", ship);
-    gameboard.clearShipFromGrid(ship);
-    console.log(gameboard.showBoard());
+    gameboard.removeShip(ship);
+    expect(ship.positions.length).toEqual(0);
   });
 });
 
@@ -54,16 +49,10 @@ describe("gameboard players", () => {
   test.todo("add player ships");
   test("randomly place player ships", () => {
     const gameboard = new Gameboard({ length: [10, 10] });
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 6; i++) {
       const ship = new Ship(3);
       gameboard.placeShipRandom(ship);
     }
-    // }
-    console.log(gameboard.showBoard());
-    // console.log(gameboard.placeShipRandom(ship));
-    // expect(gameboard.grid[0].includes("s")).toBe(false);
-    // expect(ship.positions.length).toBeGreaterThan(0);
-    expect(2 + 2).toEqual(4);
   });
   test.todo("check if all player ships are placed");
 });

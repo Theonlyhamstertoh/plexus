@@ -1,4 +1,4 @@
-import { Coord } from "../classes/Coord";
+import Coord from "../classes/Coord";
 import { CoordLocations, Directions, Grid } from "../types/types";
 /**
  *  USING INDEX VALUES, NOT ORDER PAIRS. ORDER PAIRS USED IN BOARD

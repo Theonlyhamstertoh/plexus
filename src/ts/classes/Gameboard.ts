@@ -1,10 +1,18 @@
-import { nanoid, random } from "nanoid";
-import { createShipPositions, flipDirection, flipDirectionByCoords, getShipDirection } from "../helpers/getShipLocation";
+import { nanoid } from "nanoid";
+import {
+  createShipPositions,
+  flipDirection,
+  flipDirectionByCoords,
+  getRandomCoord,
+  getRandomPosition,
+} from "../helpers/shipUtilities";
 import { checkPositionsIfValid } from "../helpers/matrixValidator";
-import { Directions, Grid, BoardLength, GameBoardParams } from "../types/types";
-import { Coord } from "./Coord";
-import { Player } from "./Player";
+import { Directions, Grid, BoardLength, GameBoardParams, modeTypes, Mode, MARKS } from "../types/types";
+
+import Coord from "./Coord";
+import Player from "./Player";
 import Ship from "./Ship";
+
 export default class Gameboard {
   grid: Grid = [];
   length: BoardLength;
@@ -70,7 +78,7 @@ export default class Gameboard {
   placeShipRandom(ship: Ship) {
     let attempts = 0;
     do {
-      if (attempts > 500) throw Error("Attempt exceeded limits of 1000");
+      if (attempts > 500) throw Error("Attempt exceeded limits of 500");
       attempts++;
       const coordY = getRandomCoord(this.length[0]);
       const coordX = getRandomCoord(this.length[1]);
@@ -107,8 +115,9 @@ export default class Gameboard {
     return this.placeShip(ship.positions[0], newDirection, ship);
   }
 
-  clearShipFromGrid(ship: Ship) {
+  removeShip(ship: Ship) {
     this.changeShipGridPosTo("clear", ship);
+    ship.positions = [];
   }
 
   findShip(coord: Coord): Ship | null {
@@ -122,31 +131,6 @@ export default class Gameboard {
   }
 }
 
-const getRandomCoord = (maxLength: number) => Math.floor(Math.random() * maxLength);
-const getRandomPosition = (): Directions => {
-  return !!Math.floor(Math.random() * 2) ? "right" : "down";
-};
-
-const modeTypes = {
-  edit: "@",
-  show: "s",
-  clear: "~",
-};
-type Mode = keyof typeof modeTypes;
-
-const gameMode = {
-  spectate: "spectate",
-  disconnected: "disconnected",
-  alive: "alive",
-};
-
-const MARKS = {
-  WATER: "~",
-  EDIT: "@",
-  SHIP: "s",
-  MISS_HIT: "o",
-  HIT: "x",
-};
 // '~' for water
 // '@' for ship being edited
 // 's' for ship

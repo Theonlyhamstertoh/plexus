@@ -1,25 +1,19 @@
-import { describe, test, beforeEach, expect, getRunningMode } from "vitest";
-import { Coord } from "../classes/Coord";
+import { describe, test, expect } from "vitest";
+import Coord from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
-import { createShipPositions, flipDirectionByCoords, getShipDirection } from "../helpers/getShipLocation";
+import { createShipPositions, flipDirectionByCoords, getShipDirection } from "../helpers/shipUtilities";
 import { checkFit, checkPositionsIfValid, columnsToCheck, coordLocationData, rowsToCheck } from "../helpers/matrixValidator";
-let gameboard: Gameboard;
-beforeEach(() => {
-  gameboard = new Gameboard({ length: [12, 18] });
-});
 
+const gameboard = new Gameboard({ length: [12, 18] });
 describe("ship position validator", () => {
   test("function should generate an array of positions", () => {
-    expect(createShipPositions("down", new Coord(3, 1), 4)).toEqual(
-      // prettier-ignore
-      arrayToCoords([[3, 1], [4, 1], [5, 1], [6, 1],
-      ])
-    );
+    // prettier-ignore
+    const downCoords = arrayToCoords([[3, 1], [4, 1], [5, 1], [6, 1]])
+    expect(createShipPositions("down", new Coord(3, 1), 4)).toEqual(downCoords);
 
-    expect(createShipPositions("right", new Coord(1, 4), 4)).toEqual(
-      // prettier-ignore
-      arrayToCoords([[1, 4], [1, 5], [1, 6], [1, 7]])
-    );
+    // prettier-ignore
+    const rightCoords = arrayToCoords([[1, 4], [1, 5], [1, 6], [1, 7]])
+    expect(createShipPositions("right", new Coord(1, 4), 4)).toEqual(rightCoords);
   });
   test("check the ship positions if it fits", () => {
     const coordData = coordLocationData(new Coord(10, 1), gameboard.grid);
