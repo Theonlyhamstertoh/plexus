@@ -1,4 +1,5 @@
 import Coord from "../classes/Coord";
+import Ship from "../classes/Ship";
 
 export type Directions = "down" | "right";
 export type Grid = string[][];
@@ -37,3 +38,13 @@ export const modeTypes = {
   clear: "~",
 };
 export type Mode = keyof typeof modeTypes;
+
+export const boardSize = {
+  small: [10, 10],
+  medium: [10, 20],
+  big: [15, 20],
+  massive: [15, 25],
+};
+export type BoardSizeOptions = keyof typeof boardSize;
+export type DeckOfFive = [Ship, Ship, Ship, Ship, Ship];
+export type DeckOfFour = [Ship, Ship, Ship, Ship];

@@ -4,6 +4,7 @@ import { describe, beforeEach, test, expect } from "vitest";
 import Ship from "../classes/Ship";
 import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
 import Coord from "../classes/Coord";
+import Player from "../classes/Player";
 
 describe("gameboard ship placement", () => {
   let gameboard: Gameboard;
@@ -48,15 +49,19 @@ describe("gameboard players", () => {
   test.todo("remove player");
   test.todo("add player ships");
   test("randomly place player ships", () => {
-    const gameboard = new Gameboard({ length: [10, 10] });
-    for (let i = 0; i < 6; i++) {
-      const ship = new Ship(3);
+    const gameboard = new Gameboard({ length: [15, 20] });
+    const player = new Player("weibo");
+    player.ships.forEach((ship) => {
       gameboard.placeShipRandom(ship);
-    }
+      expect(ship.positions.length).toEqual(ship.length);
+    });
+    console.log(gameboard.showBoard());
   });
-  test.todo("check if all player ships are placed");
+  test("check if all player ships are placed", () => {});
 });
 
 describe("finding and attacking ships ", () => {
   test("find ship placed", () => {});
 });
+
+// five ships for each player

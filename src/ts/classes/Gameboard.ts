@@ -39,7 +39,7 @@ export default class Gameboard {
       const ship = this.findShip(coord);
       if (ship === null) throw Error("no ship was found");
       ship.isHit();
-      return this.grid[coord.y][coord.x] === MARKS.HIT;
+      this.grid[coord.y][coord.x] === MARKS.HIT;
     }
 
     return this.grid[coord.y][coord.x] === MARKS.MISS_HIT;
