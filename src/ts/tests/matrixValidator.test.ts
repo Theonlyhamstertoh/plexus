@@ -1,10 +1,20 @@
 import { describe, test, expect } from "vitest";
 import Coord from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
-import { createShipPositions, flipDirectionByCoords, getShipDirection } from "../helpers/shipUtilities";
-import { checkFit, checkPositionsIfValid, columnsToCheck, coordLocationData, rowsToCheck } from "../helpers/matrixValidator";
+import {
+  createShipPositions,
+  flipDirectionByCoords,
+  getShipDirection,
+} from "../helpers/shipUtilities";
+import {
+  checkFit,
+  checkPositionsIfValid,
+  columnsToCheck,
+  coordLocationData,
+  rowsToCheck,
+} from "../helpers/matrixValidator";
 
-const gameboard = new Gameboard({ length: [12, 18] });
+const gameboard = new Gameboard({ boardLength: [12, 18] });
 describe("ship position validator", () => {
   test("function should generate an array of positions", () => {
     // prettier-ignore

@@ -15,7 +15,7 @@ export interface CoordLocations {
 
 export type BoardLength = [number, number];
 export interface GameBoardParams {
-  length: BoardLength;
+  boardLength: BoardLength;
 }
 
 export const MARKS = {
@@ -39,12 +39,34 @@ export const modeTypes = {
 };
 export type Mode = keyof typeof modeTypes;
 
-export const boardSize = {
-  small: [10, 10],
-  medium: [10, 20],
-  big: [15, 20],
-  massive: [15, 25],
+export const BOARD_SIZE: BoardSizes = {
+  SMALL: [10, 10],
+  MEDIUM: [10, 20],
+  BIG: [15, 20],
+  LARGE: [15, 25],
 };
-export type BoardSizeOptions = keyof typeof boardSize;
+
+interface BoardSizes {
+  SMALL: BoardLength;
+  MEDIUM: BoardLength;
+  BIG: BoardLength;
+  LARGE: BoardLength;
+}
+
+export const CONFIG = {
+  randomShips: false,
+  boardLength: BOARD_SIZE.SMALL,
+  shufflePlayerOrder: false,
+  randomizeFirstTurn: false,
+};
+
+export interface GameConfigs {
+  boardLength: BoardLength;
+  randomShips?: boolean;
+  shufflePlayerOrder?: boolean;
+  randomizeFirstTurn?: boolean;
+}
+
+export type BoardSizeOptions = keyof typeof BOARD_SIZE;
 export type DeckOfFive = [Ship, Ship, Ship, Ship, Ship];
 export type DeckOfFour = [Ship, Ship, Ship, Ship];

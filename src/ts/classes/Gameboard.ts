@@ -7,7 +7,17 @@ import {
   getRandomPosition,
 } from "../helpers/shipUtilities";
 import { checkPositionsIfValid } from "../helpers/matrixValidator";
-import { Directions, Grid, BoardLength, GameBoardParams, modeTypes, Mode, MARKS } from "../types/types";
+import {
+  Directions,
+  Grid,
+  BoardLength,
+  GameBoardParams,
+  modeTypes,
+  Mode,
+  MARKS,
+  CONFIGURATION,
+  GameConfigs,
+} from "../types/types";
 
 import Coord from "./Coord";
 import Player from "./Player";
@@ -15,16 +25,17 @@ import Ship from "./Ship";
 
 export default class Gameboard {
   grid: Grid = [];
-  length: BoardLength;
   players: Player[] = [];
+  #currentPlayer: Player | null = null;
+  length: BoardLength;
   readonly id: string = nanoid();
-  constructor({ length }: GameBoardParams) {
-    this.length = length;
-    this.newBoard(length);
+  constructor({ boardLength }: GameConfigs) {
+    this.length = boardLength;
+    this.newBoard(this.length);
   }
 
-  addPlayer(player: Player) {
-    this.players.push(player);
+  addPlayer(...players: Player[]) {
+    this.players.push(...players);
   }
 
   removePlayer(playerId: string) {
@@ -33,11 +44,19 @@ export default class Gameboard {
     });
   }
 
+  getPlayerByName(name: string) {
+    return this.players.find((player) => player.name === name);
+  }
+
+  getPlayerById(playerId: string) {
+    return this.players.find((player) => player.id === playerId);
+  }
+
   receiveAttack(coord: Coord) {
     // check if it hits
     if (this.grid[coord.y][coord.x] === MARKS.SHIP) {
       const ship = this.findShip(coord);
-      if (ship === null) throw Error("no ship was found");
+      if (ship === false) throw Error("no ship was found");
       ship.isHit();
       this.grid[coord.y][coord.x] === MARKS.HIT;
     }
@@ -78,7 +97,7 @@ export default class Gameboard {
   placeShipRandom(ship: Ship) {
     let attempts = 0;
     do {
-      if (attempts > 500) throw Error("Attempt exceeded limits of 500");
+      if (attempts > 1000) throw Error("Attempt exceeded limits of 1000");
       attempts++;
       const coordY = getRandomCoord(this.length[0]);
       const coordX = getRandomCoord(this.length[1]);
@@ -106,6 +125,7 @@ export default class Gameboard {
     ship.positions = [];
     ship.positions = createShipPositions(direction, coord, ship.length);
     ship.positions.forEach(({ y, x }: Coord) => (this.grid[y][x] = MARKS.SHIP));
+    ship.placed = true;
     return true;
   }
 
@@ -118,16 +138,17 @@ export default class Gameboard {
   removeShip(ship: Ship) {
     this.changeShipGridPosTo("clear", ship);
     ship.positions = [];
+    ship.placed = false;
   }
 
-  findShip(coord: Coord): Ship | null {
+  findShip({ y, x }: Coord) {
     for (let i = 0; i < this.players.length; i++) {
       const ship: Ship | undefined = this.players[i].ships.find((ship) => {
-        return ship.positions.includes(coord) ? ship : false;
+        return ship.positions.find((pos) => pos.y === y && pos.x === x);
       });
       if (ship !== undefined) return ship;
     }
-    return null;
+    return false;
   }
 }
 

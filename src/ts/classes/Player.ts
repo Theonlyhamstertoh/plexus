@@ -1,5 +1,8 @@
 import { nanoid } from "nanoid";
+import { getRandomCoord } from "../helpers/shipUtilities";
+import { CONFIG, CONFIGURATION } from "../types/types";
 import Coord from "./Coord";
+import Gameboard from "./Gameboard";
 import Ship from "./Ship";
 
 const DEFAULT_SHIPS = [new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)];
@@ -30,10 +33,22 @@ export default class Player {
   getDestroyedShipCount() {
     return this.ships.filter((ship) => ship.isDestroyed === true);
   }
+
+  isReady() {
+    return this.ships.every((ship) => ship.placed === true);
+  }
 }
 
-function botAttack() {}
+function botAttack(opponentBoard: Gameboard) {
+  // get a random coord
+  const coordY = getRandomCoord(CONFIG.boardLength[0]);
+  const coordX = getRandomCoord(CONFIG.boardLength[1]);
+  const attackCoord: Coord = new Coord(coordY, coordX);
 
-function playerAttack(coord: Coord) {
-  return new Coord(2, 2);
+  opponentBoard.receiveAttack(attackCoord);
+  // attack the coordinate
+}
+
+function playerAttack(coord: Coord, opponentBoard: Gameboard) {
+  opponentBoard.receiveAttack(coord);
 }

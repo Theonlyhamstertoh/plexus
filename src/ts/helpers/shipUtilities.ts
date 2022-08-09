@@ -1,7 +1,12 @@
 import Coord from "../classes/Coord";
+import Ship from "../classes/Ship";
 import { Directions } from "../types/types";
 
-export function createShipPositions(direction: Directions, { y, x }: Coord, length: number): Coord[] {
+export function createShipPositions(
+  direction: Directions,
+  { y, x }: Coord,
+  length: number
+): Coord[] {
   let pos: Coord[] = [];
   for (let i = 0; i < length; i++) {
     if (direction === "down") pos.push(new Coord(y + i, x));
@@ -27,3 +32,12 @@ export const getRandomCoord = (maxLength: number) => Math.floor(Math.random() * 
 export const getRandomPosition = (): Directions => {
   return !!Math.floor(Math.random() * 2) ? "right" : "down";
 };
+
+export function createRandomShips(count: number) {
+  const ships = [];
+  for (let i = 0; i < count; i++) {
+    const size = Math.floor(Math.random() * 4) + 2;
+    ships.push(new Ship(size));
+  }
+  return ships;
+}

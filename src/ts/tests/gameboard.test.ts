@@ -5,13 +5,14 @@ import Ship from "../classes/Ship";
 import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
 import Coord from "../classes/Coord";
 import Player from "../classes/Player";
+import { BOARD_SIZE } from "../types/types";
 
 describe("gameboard ship placement", () => {
   let gameboard: Gameboard;
   let ship: Ship;
   let ship2: Ship;
   beforeEach(() => {
-    gameboard = new Gameboard({ length: [10, 20] });
+    gameboard = new Gameboard({ boardLength: [10, 20] });
     ship = new Ship(4);
     ship2 = new Ship(3);
   });
@@ -42,26 +43,73 @@ describe("gameboard ship placement", () => {
     gameboard.removeShip(ship);
     expect(ship.positions.length).toEqual(0);
   });
+
+  test("find ship placed at coord", () => {
+    const player = new Player("player");
+    gameboard.addPlayer(player);
+    gameboard.placeShip(new Coord(2, 16), "down", player.ships[0]);
+    expect(gameboard.findShip(new Coord(2, 16))).toEqual(player.ships[0]);
+  });
 });
 
 describe("gameboard players", () => {
-  test.todo("add player");
-  test.todo("remove player");
-  test.todo("add player ships");
+  let gameboard: Gameboard;
+  beforeEach(() => {
+    gameboard = new Gameboard({ boardLength: BOARD_SIZE.BIG });
+    gameboard.addPlayer(new Player("weibo"));
+  });
+
+  test("add player", () => {
+    expect(gameboard.addPlayer(new Player("weibo")));
+  });
+
+  test("add multiple players", () => {
+    const player1 = new Player("1");
+    const player2 = new Player("2");
+    gameboard.addPlayer(player1, player2);
+    // a player is already added before each test
+    expect(gameboard.players.length).toEqual(3);
+  });
+
+  test("remove player by id", () => {
+    const player = new Player("John");
+    gameboard.addPlayer(player);
+    gameboard.removePlayer(player.id);
+    expect(gameboard.getPlayerByName("John")).toBeFalsy();
+  });
+  test("add player ships", () => {
+    const firstShip = gameboard.getPlayerByName("weibo")?.ships[0];
+    if (firstShip === undefined) return;
+    gameboard.placeShip(new Coord(0, 2), "right", firstShip);
+    expect(firstShip.placed).toBeTruthy();
+  });
   test("randomly place player ships", () => {
-    const gameboard = new Gameboard({ length: [15, 20] });
-    const player = new Player("weibo");
+    const player = new Player("John");
     player.ships.forEach((ship) => {
       gameboard.placeShipRandom(ship);
       expect(ship.positions.length).toEqual(ship.length);
     });
-    console.log(gameboard.showBoard());
   });
-  test("check if all player ships are placed", () => {});
+  test("check if all player ships are placed", () => {
+    const player = gameboard.getPlayerByName("weibo")!;
+    player.ships.forEach((ship) => gameboard.placeShipRandom(ship));
+    expect(player.isReady()).toBeTruthy();
+  });
 });
 
 describe("finding and attacking ships ", () => {
-  test("find ship placed", () => {});
+  const gameboard = new Gameboard({ boardLength: BOARD_SIZE.BIG });
+
+  test.todo("Gameboard should receive attack and damage ship");
+
+  test.todo("bot should be able to place ships randomly");
+  test.todo("bot should be able to attack a coord");
+  test.todo("bot should be able to receive a attack");
+  test.todo("bot should shoot adjacent coords if a attack hit");
+  test.todo("bot should shoot in same direction if 2 shots are hit");
+  test.todo("bot should shoot area until the ship is destroyed");
 });
 
 // five ships for each player
+
+// Every player has five ships or 4 ships
