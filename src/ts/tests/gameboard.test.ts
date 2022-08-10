@@ -1,6 +1,6 @@
 import Gameboard from "../classes/Gameboard";
 
-import { describe, beforeEach, test, expect } from "vitest";
+import { describe, afterEach, beforeEach, test, expect, vitest } from "vitest";
 import Ship from "../classes/Ship";
 import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
 import Coord from "../classes/Coord";
@@ -59,6 +59,10 @@ describe("gameboard players", () => {
     gameboard.addPlayer(new Player("weibo"));
   });
 
+  afterEach(() => {
+    vitest.restoreAllMocks();
+  });
+
   test("add player", () => {
     expect(gameboard.addPlayer(new Player("weibo")));
   });
@@ -69,6 +73,15 @@ describe("gameboard players", () => {
     gameboard.addPlayer(player1, player2);
     // a player is already added before each test
     expect(gameboard.players.length).toEqual(3);
+  });
+
+  test("shuffle player order", () => {
+    gameboard.addPlayer(new Player("weibo2"));
+    gameboard.addPlayer(new Player("weibo3"));
+
+    vitest.spyOn(global.Math, "random").mockReturnValue(0);
+    const oldArray = [...gameboard.players];
+    expect(oldArray).not.toEqual(gameboard.shufflePlayers());
   });
 
   test("remove player by id", () => {

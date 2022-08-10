@@ -1,16 +1,33 @@
 import Gameboard from "./Gameboard";
 import { BoardLength, BOARD_SIZE, CONFIG, GameBoardParams, GameConfigs } from "../types/types";
 import Player from "./Player";
+export class Store {}
 export class Game {
   gameboards: Gameboard[] = [];
   #currentBoard: Gameboard;
+  config: GameConfigs;
+  constructor(config: GameConfigs) {
+    this.config = config;
+    const { boardLength, randomizeFirstTurn } = this.config;
 
-  constructor({ boardLength, randomizeFirstTurn }: GameConfigs) {
     this.gameboards.push(new Gameboard({ boardLength }), new Gameboard({ boardLength }));
-    this.#currentBoard = this.gameboards[randomizeFirstTurn ? Math.round(Math.random()) : 0];
+    this.#currentBoard = this.gameboards[0];
   }
 
-  init() {}
+  applyConfigs() {
+    if (this.config.shufflePlayerOrder) {
+      this.gameboards.forEach((gameboard) => gameboard.shufflePlayers());
+    }
+    if (this.config.randomizeFirstTurn) {
+      this.#currentBoard = this.gameboards[Math.round(Math.random())];
+    }
+  }
+
+  startGame() {}
+
+  resetGame() {}
+
+  onPlayerDisconnect() {}
 
   get currentBoard() {
     return this.#currentBoard;

@@ -8,7 +8,6 @@ describe("Game", () => {
   let game: Game;
   beforeEach(() => {
     CONFIG.boardLength = BOARD_SIZE.BIG;
-    game = new Game(CONFIG);
     const teamOne = [
       new Player("Computer1", true),
       new Player("Computer2", true),
@@ -19,6 +18,7 @@ describe("Game", () => {
       new Player("Computer2", true),
       new Player("Computer3", true),
     ];
+    game = new Game(CONFIG);
     // get the list of players from teams and put them into board
     game.gameboards[0].addPlayer(...teamOne);
     game.gameboards[1].addPlayer(...teamTwo);
@@ -26,6 +26,11 @@ describe("Game", () => {
 
   afterEach(() => {
     vitest.restoreAllMocks();
+
+    // resetting
+    CONFIG.randomizeFirstTurn = false;
+    CONFIG.shufflePlayerOrder = false;
+    CONFIG.randomShips = false;
   });
 
   test("game should have created two gameboards", () => {
@@ -45,14 +50,19 @@ describe("Game", () => {
     vitest.spyOn(global.Math, "random").mockReturnValue(1);
     CONFIG.randomizeFirstTurn = true;
     const newGame = new Game(CONFIG);
+    newGame.applyConfigs();
     expect(newGame.currentBoard.id).toBe(newGame.gameboards[1].id);
   });
 
-  test("game should pick the first player from board", () => {});
+  test("game should pick the first player from current board ", () => {
+    game.config.shufflePlayerOrder = true;
+    game.config.randomizeFirstTurn = true;
+    game.applyConfigs();
 
-  test("shuffle player order", () => {
-    game.gameboards[0].shufflePlayers();
-    console.log(game.gameboards[0].players.map((p) => p.name));
-    // expect(players).toEqual(game.gameboards[0].players);
+    expect(game.currentBoard.getCurrentPlayer()).not.toBe(undefined);
+    // first player in shuffled array should be selected
+    // expect(game.);
+    // player turn should be moved back
+    // when do we add players?
   });
 });

@@ -26,7 +26,6 @@ import Ship from "./Ship";
 export default class Gameboard {
   grid: Grid = [];
   players: Player[] = [];
-  #currentPlayer: Player | null = null;
   length: BoardLength;
   readonly id: string = nanoid();
   constructor({ boardLength }: GameConfigs) {
@@ -34,18 +33,19 @@ export default class Gameboard {
     this.newBoard(this.length);
   }
 
+  getCurrentPlayer() {
+    return this.players[0];
+  }
   addPlayer(...players: Player[]) {
     this.players.push(...players);
   }
 
   shufflePlayers() {
-    const shuffledArray = this.players.slice();
     for (let i = 0; i < this.players.length; i++) {
       // the next item or current
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+      [this.players[i], this.players[j]] = [this.players[j], this.players[i]];
     }
-    this.players = shuffledArray;
     return this.players;
   }
 
