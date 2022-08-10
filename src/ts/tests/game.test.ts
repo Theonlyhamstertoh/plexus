@@ -1,8 +1,9 @@
 import { describe, beforeEach, afterEach, test, expect, vitest } from "vitest";
+import Coord from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
 import { Game } from "../classes/GameController";
 import Player from "../classes/Player";
-import { BOARD_SIZE, CONFIG } from "../types/types";
+import { BOARD_SIZE, CONFIG, GameBoardParams } from "../types/types";
 
 describe("Game", () => {
   let game: Game;
@@ -64,18 +65,18 @@ describe("Game", () => {
 
   test("current player attacks", () => {
     const currentPlayer = game.gb[game.currentBoard].getCurrentPlayer();
-    game.gb.forEach((gb) =>
-      gb.players.forEach((p) =>
-        p.ships.forEach((s) => {
-          gb.placeShipRandom(s);
-          console.log(s.id);
-        })
-      )
-    );
-    console.log(game.gb[0].showBoard());
-    console.log(game.gb[1].showBoard());
-    // cp.attack(new Coord(), game.getOpponentBoard());
+    populateGameWithShips(game);
+    for (let i = 0; i < 50; i++) {
+      currentPlayer.attack(game.getOpponentBoard());
+    }
+    console.log(game.getOpponentBoard().showBoard());
   });
   test.todo("if player attacks and miss, the turn is over");
   test.todo("if player attacks and hits, the next player in team has turn");
 });
+
+const populateGameWithShips = (game: Game) => {
+  return game.gb.forEach((gb) =>
+    gb.players.forEach((p) => p.ships.forEach((s) => gb.placeShipRandom(s)))
+  );
+};

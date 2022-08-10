@@ -123,6 +123,7 @@ describe.todo("finding and attacking ships ", () => {
   test.todo("Gameboard should receive attack and damage ship");
 
   test.todo("bot should be able to place ships randomly");
+  test.todo("bot should not attack same spot twice");
   test.todo("bot should be able to attack a coord");
   test.todo("bot should be able to receive a attack");
   test.todo("bot should shoot adjacent coords if a attack hit");

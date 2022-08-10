@@ -51,6 +51,6 @@ function botAttack(opponentBoard: Gameboard) {
   // attack the coordinate
 }
 
-function playerAttack(coord: Coord, opponentBoard: Gameboard) {
-  opponentBoard.receiveAttack(coord);
+function playerAttack(opponentBoard: Gameboard, coord: Coord) {
+  // opponentBoard.receiveAttack(coord);
 }
