@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { createRandomShips, getRandomCoord } from "../helpers/shipUtilities";
-import { CONFIG } from "../types/types";
+import { CONFIG, MARKS } from "../types/types";
 import Coord from "./Coord";
 import Gameboard from "./Gameboard";
 import Ship from "./Ship";
@@ -12,12 +12,12 @@ function createDefaultShips() {
 export default class Player {
   readonly id: string = nanoid();
   readonly name: string;
-  attack: Function;
+  readonly isBot: boolean;
   ships: Ship[] = createDefaultShips();
 
   constructor(name: string, isBot = false) {
     this.name = name;
-    this.attack = isBot ? botAttack : playerAttack;
+    this.isBot = isBot;
   }
 
   addShip(ship: Ship) {
@@ -39,18 +39,24 @@ export default class Player {
   isReady() {
     return this.ships.every((ship) => ship.placed === true);
   }
-}
 
-function botAttack(opponentBoard: Gameboard) {
-  // get a random coord
-  const coordY = getRandomCoord(CONFIG.boardLength[0]);
-  const coordX = getRandomCoord(CONFIG.boardLength[1]);
-  const attackCoord: Coord = new Coord(coordY, coordX);
+  computerAttack(opponentBoard: Gameboard) {
+    // get a random coord
+    do {
+      const coordY = getRandomCoord(opponentBoard.length[0]);
+      const coordX = getRandomCoord(opponentBoard.length[1]);
+      const attackCoord: Coord = new Coord(coordY, coordX);
 
-  opponentBoard.receiveAttack(attackCoord);
-  // attack the coordinate
-}
+      const gridTile = opponentBoard.grid[coordY][coordX];
+      if (gridTile !== MARKS.HIT && gridTile !== MARKS.MISS_HIT) {
+        const isHit = opponentBoard.receiveAttack(attackCoord);
+        return { coord: attackCoord, hit: isHit };
+      }
+    } while (true);
+  }
 
-function playerAttack(opponentBoard: Gameboard, coord: Coord) {
-  // opponentBoard.receiveAttack(coord);
+  attack(opponentBoard: Gameboard, coord: Coord) {
+    const isHit = opponentBoard.receiveAttack(coord);
+    return { coord, hit: isHit };
+  }
 }

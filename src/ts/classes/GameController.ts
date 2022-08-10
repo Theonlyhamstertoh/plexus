@@ -2,9 +2,10 @@ import Gameboard from "./Gameboard";
 import { BoardLength, BOARD_SIZE, CONFIG, GameBoardParams, GameConfigs } from "../types/types";
 import Player from "./Player";
 export class Store {}
+type BoardIndex = 0 | 1;
 export class Game {
   gb: Gameboard[] = [];
-  #currentBoard: 0 | 1 = 0;
+  #currentBoardIndex: BoardIndex = 0;
   config: GameConfigs;
   constructor(config: GameConfigs) {
     this.config = config;
@@ -18,13 +19,17 @@ export class Game {
       this.gb.forEach((gameboard) => gameboard.shufflePlayers());
     }
     if (this.config.randomizeFirstTurn) {
-      this.#currentBoard = Math.random() > 0.5 ? 1 : 0;
+      this.#currentBoardIndex = Math.round(Math.random()) as BoardIndex;
     }
     return Math.random() > 0.5 ? 1 : 0;
   }
 
   getOpponentBoard() {
-    return this.gb[1 - this.currentBoard];
+    return this.gb[1 - this.#currentBoardIndex];
+  }
+
+  nextTurn() {
+    this.#currentBoardIndex = (1 - this.#currentBoardIndex) as BoardIndex;
   }
 
   startGame() {}
@@ -33,7 +38,7 @@ export class Game {
 
   onPlayerDisconnect() {}
 
-  get currentBoard() {
-    return this.#currentBoard;
+  getCurrentBoard() {
+    return this.gb[this.#currentBoardIndex];
   }
 }

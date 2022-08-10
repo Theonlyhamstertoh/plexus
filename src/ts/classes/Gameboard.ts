@@ -76,10 +76,12 @@ export default class Gameboard {
       const ship = this.findShip(coord);
       if (ship === false) throw Error("no ship was found");
       ship.isHit();
-      return (this.grid[coord.y][coord.x] = MARKS.HIT);
+      this.grid[coord.y][coord.x] = MARKS.HIT;
+      return true;
     }
 
-    return (this.grid[coord.y][coord.x] = MARKS.MISS_HIT);
+    this.grid[coord.y][coord.x] = MARKS.MISS_HIT;
+    return false;
   }
   changeShipGridPosTo(mode: Mode, ship: Ship) {
     if (ship.positions.length === 0) return;
