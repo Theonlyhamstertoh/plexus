@@ -60,9 +60,8 @@ describe("Game", () => {
     game.applyConfigs();
 
     expect(game.currentBoard.getCurrentPlayer()).not.toBe(undefined);
-    // first player in shuffled array should be selected
-    // expect(game.);
-    // player turn should be moved back
-    // when do we add players?
   });
+
+  test.todo("if player attacks and miss, the turn is over");
+  test.todo("if player attacks and hits, the next player in team has turn");
 });

@@ -36,6 +36,13 @@ export default class Gameboard {
   getCurrentPlayer() {
     return this.players[0];
   }
+
+  moveCurrentPlayerToLast() {
+    const prevPlayer = this.players[0];
+    this.players.shift();
+    this.players.push(prevPlayer);
+  }
+
   addPlayer(...players: Player[]) {
     this.players.push(...players);
   }

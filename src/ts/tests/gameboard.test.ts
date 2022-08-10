@@ -84,6 +84,13 @@ describe("gameboard players", () => {
     expect(oldArray).not.toEqual(gameboard.shufflePlayers());
   });
 
+  test("move current player to last in line", () => {
+    gameboard.addPlayer(new Player("1"), new Player("2"));
+    const prevPlayer = gameboard.players[0];
+    gameboard.moveCurrentPlayerToLast();
+    expect(gameboard.players[0]).not.toBe(prevPlayer);
+  });
+
   test("remove player by id", () => {
     const player = new Player("John");
     gameboard.addPlayer(player);
