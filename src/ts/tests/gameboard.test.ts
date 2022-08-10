@@ -97,7 +97,7 @@ describe("gameboard players", () => {
   });
 });
 
-describe("finding and attacking ships ", () => {
+describe.todo("finding and attacking ships ", () => {
   const gameboard = new Gameboard({ boardLength: BOARD_SIZE.BIG });
 
   test.todo("Gameboard should receive attack and damage ship");

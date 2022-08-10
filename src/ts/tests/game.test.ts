@@ -9,15 +9,23 @@ describe("Game", () => {
   beforeEach(() => {
     CONFIG.boardLength = BOARD_SIZE.BIG;
     game = new Game(CONFIG);
-    const teamOne = [new Player("Computer", true), new Player("Computer", true)];
-    const teamTwo = [new Player("Computer", true), new Player("Computer", true)];
+    const teamOne = [
+      new Player("Computer1", true),
+      new Player("Computer2", true),
+      new Player("Computer3", true),
+    ];
+    const teamTwo = [
+      new Player("Computer1", true),
+      new Player("Computer2", true),
+      new Player("Computer3", true),
+    ];
     // get the list of players from teams and put them into board
     game.gameboards[0].addPlayer(...teamOne);
     game.gameboards[1].addPlayer(...teamTwo);
   });
 
   afterEach(() => {
-    vitest.spyOn(global.Math, "random").mockRestore();
+    vitest.restoreAllMocks();
   });
 
   test("game should have created two gameboards", () => {
@@ -42,5 +50,9 @@ describe("Game", () => {
 
   test("game should pick the first player from board", () => {});
 
-  test.todo("shuffle player order");
+  test("shuffle player order", () => {
+    game.gameboards[0].shufflePlayers();
+    console.log(game.gameboards[0].players.map((p) => p.name));
+    // expect(players).toEqual(game.gameboards[0].players);
+  });
 });

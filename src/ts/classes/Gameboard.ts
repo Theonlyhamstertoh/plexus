@@ -15,7 +15,7 @@ import {
   modeTypes,
   Mode,
   MARKS,
-  CONFIGURATION,
+  CONFIG,
   GameConfigs,
 } from "../types/types";
 
@@ -36,6 +36,17 @@ export default class Gameboard {
 
   addPlayer(...players: Player[]) {
     this.players.push(...players);
+  }
+
+  shufflePlayers() {
+    const shuffledArray = this.players.slice();
+    for (let i = 0; i < this.players.length; i++) {
+      // the next item or current
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    }
+    this.players = shuffledArray;
+    return this.players;
   }
 
   removePlayer(playerId: string) {

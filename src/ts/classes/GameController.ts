@@ -6,9 +6,7 @@ export class Game {
   #currentBoard: Gameboard;
 
   constructor({ boardLength, randomizeFirstTurn }: GameConfigs) {
-    CONFIG.boardLength = boardLength;
     this.gameboards.push(new Gameboard({ boardLength }), new Gameboard({ boardLength }));
-
     this.#currentBoard = this.gameboards[randomizeFirstTurn ? Math.round(Math.random()) : 0];
   }
 
