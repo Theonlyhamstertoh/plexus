@@ -36,7 +36,7 @@ export const getRandomPosition = (): Directions => {
 export function createRandomShips(count: number) {
   const ships = [];
   for (let i = 0; i < count; i++) {
-    const size = Math.floor(Math.random() * 4) + 2;
+    const size = Math.floor(Math.random() * 3) + 2;
     ships.push(new Ship(size));
   }
   return ships;

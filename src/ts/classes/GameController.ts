@@ -3,24 +3,28 @@ import { BoardLength, BOARD_SIZE, CONFIG, GameBoardParams, GameConfigs } from ".
 import Player from "./Player";
 export class Store {}
 export class Game {
-  gameboards: Gameboard[] = [];
-  #currentBoard: Gameboard;
+  gb: Gameboard[] = [];
+  #currentBoard: 0 | 1 = 0;
   config: GameConfigs;
   constructor(config: GameConfigs) {
     this.config = config;
-    const { boardLength, randomizeFirstTurn } = this.config;
+    const { boardLength } = this.config;
 
-    this.gameboards.push(new Gameboard({ boardLength }), new Gameboard({ boardLength }));
-    this.#currentBoard = this.gameboards[0];
+    this.gb.push(new Gameboard({ boardLength }), new Gameboard({ boardLength }));
   }
 
   applyConfigs() {
     if (this.config.shufflePlayerOrder) {
-      this.gameboards.forEach((gameboard) => gameboard.shufflePlayers());
+      this.gb.forEach((gameboard) => gameboard.shufflePlayers());
     }
     if (this.config.randomizeFirstTurn) {
-      this.#currentBoard = this.gameboards[Math.round(Math.random())];
+      this.#currentBoard = Math.random() > 0.5 ? 1 : 0;
     }
+    return Math.random() > 0.5 ? 1 : 0;
+  }
+
+  getOpponentBoard() {
+    return this.gb[1 - this.currentBoard];
   }
 
   startGame() {}
@@ -33,11 +37,3 @@ export class Game {
     return this.#currentBoard;
   }
 }
-
-// start a new game when host clicks start
-const game = new Game({ boardLength: BOARD_SIZE.BIG });
-const teamOne = [new Player("Computer", true), new Player("Computer", true)];
-const teamTwo = [new Player("Computer", true), new Player("Computer", true)];
-// get the list of players from teams and put them into board
-game.gameboards[0].addPlayer(...teamOne);
-game.gameboards[1].addPlayer(...teamTwo);

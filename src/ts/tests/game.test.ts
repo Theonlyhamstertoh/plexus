@@ -20,8 +20,8 @@ describe("Game", () => {
     ];
     game = new Game(CONFIG);
     // get the list of players from teams and put them into board
-    game.gameboards[0].addPlayer(...teamOne);
-    game.gameboards[1].addPlayer(...teamTwo);
+    game.gb[0].addPlayer(...teamOne);
+    game.gb[1].addPlayer(...teamTwo);
   });
 
   afterEach(() => {
@@ -34,24 +34,24 @@ describe("Game", () => {
   });
 
   test("game should have created two gameboards", () => {
-    expect(game.gameboards.length).toEqual(2);
+    expect(game.gb.length).toEqual(2);
   });
 
   test("gameboards should have a list of players each ", () => {
-    expect(game.gameboards[0].players.length).toBeGreaterThan(0);
-    expect(game.gameboards[1].players.length).toBeGreaterThan(0);
+    expect(game.gb[0].players.length).toBeGreaterThan(0);
+    expect(game.gb[1].players.length).toBeGreaterThan(0);
   });
 
   test("game should not randomize first turn", () => {
-    expect(game.currentBoard.id).toBe(game.gameboards[0].id);
+    expect(game.gb[game.currentBoard].id).toBe(game.gb[0].id);
   });
 
   test("game should randomize first turn", () => {
-    vitest.spyOn(global.Math, "random").mockReturnValue(1);
+    vitest.spyOn(global.Math, "random").mockReturnValue(0.8);
     CONFIG.randomizeFirstTurn = true;
     const newGame = new Game(CONFIG);
     newGame.applyConfigs();
-    expect(newGame.currentBoard.id).toBe(newGame.gameboards[1].id);
+    expect(newGame.gb[newGame.currentBoard].id).toBe(newGame.gb[1].id);
   });
 
   test("game should pick the first player from current board ", () => {
@@ -59,9 +59,23 @@ describe("Game", () => {
     game.config.randomizeFirstTurn = true;
     game.applyConfigs();
 
-    expect(game.currentBoard.getCurrentPlayer()).not.toBe(undefined);
+    expect(game.gb[game.currentBoard].getCurrentPlayer()).not.toBe(undefined);
   });
 
+  test("current player attacks", () => {
+    const currentPlayer = game.gb[game.currentBoard].getCurrentPlayer();
+    game.gb.forEach((gb) =>
+      gb.players.forEach((p) =>
+        p.ships.forEach((s) => {
+          gb.placeShipRandom(s);
+          console.log(s.id);
+        })
+      )
+    );
+    console.log(game.gb[0].showBoard());
+    console.log(game.gb[1].showBoard());
+    // cp.attack(new Coord(), game.getOpponentBoard());
+  });
   test.todo("if player attacks and miss, the turn is over");
   test.todo("if player attacks and hits, the next player in team has turn");
 });

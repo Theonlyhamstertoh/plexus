@@ -1,17 +1,19 @@
 import { nanoid } from "nanoid";
-import { getRandomCoord } from "../helpers/shipUtilities";
-import { CONFIG, CONFIGURATION } from "../types/types";
+import { createRandomShips, getRandomCoord } from "../helpers/shipUtilities";
+import { CONFIG } from "../types/types";
 import Coord from "./Coord";
 import Gameboard from "./Gameboard";
 import Ship from "./Ship";
 
-const DEFAULT_SHIPS = [new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)];
+function createDefaultShips() {
+  return [new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)];
+}
 
 export default class Player {
   readonly id: string = nanoid();
   readonly name: string;
   attack: Function;
-  ships: Ship[] = DEFAULT_SHIPS;
+  ships: Ship[] = createDefaultShips();
 
   constructor(name: string, isBot = false) {
     this.name = name;
