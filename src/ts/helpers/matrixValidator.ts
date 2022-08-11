@@ -1,5 +1,5 @@
 import Coord from "../classes/Coord";
-import { CoordLocations, Directions, Grid } from "../types/types";
+import { CoordLocations, Directions, Grid, MARKS } from "../types/types";
 /**
  *  USING INDEX VALUES, NOT ORDER PAIRS. ORDER PAIRS USED IN BOARD
  *
@@ -19,7 +19,12 @@ import { CoordLocations, Directions, Grid } from "../types/types";
  *
  */
 
-export function checkPositionsIfValid(direction: Directions, coord: Coord, length: number, grid: Grid): boolean {
+export function checkPositionsIfValid(
+  direction: Directions,
+  coord: Coord,
+  length: number,
+  grid: Grid
+): boolean {
   const coordData = coordLocationData(coord, grid);
   // check validity of positions by seeing if it fits inside grid.
   // if it does not fit, the function returns
@@ -32,14 +37,18 @@ export function checkPositionsIfValid(direction: Directions, coord: Coord, lengt
   const area = checkArea(coordData);
   return area.every(({ y, x }: Coord) => {
     for (let i = 0; i < getAreaLength(coordData, direction, length); i++) {
-      if (direction === "right" && grid[y][x + i] === "s") return false;
-      if (direction === "down" && grid[y + i][x] === "s") return false;
+      if (direction === "right" && grid[y][x + i] === MARKS.SHIP) return false;
+      if (direction === "down" && grid[y + i][x] === MARKS.SHIP) return false;
     }
     return true;
   });
 }
 
-export function getAreaLength(coordData: CoordLocations, direction: Directions, length: number): number {
+export function getAreaLength(
+  coordData: CoordLocations,
+  direction: Directions,
+  length: number
+): number {
   const { isFirstRow, isFirstColumn, yMax, xMax, coord } = coordData;
   const { y, x } = coord;
   if (direction === "down") {

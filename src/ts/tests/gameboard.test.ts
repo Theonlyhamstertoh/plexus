@@ -5,7 +5,7 @@ import Ship from "../classes/Ship";
 import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
 import Coord from "../classes/Coord";
 import Player from "../classes/Player";
-import { BOARD_SIZE } from "../types/types";
+import { BOARD_SIZE, MARKS } from "../types/types";
 
 describe("gameboard ship placement", () => {
   let gameboard: Gameboard;
@@ -25,7 +25,7 @@ describe("gameboard ship placement", () => {
 
   test("place ship at specific coords", () => {
     gameboard.placeShip(new Coord(0, 0), "right", ship);
-    expect(gameboard.grid[0][0]).toBe("s");
+    expect(gameboard.grid[0][0]).toBe(MARKS.SHIP);
   });
 
   test("should not place a ship if not valid position", () => {
@@ -35,7 +35,7 @@ describe("gameboard ship placement", () => {
   test("rotate a ship on valid position", () => {
     gameboard.placeShip(new Coord(2, 16), "down", ship);
     gameboard.rotateShip(ship);
-    expect(gameboard.grid[2][19]).toBe("s");
+    expect(gameboard.grid[2][19]).toBe(MARKS.SHIP);
   });
 
   test("clear a ship from position on grid", () => {
@@ -87,7 +87,7 @@ describe("gameboard players", () => {
   test("move current player to last in line", () => {
     gameboard.addPlayer(new Player("1"), new Player("2"));
     const prevPlayer = gameboard.players[0];
-    gameboard.moveCurrentPlayerToLast();
+    gameboard.nextTeammate();
     expect(gameboard.players[0]).not.toBe(prevPlayer);
   });
 

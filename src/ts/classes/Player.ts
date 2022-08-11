@@ -1,25 +1,17 @@
 import { nanoid } from "nanoid";
-import { createRandomShips, getRandomCoord } from "../helpers/shipUtilities";
-import { CONFIG, MARKS } from "../types/types";
+import { createDefaultShips, getRandomCoord } from "../helpers/shipUtilities";
+import { MARKS } from "../types/types";
 import Coord from "./Coord";
 import Gameboard from "./Gameboard";
 import Ship from "./Ship";
 
-function createDefaultShips() {
-  return [new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)];
-}
-
-export default class Player {
+export class Entity {
+  ships: Ship[] = createDefaultShips();
   readonly id: string = nanoid();
   readonly name: string;
-  readonly isBot: boolean;
-  ships: Ship[] = createDefaultShips();
-
-  constructor(name: string, isBot = false) {
+  constructor(name: string) {
     this.name = name;
-    this.isBot = isBot;
   }
-
   addShip(ship: Ship) {
     this.ships.push(ship);
   }
@@ -39,15 +31,34 @@ export default class Player {
   isReady() {
     return this.ships.every((ship) => ship.placed === true);
   }
+}
 
-  computerAttack(opponentBoard: Gameboard) {
-    // get a random coord
+export default class Player extends Entity {
+  constructor(name: string, AI: boolean = false) {
+    super(name);
+  }
+
+  attack(opponentBoard: Gameboard, board: Gameboard, coord?: Coord) {
+    if (coord === undefined) throw Error("UNDEFINED ATTACK COORD");
+    const isHit = opponentBoard.receiveAttack(coord);
+    return { coord, hit: isHit };
+  }
+}
+
+export class AI extends Entity {
+  constructor(name: string) {
+    super(name);
+  }
+
+  attack(opponentBoard: Gameboard, board: Gameboard, coord?: Coord) {
+    // attack randomly in positions not yet attacked
     do {
       const coordY = getRandomCoord(opponentBoard.length[0]);
       const coordX = getRandomCoord(opponentBoard.length[1]);
       const attackCoord: Coord = new Coord(coordY, coordX);
 
       const gridTile = opponentBoard.grid[coordY][coordX];
+      // if already hit, cycle to next one
       if (gridTile !== MARKS.HIT && gridTile !== MARKS.MISS_HIT) {
         const isHit = opponentBoard.receiveAttack(attackCoord);
         return { coord: attackCoord, hit: isHit };
@@ -55,8 +66,6 @@ export default class Player {
     } while (true);
   }
 
-  attack(opponentBoard: Gameboard, coord: Coord) {
-    const isHit = opponentBoard.receiveAttack(coord);
-    return { coord, hit: isHit };
-  }
+  // if there are any hit tiles, and ship has not been fully destroyed, keep on trying.
+  // what is the easiest way to tell a bot that a ship has been destroyed? Changing it to a destroyed sign
 }

@@ -20,12 +20,12 @@ import {
 } from "../types/types";
 
 import Coord from "./Coord";
-import Player from "./Player";
+import Player, { AI } from "./Player";
 import Ship from "./Ship";
 
 export default class Gameboard {
   grid: Grid = [];
-  players: Player[] = [];
+  players: (Player | AI)[] = [];
   length: BoardLength;
   readonly id: string = nanoid();
   constructor({ boardLength }: GameConfigs) {
@@ -33,11 +33,11 @@ export default class Gameboard {
     this.newBoard(this.length);
   }
 
-  getCurrentPlayer() {
+  getCurrentPlayer(): Player | AI {
     return this.players[0];
   }
 
-  moveCurrentPlayerToLast() {
+  nextTeammate() {
     const prevPlayer = this.players[0];
     this.players.shift();
     this.players.push(prevPlayer);
@@ -63,7 +63,11 @@ export default class Gameboard {
   }
 
   getPlayerByName(name: string) {
-    return this.players.find((player) => player.name === name);
+    return this.players.find((player) => {
+      if (player.name && player.name === name) {
+        return player;
+      }
+    });
   }
 
   getPlayerById(playerId: string) {
@@ -83,6 +87,7 @@ export default class Gameboard {
     this.grid[coord.y][coord.x] = MARKS.MISS_HIT;
     return false;
   }
+
   changeShipGridPosTo(mode: Mode, ship: Ship) {
     if (ship.positions.length === 0) return;
     ship.positions.forEach(({ y, x }) => (this.grid[y][x] = modeTypes[mode]));
@@ -163,8 +168,8 @@ export default class Gameboard {
 
   findShip({ y, x }: Coord) {
     for (let i = 0; i < this.players.length; i++) {
-      const ship: Ship | undefined = this.players[i].ships.find((ship) => {
-        return ship.positions.find((pos) => pos.y === y && pos.x === x);
+      const ship: Ship | undefined = this.players[i].ships.find((ship: Ship) => {
+        return ship.positions.find((pos: Coord) => pos.y === y && pos.x === x);
       });
       if (ship !== undefined) return ship;
     }

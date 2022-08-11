@@ -1,6 +1,5 @@
 import { nanoid } from "nanoid";
-import { Directions, ShipPositions } from "../types/types";
-import { Coord } from "./Coord";
+import Coord from "./Coord";
 
 export default class Ship {
   readonly length: number;

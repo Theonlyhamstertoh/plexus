@@ -41,3 +41,7 @@ export function createRandomShips(count: number) {
   }
   return ships;
 }
+
+export function createDefaultShips() {
+  return [new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)];
+}
