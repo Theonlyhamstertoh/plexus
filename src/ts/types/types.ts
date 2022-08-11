@@ -21,10 +21,10 @@ export interface GameBoardParams {
 export const MARKS = {
   WATER: "🟦",
   EDIT: "@",
-  SHIP: "⬜",
+  SHIP: "🌕",
   destroyed: "🔴",
-  MISS_HIT: "◯",
-  HIT: "❎",
+  MISS_HIT: "⬜",
+  HIT: "❌",
 };
 
 const gameMode = {

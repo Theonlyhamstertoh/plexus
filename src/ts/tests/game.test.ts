@@ -67,9 +67,6 @@ describe("Game", () => {
     expect(game.getOpponentBoard().grid[y][x]).not.toBe(MARKS.SHIP);
   });
 
-  test("ship should take damage if hit");
-
-  test.todo("if attack hits, receiveAttack should return true");
   test("if player attacks and miss, the turn is over", () => {
     const currentBoard = game.getCurrentBoard();
     const currentPlayer = currentBoard.getCurrentPlayer();
@@ -91,8 +88,21 @@ describe("Game", () => {
     // console.log(game.getOpponentBoard().findShip(new Coord(0, 0)));
     hit && game.getCurrentBoard().nextTeammate();
     expect(game.getCurrentBoard().getCurrentPlayer()).not.toBe(currentPlayer);
-    console.log(game.getOpponentBoard().showBoard());
   });
+
+  test("get board state", () => {
+    game.getCurrentBoard().nextTeammate();
+    for (let i = 0; i < 40; i++) {
+      game
+        .getCurrentBoard()
+        .getCurrentPlayer()
+        .attack(game.getOpponentBoard(), game.getCurrentBoard());
+    }
+    console.log(game.getOpponentBoard().showBoard());
+    console.log(game.getOpponentBoard().getBoardState());
+  });
+  test("ship should take damage if hit");
+  test.todo("if attack hits, receiveAttack should return true");
 });
 
 // const populateGameRandomly = (game: Game) => {

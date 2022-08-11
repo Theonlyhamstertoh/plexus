@@ -33,6 +33,15 @@ export default class Gameboard {
     this.newBoard(this.length);
   }
 
+  getBoardState() {
+    const shipNotHit = [];
+
+    const shipHit = this.players.flatMap((player) =>
+      player.ships.filter((ship) => ship.isDamaged() === true)
+    );
+    return shipHit;
+  }
+
   getCurrentPlayer(): Player | AI {
     return this.players[0];
   }

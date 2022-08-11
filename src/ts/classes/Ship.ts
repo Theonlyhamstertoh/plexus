@@ -12,6 +12,9 @@ export default class Ship {
     this.#lives = this.length = length;
   }
 
+  isDamaged() {
+    return this.#lives < this.length;
+  }
   isHit() {
     if (this.#lives > 0) {
       this.#lives--;
