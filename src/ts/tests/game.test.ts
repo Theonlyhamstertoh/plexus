@@ -26,6 +26,7 @@ describe("Game", () => {
     CONFIG.randomizeFirstTurn = false;
     CONFIG.shufflePlayerOrder = false;
     CONFIG.randomShips = false;
+    CONFIG.boardLength = BOARD_SIZE.SMALL;
   });
 
   test("game should have created two gameboards", () => {
@@ -91,14 +92,22 @@ describe("Game", () => {
   });
 
   test("get board state", () => {
-    game.getCurrentBoard().nextTeammate();
-    for (let i = 0; i < 20; i++) {
-      game
+    CONFIG.boardLength = BOARD_SIZE.BIG;
+    const newGame = new Game(CONFIG);
+    const teamOne = [new Player("player1"), new AI("bot2"), new AI("bot3")];
+    const teamTwo = [new Player("player4"), new AI("bot5"), new AI("bot6")];
+    newGame.gb[0].addPlayer(...teamOne);
+    newGame.gb[1].addPlayer(...teamTwo);
+    newGame.config.shufflePlayerOrder = false;
+    populateGameRandomly(newGame);
+    newGame.getCurrentBoard().nextTeammate();
+    for (let i = 0; i < 50; i++) {
+      newGame
         .getCurrentBoard()
         .getCurrentPlayer()
-        .attack(game.getOpponentBoard(), game.getCurrentBoard());
+        .attack(newGame.getOpponentBoard(), newGame.getCurrentBoard(), i);
     }
-    console.log(game.getOpponentBoard().getBoardState());
+    console.log(newGame.getOpponentBoard().showBoard());
     // expect(game.getOpponentBoard().getBoardState().shipHit.length).toBeGreaterThan(0);
   });
   test("ship should take damage if hit");
@@ -106,11 +115,11 @@ describe("Game", () => {
   test.todo("bot should attack nearby hit coordinates if opponent ship damaged");
 });
 
-// const populateGameRandomly = (game: Game) => {
-//   return game.gb.forEach((gb) =>
-//     gb.players.forEach((p) => p.ships.forEach((s) => gb.placeShipRandom(s)))
-//   );
-// };
+const populateGameRandomly = (game: Game) => {
+  return game.gb.forEach((gb) =>
+    gb.players.forEach((p) => p.ships.forEach((s) => gb.placeShipRandom(s)))
+  );
+};
 
 const populateGameWithShips = (game: Game) => {
   return game.gb.forEach((gb) =>

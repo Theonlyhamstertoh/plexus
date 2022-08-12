@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { createDefaultShips, getRandomCoord } from "../helpers/shipUtilities";
-import { Directions, MARKS } from "../types/types";
+import { Directions, Grid, MARKS } from "../types/types";
 import Coord from "./Coord";
 import Gameboard from "./Gameboard";
 import Ship from "./Ship";
@@ -38,7 +38,7 @@ export default class Player extends Entity {
     super(name);
   }
 
-  attack(opponentBoard: Gameboard, board: Gameboard, coord?: Coord) {
+  attack(opponentBoard: Gameboard, board: Gameboard, coord?: any) {
     if (coord === undefined) throw Error("UNDEFINED ATTACK COORD");
     const isHit = opponentBoard.receiveAttack(coord);
     return { coord, hit: isHit };
@@ -50,9 +50,11 @@ export class AI extends Entity {
     super(name);
   }
 
-  attack(opponentBoard: Gameboard, board: Gameboard, coord?: Coord) {
+  attack(opponentBoard: Gameboard, board: Gameboard, coord?: any) {
     const possibleAttacks = this.getPossibleAttacks(opponentBoard);
+    // if there are no attacks so far that hit
     if (possibleAttacks === undefined) return this.attackRandom(opponentBoard);
+
     const attackCoord = possibleAttacks[getRandomCoord(possibleAttacks.length)];
     const isHit = opponentBoard.receiveAttack(attackCoord);
     return { coord: attackCoord, hit: isHit };
@@ -74,26 +76,38 @@ export class AI extends Entity {
     } while (true);
   }
   getPossibleAttacks(opponentBoard: Gameboard) {
-    const { hits } = opponentBoard.getBoardState();
+    // const hits = opponentBoard.hits;
+    const hits = opponentBoard.getBoardState();
     if (hits.length === 0) return;
     if (hits.length === 1) {
-      // we randomly hit a spot. Now, find the possible spots within area
-      const coord: Coord = hits[0];
-      const coordDown = new Coord(coord.y + 1, coord.x);
-      const coordTop = new Coord(coord.y - 1, coord.x);
-      const coordLeft = new Coord(coord.y, coord.x - 1);
-      const coordRight = new Coord(coord.y, coord.x + 1);
-
-      return [coordDown, coordTop, coordLeft, coordRight];
-    }
-
-    if (hits.length >= 2) {
-      return getAttacksInDirection(hits, opponentBoard.length);
+      return getSurroundingCoords(hits[0], opponentBoard.grid);
+    } else if (hits.length >= 2) {
+      return getAttacksInDirection(hits, opponentBoard.grid);
     }
   }
 }
 
-export function getAttacksInDirection(hits: Coord[], maxLength: [number, number]): Coord[] {
+export function getSurroundingCoords(coord: Coord, grid: Grid) {
+  // we randomly hit a spot. Now, find the possible spots within area
+  const coordDown = new Coord(coord.y + 1, coord.x);
+  const coordTop = new Coord(coord.y - 1, coord.x);
+  const coordLeft = new Coord(coord.y, coord.x - 1);
+  const coordRight = new Coord(coord.y, coord.x + 1);
+
+  const yMax = grid.length;
+  const xMax = grid[0].length;
+  return [coordDown, coordTop, coordLeft, coordRight].filter((coord: Coord): coord is Coord => {
+    return (
+      coord.x >= 0 &&
+      coord.x < xMax &&
+      coord.y >= 0 &&
+      coord.y < yMax &&
+      grid[coord.y][coord.x] !== MARKS.HIT &&
+      grid[coord.y][coord.x] !== MARKS.MISS_HIT
+    );
+  });
+}
+export function getAttacksInDirection(hits: Coord[], grid: Grid): Coord[] {
   const yDifference = hits[1].y - hits[0].y;
   const direction: Directions = yDifference !== 0 ? "down" : "right";
 
@@ -101,20 +115,30 @@ export function getAttacksInDirection(hits: Coord[], maxLength: [number, number]
   // direction will tell us which coords to check
   const firstCoord = sortedHits[0];
   const lastCoord = sortedHits[sortedHits.length - 1];
-  const yMax = maxLength[0] - 1;
-  const xMax = maxLength[1] - 1;
+  const yMax = grid.length;
+  const xMax = grid[0].length;
   let attackCoords = [];
   if (direction === "down") {
     const coordOne = new Coord(firstCoord.y - 1, firstCoord.x);
     const coordTwo = new Coord(lastCoord.y + 1, firstCoord.x);
 
-    attackCoords.push(firstCoord.y > 0 ? coordOne : null, lastCoord.y < yMax ? coordTwo : null);
+    attackCoords.push(coordOne, coordTwo);
   } else if (direction === "right") {
     const coordOne = new Coord(firstCoord.y, firstCoord.x - 1);
     const coordTwo = new Coord(firstCoord.y, lastCoord.x + 1);
-    attackCoords.push(firstCoord.x > 0 ? coordOne : null, lastCoord.x < xMax ? coordTwo : null);
+    attackCoords.push(coordOne, coordTwo);
   }
-  return attackCoords.flatMap((coord) => (coord !== null ? [coord] : []));
+  // basicall
+  return attackCoords.filter((coord): coord is Coord => {
+    return (
+      coord.x >= 0 &&
+      coord.x < xMax &&
+      coord.y >= 0 &&
+      coord.y < yMax &&
+      grid[coord.y][coord.x] !== MARKS.HIT &&
+      grid[coord.y][coord.x] !== MARKS.MISS_HIT
+    );
+  });
 }
 // check if the possible attack is outside of grid
 

@@ -11,7 +11,6 @@ import {
   Directions,
   Grid,
   BoardLength,
-  GameBoardParams,
   modeTypes,
   Mode,
   MARKS,
@@ -38,13 +37,12 @@ export default class Gameboard {
     this.players.forEach((player) =>
       player.ships.forEach((ship) => {
         if (ship.isDamaged() && ship.isDestroyed === false) {
-          ship.positions.forEach((coord) => {
-            // coord.hit === true && shipHit.push(coord);
-          });
+          shipHit.push(...ship.hits);
         }
       })
     );
-    return { shipHit };
+    return shipHit;
+    // return { this. };
   }
 
   getCurrentPlayer(): Player | AI {
@@ -94,6 +92,7 @@ export default class Gameboard {
       const ship = this.findShip(coord);
       if (ship === false) throw Error("no ship was found");
       ship.isHit(coord);
+      ship.hits.push(coord);
       this.grid[coord.y][coord.x] = MARKS.HIT;
       return true;
     }

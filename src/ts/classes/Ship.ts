@@ -5,6 +5,7 @@ export default class Ship {
   readonly length: number;
   readonly id: string = nanoid();
   positions: Coord[] = [];
+  hits: Coord[] = [];
   damagedPosIndex: number[] = [];
   #lives: number;
   isDestroyed: boolean = false;
