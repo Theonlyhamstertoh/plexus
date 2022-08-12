@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { createDefaultShips, getRandomCoord } from "../helpers/shipUtilities";
-import { MARKS } from "../types/types";
+import { Directions, MARKS } from "../types/types";
 import Coord from "./Coord";
 import Gameboard from "./Gameboard";
 import Ship from "./Ship";
@@ -51,6 +51,14 @@ export class AI extends Entity {
   }
 
   attack(opponentBoard: Gameboard, board: Gameboard, coord?: Coord) {
+    const possibleAttacks = this.getPossibleAttacks(opponentBoard);
+    if (possibleAttacks === undefined) return this.attackRandom(opponentBoard);
+    const attackCoord = possibleAttacks[getRandomCoord(possibleAttacks.length)];
+    const isHit = opponentBoard.receiveAttack(attackCoord);
+    return { coord: attackCoord, hit: isHit };
+  }
+
+  attackRandom(opponentBoard: Gameboard) {
     // attack randomly in positions not yet attacked
     do {
       const coordY = getRandomCoord(opponentBoard.length[0]);
@@ -65,13 +73,12 @@ export class AI extends Entity {
       }
     } while (true);
   }
-
   getPossibleAttacks(opponentBoard: Gameboard) {
-    const { shipHit } = opponentBoard.getBoardState();
-    if (shipHit.length === 0) return;
-    if (shipHit.length === 1) {
+    const { hits } = opponentBoard.getBoardState();
+    if (hits.length === 0) return;
+    if (hits.length === 1) {
       // we randomly hit a spot. Now, find the possible spots within area
-      const coord: Coord = shipHit[0];
+      const coord: Coord = hits[0];
       const coordDown = new Coord(coord.y + 1, coord.x);
       const coordTop = new Coord(coord.y - 1, coord.x);
       const coordLeft = new Coord(coord.y, coord.x - 1);
@@ -80,40 +87,49 @@ export class AI extends Entity {
       return [coordDown, coordTop, coordLeft, coordRight];
     }
 
-    if (shipHit.length === 2) {
+    if (hits.length >= 2) {
+      return getAttacksInDirection(hits, opponentBoard.length);
     }
   }
 }
-// maybe a array that says coords that hit a ship
-// is a ship hit. If it is a bot, if there is any ship hit
-// then it will immediately focus on KOing that one first
-// shipHit should return me the ship
-// also need the coord that hit it?
-// say there is one ship in there
-// what fucking coordinate is it
-// if previous coordinate hit, your teammate (another bot) goes
-// so that coordinate must be shared for bots
-// maybe each ship if hit, stores the hit coord somewhere
 
-export function getAttacksInDirection(shipHit: Coord[]) {
-  const yDifference = shipHit[1].y - shipHit[0].y;
-  const xDifference = shipHit[1].x - shipHit[0].x;
-  const direction = yDifference !== 0 ? "down" : "right";
+export function getAttacksInDirection(hits: Coord[], maxLength: [number, number]): Coord[] {
+  const yDifference = hits[1].y - hits[0].y;
+  const direction: Directions = yDifference !== 0 ? "down" : "right";
 
+  const sortedHits = sortHitsAcsending(hits);
   // direction will tell us which coords to check
+  const firstCoord = sortedHits[0];
+  const lastCoord = sortedHits[sortedHits.length - 1];
+  const yMax = maxLength[0] - 1;
+  const xMax = maxLength[1] - 1;
+  let attackCoords = [];
   if (direction === "down") {
-    // if yDifference is +1, then [1] is on bottom. By adding the yDifference [1], it will give me the next row. If -1, then adding that will give me the previous row.
-    // because the [0] subtracts, it will be the opposite of whatever the ydifference is. If yDifference is -1, then [0] is the bottom. The negatives cancel out and we can get the next row.
+    const coordOne = new Coord(firstCoord.y - 1, firstCoord.x);
+    const coordTwo = new Coord(lastCoord.y + 1, firstCoord.x);
 
-    const coordOne = new Coord(shipHit[1].y + yDifference, shipHit[1].x);
-    const coordTwo = new Coord(shipHit[0].y - yDifference, shipHit[0].x);
-    return [coordOne, coordTwo];
+    attackCoords.push(firstCoord.y > 0 ? coordOne : null, lastCoord.y < yMax ? coordTwo : null);
   } else if (direction === "right") {
-    const coordOne = new Coord(shipHit[1].y, shipHit[1].x + xDifference);
-    const coordTwo = new Coord(shipHit[0].y, shipHit[0].x - xDifference);
-    return [coordOne, coordTwo];
+    const coordOne = new Coord(firstCoord.y, firstCoord.x - 1);
+    const coordTwo = new Coord(firstCoord.y, lastCoord.x + 1);
+    attackCoords.push(firstCoord.x > 0 ? coordOne : null, lastCoord.x < xMax ? coordTwo : null);
   }
+  return attackCoords.flatMap((coord) => (coord !== null ? [coord] : []));
 }
+// check if the possible attack is outside of grid
+
+export function sortHitsAcsending(hits: Coord[]) {
+  const yDifference = hits[1].y - hits[0].y;
+  const axis = yDifference !== 0 ? "y" : "x";
+  return hits.sort((a: Coord, b: Coord): number => a[axis] - b[axis]);
+}
+
+export function sortOnlyValidAttacks(attacks: Coord[]) {
+  return attacks.filter((coord) => coord !== null);
+}
+export const getAxis = (direction: Directions) => (direction === "right" ? "x" : "y");
+
+// if ship is hit three times or more, I need to get the position but they have to be the very last or very first. To do this, I should use a reduce
 
 // if there are any hit tiles, and ship has not been fully destroyed, keep on trying.
 // what is the easiest way to tell a bot that a ship has been destroyed? Changing it to a destroyed sign
