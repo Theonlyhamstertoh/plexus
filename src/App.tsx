@@ -30,7 +30,7 @@ function App() {
               className={tile === "s" ? "ship" : "tile"}
               key={`${y}, ${x}`}
             >
-              {tile}
+              {/* {tile} */} {y}, {x}
             </div>
           ));
         })}

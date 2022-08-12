@@ -10,7 +10,6 @@ export class Game {
   constructor(config: GameConfigs) {
     this.config = config;
     const { boardLength } = this.config;
-
     this.gb.push(new Gameboard({ boardLength }), new Gameboard({ boardLength }));
   }
 

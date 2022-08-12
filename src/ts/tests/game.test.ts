@@ -92,17 +92,18 @@ describe("Game", () => {
 
   test("get board state", () => {
     game.getCurrentBoard().nextTeammate();
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 20; i++) {
       game
         .getCurrentBoard()
         .getCurrentPlayer()
         .attack(game.getOpponentBoard(), game.getCurrentBoard());
     }
-    console.log(game.getOpponentBoard().showBoard());
     console.log(game.getOpponentBoard().getBoardState());
+    // expect(game.getOpponentBoard().getBoardState().shipHit.length).toBeGreaterThan(0);
   });
   test("ship should take damage if hit");
   test.todo("if attack hits, receiveAttack should return true");
+  test.todo("bot should attack nearby hit coordinates if opponent ship damaged");
 });
 
 // const populateGameRandomly = (game: Game) => {

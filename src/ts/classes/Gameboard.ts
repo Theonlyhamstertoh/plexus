@@ -34,12 +34,17 @@ export default class Gameboard {
   }
 
   getBoardState() {
-    const shipNotHit = [];
-
-    const shipHit = this.players.flatMap((player) =>
-      player.ships.filter((ship) => ship.isDamaged() === true)
+    const shipHit: Coord[] = [];
+    this.players.forEach((player) =>
+      player.ships.forEach((ship) => {
+        if (ship.isDamaged() && ship.isDestroyed === false) {
+          ship.positions.forEach((coord) => {
+            // coord.hit === true && shipHit.push(coord);
+          });
+        }
+      })
     );
-    return shipHit;
+    return { shipHit };
   }
 
   getCurrentPlayer(): Player | AI {
@@ -88,7 +93,7 @@ export default class Gameboard {
     if (this.grid[coord.y][coord.x] === MARKS.SHIP) {
       const ship = this.findShip(coord);
       if (ship === false) throw Error("no ship was found");
-      ship.isHit();
+      ship.isHit(coord);
       this.grid[coord.y][coord.x] = MARKS.HIT;
       return true;
     }
