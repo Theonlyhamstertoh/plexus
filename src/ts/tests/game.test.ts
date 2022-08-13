@@ -1,11 +1,10 @@
 import { describe, beforeEach, afterEach, test, expect, vitest, vi } from "vitest";
 import Coord from "../classes/Coord";
-import Gameboard from "../classes/Gameboard";
 import { Game } from "../classes/GameController";
-import Player, { AI } from "../classes/Player";
+import Player from "../classes/Player";
 import Ship from "../classes/Ship";
-import { BOARD_SIZE, CONFIG, GameBoardParams, MARKS } from "../types/types";
-
+import { BOARD_SIZE, CONFIG, MARKS } from "../types/types";
+import AI from "../classes/AI";
 describe("Game", () => {
   let game: Game;
   beforeEach(() => {
@@ -63,7 +62,7 @@ describe("Game", () => {
     game.getCurrentBoard().nextTeammate();
     const currentPlayer = game.getCurrentBoard().getCurrentPlayer();
     //prettier-ignore
-    const {coord: { y, x }} = currentPlayer.attack(game.getOpponentBoard(), game.getCurrentBoard());
+    const {coord: {y, x}} = currentPlayer.attack(game.getOpponentBoard(), game.getCurrentBoard())!;
     expect(game.getOpponentBoard().grid[y][x]).not.toBe(MARKS.WATER);
     expect(game.getOpponentBoard().grid[y][x]).not.toBe(MARKS.SHIP);
   });
@@ -71,17 +70,17 @@ describe("Game", () => {
   test("if player attacks and miss, the turn is over", () => {
     const currentBoard = game.getCurrentBoard();
     const currentPlayer = currentBoard.getCurrentPlayer();
-    const { hit } = currentPlayer.attack(
+    const attackData = currentPlayer.attack(
       game.getOpponentBoard(),
       game.getCurrentBoard(),
       new Coord(2, 0)
     );
-    !hit && game.nextTurn();
+    !attackData?.hit && game.nextTurn();
     expect(game.getCurrentBoard()).not.toBe(currentBoard);
   });
   test("if player hits, next player in team has turn", () => {
     const currentPlayer = game.getCurrentBoard().getCurrentPlayer();
-    const { hit } = currentPlayer.attack(
+    const hit = currentPlayer.attack(
       game.getOpponentBoard(),
       game.getCurrentBoard(),
       new Coord(0, 0)

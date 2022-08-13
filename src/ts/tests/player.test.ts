@@ -5,7 +5,8 @@ import Player, {
   getAttacksInDirection,
   getSurroundingCoords,
   sortHitsAcsending,
-} from "../classes/Player";
+} from "../classes/AI";
+
 import { CONFIG } from "../types/types";
 
 test.todo("bot should inherit player class", () => {});

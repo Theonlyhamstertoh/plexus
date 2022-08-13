@@ -2,7 +2,6 @@ import Gameboard from "../classes/Gameboard";
 
 import { describe, afterEach, beforeEach, test, expect, vitest } from "vitest";
 import Ship from "../classes/Ship";
-import { checkFit, coordLocationData, getAreaLength } from "../helpers/matrixValidator";
 import Coord from "../classes/Coord";
 import Player from "../classes/Player";
 import { BOARD_SIZE, MARKS } from "../types/types";
@@ -122,13 +121,7 @@ describe.todo("finding and attacking ships ", () => {
 
   test.todo("Gameboard should receive attack and damage ship");
 
-  test.todo("bot should be able to place ships randomly");
-  test.todo("bot should not attack same spot twice");
-  test.todo("bot should be able to attack a coord");
   test.todo("bot should be able to receive a attack");
-  test.todo("bot should shoot adjacent coords if a attack hit");
-  test.todo("bot should shoot in same direction if 2 shots are hit");
-  test.todo("bot should shoot area until the ship is destroyed");
 });
 
 // five ships for each player

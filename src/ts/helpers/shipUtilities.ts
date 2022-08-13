@@ -27,7 +27,7 @@ export function flipDirection(direction: string): Directions {
   return direction === "right" ? "down" : "right";
 }
 
-export const getRandomCoord = (maxLength: number) => Math.floor(Math.random() * maxLength);
+export const getRandomNumber = (maxLength: number) => Math.floor(Math.random() * maxLength);
 
 export const getRandomPosition = (): Directions => {
   return !!Math.floor(Math.random() * 2) ? "right" : "down";

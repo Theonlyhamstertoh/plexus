@@ -69,5 +69,4 @@ export interface GameConfigs {
 }
 
 export type BoardSizeOptions = keyof typeof BOARD_SIZE;
-export type DeckOfFive = [Ship, Ship, Ship, Ship, Ship];
-export type DeckOfFour = [Ship, Ship, Ship, Ship];
+export type AttackCoordData = { coord: Coord; hit: boolean };
