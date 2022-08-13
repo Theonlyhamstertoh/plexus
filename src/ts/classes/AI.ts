@@ -1,5 +1,5 @@
 import { getRandomNumber } from "../helpers/shipUtilities";
-import { Directions, Grid, MARKS, AttackCoordData } from "../types/types";
+import { Directions, Grid, MARKS } from "../types/types";
 import Coord from "./Coord";
 import Entity from "./Entity";
 import Gameboard from "./Gameboard";
@@ -9,25 +9,23 @@ export default class AI extends Entity {
     super(name);
   }
 
-  attack(opponentBoard: Gameboard, board: Gameboard, coord?: any): AttackCoordData | undefined {
-    if (opponentBoard.notHitCoords.length === 0) return;
+  attack(opponentBoard: Gameboard, board: Gameboard, coord?: any): boolean {
+    if (opponentBoard.notHitCoords.length === 0) return false;
     const possibleAttacks = this.getPossibleAttacks(opponentBoard);
     // if there are no attacks so far that hit
     if (possibleAttacks === undefined) return this.attackRandom(opponentBoard);
 
     // randomly choose a attack coord within array
     const attackCoord = possibleAttacks[getRandomNumber(possibleAttacks.length)];
-    const isHit = opponentBoard.receiveAttack(attackCoord);
-    return { coord: attackCoord, hit: isHit };
+    return opponentBoard.receiveAttack(attackCoord);
   }
 
-  attackRandom(opponentBoard: Gameboard): AttackCoordData {
+  attackRandom(opponentBoard: Gameboard): boolean {
     // attack randomly in positions not yet attacked
     const index = getRandomNumber(opponentBoard.notHitCoords.length);
     const attackCoord: Coord = opponentBoard.notHitCoords[index];
 
-    const isHit = opponentBoard.receiveAttack(attackCoord);
-    return { coord: attackCoord, hit: isHit };
+    return opponentBoard.receiveAttack(attackCoord);
   }
   getPossibleAttacks(opponentBoard: Gameboard) {
     // const hits = opponentBoard.hits;

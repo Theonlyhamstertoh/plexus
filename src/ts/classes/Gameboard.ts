@@ -44,7 +44,7 @@ export default class Gameboard {
           hits.push(...ship.hits);
           shipsDamaged++;
         }
-        if (!ship.isDestroyed === false) shipsAlive++;
+        if (ship.isDestroyed === false) shipsAlive++;
         if (ship.isDestroyed === true) shipsDestroyed++;
       })
     );
@@ -100,7 +100,6 @@ export default class Gameboard {
       const ship = this.findShip(coord);
       if (ship === false) throw Error("no ship was found");
       ship.isHit(coord);
-      ship.hits.push(coord);
       this.grid[coord.y][coord.x] = MARKS.HIT;
       return true;
     }

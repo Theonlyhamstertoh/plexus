@@ -6,7 +6,6 @@ export default class Ship {
   readonly id: string = nanoid();
   positions: Coord[] = [];
   hits: Coord[] = [];
-  damagedPosIndex: number[] = [];
   #lives: number;
   isDestroyed: boolean = false;
   placed: boolean = false;
@@ -18,18 +17,10 @@ export default class Ship {
     return this.#lives !== 0 && this.#lives < this.length;
   }
 
-  // markCoordHit({ y, x }: Coord) {
-  //   this.positions.find((pos: Coord) => {
-  //     if (pos.y === y && pos.x === x) {
-  //     }
-  //   });
-  // }
-
   isHit(coord: Coord) {
     if (this.#lives > 0) {
       this.#lives--;
-
-      // this.positions.indexOf(coord);
+      this.hits.push(coord);
     }
 
     if (this.#lives === 0) {

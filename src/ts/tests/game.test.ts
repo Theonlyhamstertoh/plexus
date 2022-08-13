@@ -62,21 +62,21 @@ describe("Game", () => {
     game.getCurrentBoard().nextTeammate();
     const currentPlayer = game.getCurrentBoard().getCurrentPlayer();
     //prettier-ignore
-    const {coord: {y, x}} = currentPlayer.attack(game.getOpponentBoard(), game.getCurrentBoard())!;
-    expect(game.getOpponentBoard().grid[y][x]).not.toBe(MARKS.WATER);
-    expect(game.getOpponentBoard().grid[y][x]).not.toBe(MARKS.SHIP);
+    const prevNotHitCoords = game.getOpponentBoard().notHitCoords.length
+    currentPlayer.attack(game.getOpponentBoard(), game.getCurrentBoard())!;
+    expect(game.getOpponentBoard().notHitCoords.length).toBeLessThan(prevNotHitCoords);
   });
 
   test("if player attacks and miss, the turn is over", () => {
     const currentBoard = game.getCurrentBoard();
     const currentPlayer = currentBoard.getCurrentPlayer();
-    const attackData = currentPlayer.attack(
+    const hit = currentPlayer.attack(
       game.getOpponentBoard(),
       game.getCurrentBoard(),
       new Coord(2, 0)
     );
-    !attackData?.hit && game.nextTurn();
-    expect(game.getCurrentBoard()).not.toBe(currentBoard);
+    game.nextTurn(hit);
+    expect(game.getCurrentBoard().id).not.toBe(currentBoard.id);
   });
   test("if player hits, next player in team has turn", () => {
     const currentPlayer = game.getCurrentBoard().getCurrentPlayer();
@@ -86,7 +86,7 @@ describe("Game", () => {
       new Coord(0, 0)
     );
     // console.log(game.getOpponentBoard().findShip(new Coord(0, 0)));
-    hit && game.getCurrentBoard().nextTeammate();
+    game.nextTurn(hit);
     expect(game.getCurrentBoard().getCurrentPlayer()).not.toBe(currentPlayer);
   });
 
@@ -106,12 +106,8 @@ describe("Game", () => {
         .getCurrentPlayer()
         .attack(newGame.getOpponentBoard(), newGame.getCurrentBoard(), i);
     }
-    console.log(newGame.getOpponentBoard().showBoard());
-    // expect(game.getOpponentBoard().getBoardState().shipHit.length).toBeGreaterThan(0);
+    expect(game.getOpponentBoard().getBoardState().shipsAlive).toBeGreaterThan(0);
   });
-  test("ship should take damage if hit");
-  test.todo("if attack hits, receiveAttack should return true");
-  test.todo("bot should attack nearby hit coordinates if opponent ship damaged");
 });
 
 const populateGameRandomly = (game: Game) => {

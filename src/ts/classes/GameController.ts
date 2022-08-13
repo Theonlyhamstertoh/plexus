@@ -27,8 +27,13 @@ export class Game {
     return this.gb[1 - this.#currentBoardIndex];
   }
 
-  nextTurn() {
-    this.#currentBoardIndex = (1 - this.#currentBoardIndex) as BoardIndex;
+  nextTurn(isHit: boolean) {
+    // move turn to next player
+    // if player miss, switch board
+    if (isHit === false) {
+      this.#currentBoardIndex = (1 - this.#currentBoardIndex) as BoardIndex;
+    }
+    this.getCurrentBoard().nextTeammate();
   }
 
   startGame() {}

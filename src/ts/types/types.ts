@@ -69,4 +69,4 @@ export interface GameConfigs {
 }
 
 export type BoardSizeOptions = keyof typeof BOARD_SIZE;
-export type AttackCoordData = { coord: Coord; hit: boolean };
+// export type AttackCoordData = { coord: Coord; hit: boolean };
