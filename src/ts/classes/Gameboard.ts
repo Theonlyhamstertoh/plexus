@@ -93,13 +93,16 @@ export default class Gameboard {
   }
 
   receiveAttack(coord: Coord) {
-    // check if it hits
+    if (this.grid[coord.y][coord.x] === MARKS.HIT || this.grid[coord.y][coord.x] === MARKS.MISS_HIT)
+      return false;
+    // filter out hit coordinates
     this.notHitCoords = this.notHitCoords.filter((c) => c.x !== coord.x || c.y !== coord.y);
-    // console.log(this.notHitCoords);
+
     if (this.grid[coord.y][coord.x] === MARKS.SHIP) {
       const ship = this.findShip(coord);
       if (ship === false) throw Error("no ship was found");
       ship.isHit(coord);
+
       this.grid[coord.y][coord.x] = MARKS.HIT;
       return true;
     }

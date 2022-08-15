@@ -1,5 +1,4 @@
 import Coord from "../classes/Coord";
-import Ship from "../classes/Ship";
 
 export type Directions = "down" | "right";
 export type Grid = string[][];
@@ -14,9 +13,6 @@ export interface CoordLocations {
 }
 
 export type BoardLength = [number, number];
-export interface GameBoardParams {
-  boardLength: BoardLength;
-}
 
 export const MARKS = {
   WATER: "🟦",
@@ -53,6 +49,7 @@ interface BoardSizes {
   BIG: BoardLength;
   LARGE: BoardLength;
 }
+export type BoardSizeOptions = keyof typeof BOARD_SIZE;
 
 export const CONFIG = {
   randomShips: false,
@@ -67,6 +64,3 @@ export interface GameConfigs {
   shufflePlayerOrder?: boolean;
   randomizeFirstTurn?: boolean;
 }
-
-export type BoardSizeOptions = keyof typeof BOARD_SIZE;
-// export type AttackCoordData = { coord: Coord; hit: boolean };

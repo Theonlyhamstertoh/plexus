@@ -20,7 +20,11 @@ export default class Ship {
   isHit(coord: Coord) {
     if (this.#lives > 0) {
       this.#lives--;
-      this.hits.push(coord);
+      // this.hits.push(coord);
+
+      // move hit coords from position to hits array
+      const coordIndex = this.positions.findIndex((c) => c.y === coord.y && c.x === coord.x);
+      this.hits.push(...this.positions.splice(coordIndex, 1));
     }
 
     if (this.#lives === 0) {

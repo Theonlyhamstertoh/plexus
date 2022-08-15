@@ -8,6 +8,7 @@ export default class Player extends Entity {
 
   attack(opponentBoard: Gameboard, board: Gameboard, coord?: any) {
     if (coord === undefined) throw Error("UNDEFINED ATTACK COORD");
+
     return opponentBoard.receiveAttack(coord);
   }
 }

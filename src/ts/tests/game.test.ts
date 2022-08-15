@@ -1,4 +1,4 @@
-import { describe, beforeEach, afterEach, test, expect, vitest, vi } from "vitest";
+import { describe, beforeEach, afterEach, test, expect, vitest } from "vitest";
 import Coord from "../classes/Coord";
 import { Game } from "../classes/GameController";
 import Player from "../classes/Player";

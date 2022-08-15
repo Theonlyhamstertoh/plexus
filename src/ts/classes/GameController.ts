@@ -1,5 +1,5 @@
 import Gameboard from "./Gameboard";
-import { BoardLength, BOARD_SIZE, CONFIG, GameBoardParams, GameConfigs } from "../types/types";
+import { BoardLength, BOARD_SIZE, CONFIG, GameConfigs } from "../types/types";
 import Player from "./Player";
 export class Store {}
 type BoardIndex = 0 | 1;
