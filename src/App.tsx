@@ -6,6 +6,7 @@ import Coord from "./ts/classes/Coord";
 import Gameboard from "./ts/classes/Gameboard";
 import Player from "./ts/classes/Player";
 import Ship from "./ts/classes/Ship";
+import { createShipPositions } from "./ts/helpers/shipUtilities";
 import { Grid, MARKS, MarkTypes } from "./ts/types/types";
 const gameboard = new Gameboard({ boardLength: [20, 20] });
 gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"));
@@ -51,7 +52,7 @@ const COLORS = {
   attack: "#ff3333",
 };
 
-const TILE_SIZE = 25;
+const TILE_SIZE = 28;
 const GRID_WIDTH = 28 * gameboard.length[0];
 
 const INITIAL_STATE = generateTiles();
@@ -59,12 +60,21 @@ const player = new Player("weibo");
 function App() {
   const [grid, setGrid] = useState(INITIAL_STATE);
   const handleEvent = (e) => {
-    setGrid((prev) => {
-      return prev.map((tile) => ({
-        ...tile,
-        hover: tile.id === e.target.id() ? true : false,
-      }));
-    });
+    // setGrid((prev) => {
+    //   const tile = prev.find((tile) => tile.id === e.target.id())!;
+    //   const positions = createShipPositions("down", tile.coord, 4);
+    //   return prev.map((tile) => {
+    //     let hover = false;
+    //     positions.forEach((coord) => {
+    //       if (coord.x === tile.coord.x && coord.y === tile.coord.y) {
+    //         hover = true;
+    //       }
+    //     });
+
+    //     return { ...tile, color: hover ? COLORS.hover : COLORS.water };
+    //   });
+    //   console.log(map);
+    // });
     const container = e.target.getStage().container();
     container.style.cursor = "pointer";
   };
@@ -93,8 +103,8 @@ function App() {
               height={25}
               fill={tile.hover ? COLORS.hover : tile.color}
               id={tile.id}
-              onMouseEnter={handleEvent}
-              onMouseLeave={mouseOut}
+              // onMouseOver={handleEvent}
+              // onMouseLeave={mouseOut}
               onClick={attack}
             />
           ))}
@@ -115,10 +125,21 @@ function Ships({ length }: { length: number }) {
       draggable
       onDragEnd={(e) => {
         e.target.to({
-          x: Math.round(e.target.x() / TILE_SIZE) * (TILE_SIZE + 3),
-          y: Math.round(e.target.y() / TILE_SIZE) * (TILE_SIZE + 3),
-          duration: 0.1,
+          x: Math.round(e.target.x() / TILE_SIZE) * TILE_SIZE,
+          y: Math.round(e.target.y() / TILE_SIZE) * TILE_SIZE,
+          duration: 0,
         });
+        console.log(Math.round(e.target.x() / TILE_SIZE), e.target.x() / TILE_SIZE);
+        // e.target.x(Math.round(e.target.x() / TILE_SIZE) * (TILE_SIZE + 3));
+        // e.target.y(Math.round(e.target.y() / TILE_SIZE) * (TILE_SIZE + 3));
+      }}
+      onMouseEnter={(e) => {
+        const container = e.target.getStage().container();
+        container.style.cursor = "pointer";
+      }}
+      onMouseLeave={(e) => {
+        const container = e.target.getStage().container();
+        container.style.cursor = "default";
       }}
     >
       {[...Array(length)].map((_, i) => {
