@@ -23,6 +23,7 @@ export const MARKS = {
   HIT: "❌",
 };
 
+export type MarkTypes = typeof MARKS;
 const gameMode = {
   spectate: "spectate",
   disconnected: "disconnected",
