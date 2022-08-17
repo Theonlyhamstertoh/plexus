@@ -1,7 +1,7 @@
 import Coord from "../classes/Coord";
 
 export type Directions = "down" | "right";
-export type Grid = string[][];
+export type Grid = MarkSymbols[][];
 export interface CoordLocations {
   isFirstColumn: boolean;
   isFirstRow: boolean;
@@ -21,21 +21,15 @@ export const MARKS = {
   destroyed: "🔴",
   MISS_HIT: "⬜",
   HIT: "❌",
-};
+} as const;
 
-export type MarkTypes = typeof MARKS;
+export type MarkTypes = keyof typeof MARKS;
+export type MarkSymbols = typeof MARKS[MarkTypes];
 const gameMode = {
   spectate: "spectate",
   disconnected: "disconnected",
   alive: "alive",
 };
-
-export const modeTypes = {
-  edit: "@",
-  show: "s",
-  clear: "~",
-};
-export type Mode = keyof typeof modeTypes;
 
 export const BOARD_SIZE: BoardSizes = {
   SMALL: [10, 10],
@@ -65,3 +59,22 @@ export interface GameConfigs {
   shufflePlayerOrder?: boolean;
   randomizeFirstTurn?: boolean;
 }
+
+// game
+export interface TileData {
+  y: number;
+  x: number;
+  color: string;
+  hover: boolean;
+  hit: boolean;
+  state: string;
+  coord: Coord;
+  id: string;
+}
+
+export const COLORS = {
+  water: "#211f9e",
+  ship: "#d6bb36",
+  hover: "#ab4ceb",
+  attack: "#ff3333",
+};

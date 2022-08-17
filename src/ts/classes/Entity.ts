@@ -9,6 +9,7 @@ export default class Entity {
   ships: Ship[] = createDefaultShips();
   readonly id: string = nanoid();
   readonly name: string;
+  readonly color: string = "#ab4ceb";
   constructor(name: string) {
     this.name = name;
   }

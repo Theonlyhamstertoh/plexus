@@ -106,7 +106,7 @@ describe("Game", () => {
         .getCurrentPlayer()
         .attack(newGame.getOpponentBoard(), newGame.getCurrentBoard(), i);
     }
-    expect(game.getOpponentBoard().getBoardState().shipsAlive).toBeGreaterThan(0);
+    expect(newGame.getOpponentBoard().getBoardState().shipsAlive).toBeGreaterThan(0);
   });
 });
 

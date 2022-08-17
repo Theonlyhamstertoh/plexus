@@ -11,11 +11,10 @@ import {
   Directions,
   Grid,
   BoardLength,
-  modeTypes,
-  Mode,
   MARKS,
   CONFIG,
   GameConfigs,
+  MarkTypes,
 } from "../types/types";
 
 import Coord from "./Coord";
@@ -111,9 +110,9 @@ export default class Gameboard {
     return false;
   }
 
-  changeShipGridPosTo(mode: Mode, ship: Ship) {
+  changeShipGridPosTo(mode: MarkTypes, ship: Ship) {
     if (ship.positions.length === 0) return;
-    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = modeTypes[mode]));
+    ship.positions.forEach(({ y, x }) => (this.grid[y][x] = MARKS[mode]));
   }
 
   newBoard(length: BoardLength) {
@@ -161,16 +160,16 @@ export default class Gameboard {
 
   placeShip(coord: Coord, direction: Directions, ship: Ship) {
     // if new ship, nothing happens, function returns
-    this.changeShipGridPosTo("edit", ship);
+    this.changeShipGridPosTo("EDIT", ship);
     // test if the position are valid
     const validity = checkPositionsIfValid(direction, coord, ship.length, this.grid);
     if (validity === false) {
-      this.changeShipGridPosTo("show", ship);
+      this.changeShipGridPosTo("SHIP", ship);
       return false;
     }
 
     // remove previous ship positions if it was already placed
-    this.changeShipGridPosTo("clear", ship);
+    this.changeShipGridPosTo("WATER", ship);
     ship.positions = [];
     ship.positions = createShipPositions(direction, coord, ship.length);
     ship.positions.forEach(({ y, x }: Coord) => (this.grid[y][x] = MARKS.SHIP));
@@ -185,7 +184,7 @@ export default class Gameboard {
   }
 
   removeShip(ship: Ship) {
-    this.changeShipGridPosTo("clear", ship);
+    this.changeShipGridPosTo("WATER", ship);
     ship.positions = [];
     ship.placed = false;
   }
