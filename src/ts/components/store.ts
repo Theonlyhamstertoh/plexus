@@ -5,6 +5,8 @@ const useGameStore = create<GameState>()((set: any) => ({
   direction: false,
   hover: false,
   placingShip: null,
+  grid: [],
+
   // lastPosition: createRef<Coord>() as React.MutableRefObject<Coord>,
 }));
 

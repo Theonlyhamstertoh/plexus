@@ -62,14 +62,14 @@ export interface GameConfigs {
 
 // game
 export interface TileData {
+  id: string;
+  coord: Coord;
   y: number;
   x: number;
-  color: string;
-  hover: boolean;
-  hit: boolean;
-  state: string;
-  coord: Coord;
-  id: string;
+  color?: string;
+  hover?: boolean;
+  hit?: boolean;
+  state?: string;
 }
 
 export const COLORS = {
