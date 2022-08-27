@@ -24,7 +24,7 @@ export default class Ship {
 
       // move hit coords from position to hits array
       const coordIndex = this.positions.findIndex((c) => c.y === coord.y && c.x === coord.x);
-      this.hits.push(...this.positions.splice(coordIndex, 1));
+      this.hits.push(...this.positions.slice(coordIndex, coordIndex + 1));
     }
 
     if (this.#lives === 0) {

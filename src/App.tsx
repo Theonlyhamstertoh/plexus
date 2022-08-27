@@ -13,12 +13,52 @@ import Player from "./ts/classes/Player";
 import Ship from "./ts/classes/Ship";
 import { checkPositionsIfValid } from "./ts/helpers/matrixValidator";
 import { createShipPositions } from "./ts/helpers/shipUtilities";
-import { TileData, GuideTypes } from "./ts/types/types";
+import { TileData, GuideTypes, ShipPiece, PLAYER_COLORS } from "./ts/types/types";
 
+import "../src/ts/components/store";
 useStrictMode(true);
+
+/**
+ *
+ *
+ * Fake Server
+ *
+ *
+ */
+const gameboard = new Gameboard({ boardLength: [15, 20] });
+gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"));
+gameboard.players.forEach((p) => {
+  p.ships.forEach((s) => gameboard.placeShipRandom(s));
+});
+
+function createTiles() {
+  const grid: TileData[][] = [];
+  for (let y = 0; y < gameboard.length[0]; y++) {
+    grid[y] = [];
+    for (let x = 0; x < gameboard.length[1]; x++) {
+      grid[y][x] = {
+        id: nanoid(),
+        coord: new Coord(y, x),
+        state: gameboard.grid[y][x],
+        hit: false,
+        y: y * (50 + 5),
+        x: x * (50 + 5),
+      };
+    }
+  }
+  return grid;
+}
+
+/**
+ *
+ * CODE
+ *
+ */
 
 export const TILE_SIZE = 50;
 export const TILE_GAP = 5;
+const SMALL_TILE_GAP = 3;
+const SMALL_TILE_SIZE = 18;
 const GUIDE_SIZE = TILE_SIZE / 2;
 const CORNER_RADIUS = 0.16;
 
@@ -82,8 +122,42 @@ function Board({ dimension }: any) {
           <Rect key={tile.id} {...tile} />
         ))}
       </Group>
+      <ShipHud ships={gameboard.players[0].ships} color={PLAYER_COLORS.yellow_orange} />
     </Group>
   );
+}
+
+export function ShipHud({ ships, color }: any) {
+  // create ships for ONLY ONE PLAYER
+  return (
+    <Group>
+      {ships.map((ship: Ship, i: number) => (
+        <SmallShip
+          key={ship.id}
+          length={ship.length}
+          color={color}
+          y={i * (SMALL_TILE_SIZE + SMALL_TILE_GAP)}
+        />
+      ))}
+    </Group>
+  );
+}
+
+export function SmallShip({ color, length, y }: ShipPiece) {
+  const rects = [];
+  for (let i = 0; i < length; i++) {
+    const data = {
+      id: nanoid(),
+      width: SMALL_TILE_SIZE,
+      height: SMALL_TILE_SIZE,
+      y: 0,
+      x: i * (SMALL_TILE_SIZE + SMALL_TILE_GAP),
+      fill: color,
+      cornerRadius: SMALL_TILE_SIZE * CORNER_RADIUS,
+    };
+    rects.push(<Rect key={data.id} {...data} />);
+  }
+  return <Group y={y}>{rects}</Group>;
 }
 
 function Guide({ length, isAlphabet }: GuideTypes) {
@@ -118,6 +192,7 @@ function Guide({ length, isAlphabet }: GuideTypes) {
     </Group>
   );
 }
+
 /**
  * Create numbers on the side?
  */

@@ -1,15 +1,22 @@
 import { nanoid } from "nanoid";
 import React, { createRef } from "react";
 import create from "zustand";
-import { TILE_GAP, TILE_SIZE } from "../../App";
+import { ShipHud, TILE_GAP, TILE_SIZE } from "../../App";
 import AI from "../classes/AI";
 import Coord from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
-import { TileData } from "../types/types";
+import { PLAYER_COLORS, TileData } from "../types/types";
+
+const gameboard = new Gameboard({ boardLength: [15, 20] });
+
 const useGameStore = create<GameState>((set) => ({
   direction: false,
   hover: false,
   placingShip: false,
+  playerData: {
+    color: "",
+    name: "",
+  },
   grid: createTiles(),
   setGrid: () => set((state) => ({ grid: state.grid })),
 }));
@@ -19,6 +26,10 @@ interface GameState {
   direction: boolean;
   hover: boolean;
   placingShip: boolean;
+  playerData: {
+    color: string;
+    name: string;
+  };
   grid: TileData[][];
   setGrid: () => void;
 }
@@ -34,7 +45,6 @@ interface GameState {
  *
  */
 
-const gameboard = new Gameboard({ boardLength: [20, 20] });
 gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"));
 gameboard.players.forEach((p) => {
   p.ships.forEach((s) => gameboard.placeShipRandom(s));
@@ -56,10 +66,17 @@ function createTiles() {
         coord: new Coord(y, x),
         state: gameboard.grid[y][x],
         hit: false,
-        y: y * (TILE_SIZE + TILE_GAP),
-        x: x * (TILE_SIZE + TILE_GAP),
+        y: y * (50 + 5),
+        x: x * (50 + 5),
       };
     }
   }
   return grid;
 }
+console.log("yes");
+// ShipHud({ ships: gameboard.players[0].ships });
+// let me see my ships on the left and my teammates
+// keep track of all players and teammates too.
+// data is simply sent. No one in the client. No data of other players should be stored there. Just information sent.
+// I want to see my ship color
+// every player will have their unique color stored

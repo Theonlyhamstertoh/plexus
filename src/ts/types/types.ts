@@ -81,3 +81,19 @@ export const COLORS = {
   hover: "#ab4ceb",
   attack: "#ff3333",
 };
+
+export const PLAYER_COLORS = {
+  green: "#70B550",
+  teal: "#62E3CC",
+  red: "#C53A3A",
+  yellow_orange: "#FEC24F",
+  orange: "#ED7A39",
+  purple: "#9B4FFE",
+  pink: "#E939E",
+  blue: "#4765B4",
+};
+export interface ShipPiece {
+  color: string;
+  length: number;
+  y: number;
+}
