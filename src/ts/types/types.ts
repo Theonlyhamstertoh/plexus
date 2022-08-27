@@ -70,6 +70,7 @@ export interface TileData {
   hover?: boolean;
   hit?: boolean;
   state?: string;
+  fill?: string;
 }
 
 export type GuideTypes = { length: number; isAlphabet: boolean };

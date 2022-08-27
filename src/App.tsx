@@ -13,62 +13,20 @@ import Player from "./ts/classes/Player";
 import Ship from "./ts/classes/Ship";
 import { checkPositionsIfValid } from "./ts/helpers/matrixValidator";
 import { createShipPositions } from "./ts/helpers/shipUtilities";
-import {
-  Directions,
-  Grid,
-  MARKS,
-  MarkSymbols,
-  TileData,
-  COLORS,
-  GuideTypes,
-} from "./ts/types/types";
+import { TileData, GuideTypes } from "./ts/types/types";
 
 useStrictMode(true);
-const gameboard = new Gameboard({ boardLength: [20, 20] });
 
-gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"));
-gameboard.players.forEach((p) => {
-  p.ships.forEach((s) => gameboard.placeShipRandom(s));
-});
-
-// all the gameboard data, game data will be stored on server side
-// the data that should only be displayed here is the grid
-// players information
-//
-function generateTiles() {
-  const grid: TileData[][] = [];
-  for (let y = 0; y < gameboard.length[0]; y++) {
-    grid[y] = [];
-    for (let x = 0; x < gameboard.length[1]; x++) {
-      grid[y][x] = createTileData(gameboard.grid[y][x], y, x);
-    }
-  }
-  return grid;
-}
-function createTileData(tile: MarkSymbols, y: number, x: number) {
-  return {
-    id: nanoid(),
-    y: y * 28,
-    x: x * 28,
-    color: tile === MARKS.SHIP ? COLORS.ship : COLORS.water,
-    hover: false,
-    state: tile,
-    coord: new Coord(y, x),
-    hit: false,
-  };
-}
-
-const TILE_SIZE = 50;
-const TILE_GAP = 5;
+export const TILE_SIZE = 50;
+export const TILE_GAP = 5;
 const GUIDE_SIZE = TILE_SIZE / 2;
-const INITIAL_STATE = generateTiles();
-const player = new Player("weibo");
+const CORNER_RADIUS = 0.16;
 
 function App() {
-  const [stage, setStage] = useState({ width: window.innerWidth, height: window.innerHeight });
+  // const [stage, setStage] = useState({ width: window.innerWidth, height: window.innerHeight });
   return (
     <div className="app">
-      <Stage className="konva" width={window.innerWidth} height={window.innerHeight}>
+      <Stage className="konva" width={window.innerWidth} height={window.innerHeight * 2}>
         <Layer>
           <Board dimension={{ x: 20, y: 15 }} />
         </Layer>
@@ -86,10 +44,10 @@ function Board({ dimension }: any) {
         coord: new Coord(y, x),
         y: y * (TILE_SIZE + TILE_GAP),
         x: x * (TILE_SIZE + TILE_GAP),
-        width: 50,
-        height: 50,
+        height: TILE_SIZE,
         fill: "#353535",
-        cornerRadius: 8,
+        width: TILE_SIZE,
+        cornerRadius: TILE_SIZE * CORNER_RADIUS,
         stroke: "#3c3c3c",
       };
 
@@ -134,8 +92,8 @@ function Guide({ length, isAlphabet }: GuideTypes) {
     guides.push({
       id: nanoid(),
       text: isAlphabet ? String.fromCharCode(65 + i) : i + 1,
-      y: isAlphabet ? i * (TILE_SIZE + TILE_GAP) : -50,
-      x: isAlphabet ? -50 : i * (TILE_SIZE + TILE_GAP),
+      y: isAlphabet ? i * (TILE_SIZE + TILE_GAP) : -TILE_SIZE,
+      x: isAlphabet ? -TILE_SIZE : i * (TILE_SIZE + TILE_GAP),
     });
   }
 
