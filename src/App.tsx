@@ -1,7 +1,10 @@
 import Konva from "konva";
-import { nanoid } from "nanoid";
+import { KonvaEventObject } from "konva/lib/Node";
+import { Shape } from "konva/lib/Shape";
+import { RectConfig } from "konva/lib/shapes/Rect";
+import { nanoid, random } from "nanoid";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { Group, Layer, Rect, Stage } from "react-konva";
+import { Group, Layer, Rect, Stage, useStrictMode } from "react-konva";
 import AI from "./ts/classes/AI";
 import Coord from "./ts/classes/Coord";
 import Gameboard from "./ts/classes/Gameboard";
@@ -10,7 +13,10 @@ import Ship from "./ts/classes/Ship";
 import { checkPositionsIfValid } from "./ts/helpers/matrixValidator";
 import { createShipPositions } from "./ts/helpers/shipUtilities";
 import { Directions, Grid, MARKS, MarkSymbols, TileData, COLORS } from "./ts/types/types";
+
+useStrictMode(true);
 const gameboard = new Gameboard({ boardLength: [20, 20] });
+
 gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"));
 gameboard.players.forEach((p) => {
   p.ships.forEach((s) => gameboard.placeShipRandom(s));
@@ -55,32 +61,27 @@ function App() {
     <div className="app">
       <Stage className="konva" width={window.innerWidth} height={window.innerHeight}>
         <Layer>
-          <Board
-            width={50}
-            height={50}
-            // x={5}
-            // y={5}
-            fill="#353535"
-            cornerRadius={8}
-            stroke="#3c3c3c"
-            dimension={{ x: 20, y: 10 }}
-          />
+          <Board dimension={{ x: 20, y: 10 }} />
         </Layer>
       </Stage>
     </div>
   );
 }
 
-function Board(props: any) {
+function Board({ dimension }: any) {
   const board: TileData[] = [];
-  for (let y = 0; y < props.dimension.y; y++) {
-    for (let x = 0; x < props.dimension.x; x++) {
+  for (let y = 0; y < dimension.y; y++) {
+    for (let x = 0; x < dimension.x; x++) {
       const tile = {
         id: nanoid(),
         coord: new Coord(y, x),
         y: y * (TILE_SIZE + TILE_GAP),
         x: x * (TILE_SIZE + TILE_GAP),
-        ...props,
+        width: 50,
+        height: 50,
+        fill: "#353535",
+        cornerRadius: 8,
+        stroke: "#3c3c3c",
       };
 
       board.push(tile);
@@ -88,7 +89,24 @@ function Board(props: any) {
   }
 
   return (
-    <Group>
+    <Group
+      offsetY={(dimension.y * (TILE_SIZE + TILE_GAP)) / 2}
+      offsetX={(dimension.x * (TILE_SIZE + TILE_GAP)) / 2}
+      y={window.innerHeight / 2}
+      x={window.innerWidth / 2}
+      onMouseOver={(e: KonvaEventObject<MouseEvent>) => {
+        const rect: Shape<RectConfig> | Konva.Stage = e.target;
+        if (typeof rect === typeof Konva.Stage) return;
+        rect.setAttr("fill", "#505050");
+        document.body.style.cursor = "pointer";
+      }}
+      onMouseOut={(e: KonvaEventObject<MouseEvent>) => {
+        const rect: Shape<RectConfig> | Konva.Stage = e.target;
+        if (typeof rect === typeof Konva.Stage) return;
+        rect.setAttr("fill", "#353535");
+        document.body.style.cursor = "default";
+      }}
+    >
       {board.map((tile: TileData) => (
         <Rect key={tile.id} {...tile} />
       ))}
