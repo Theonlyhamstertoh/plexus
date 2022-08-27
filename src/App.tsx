@@ -1,10 +1,11 @@
 import Konva from "konva";
+import { Container } from "konva/lib/Container";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Shape } from "konva/lib/Shape";
 import { RectConfig } from "konva/lib/shapes/Rect";
-import { nanoid, random } from "nanoid";
+import { nanoid } from "nanoid";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { Group, Layer, Rect, Stage, useStrictMode } from "react-konva";
+import { Group, Layer, Rect, Stage, Text, useStrictMode } from "react-konva";
 import AI from "./ts/classes/AI";
 import Coord from "./ts/classes/Coord";
 import Gameboard from "./ts/classes/Gameboard";
@@ -12,7 +13,15 @@ import Player from "./ts/classes/Player";
 import Ship from "./ts/classes/Ship";
 import { checkPositionsIfValid } from "./ts/helpers/matrixValidator";
 import { createShipPositions } from "./ts/helpers/shipUtilities";
-import { Directions, Grid, MARKS, MarkSymbols, TileData, COLORS } from "./ts/types/types";
+import {
+  Directions,
+  Grid,
+  MARKS,
+  MarkSymbols,
+  TileData,
+  COLORS,
+  GuideTypes,
+} from "./ts/types/types";
 
 useStrictMode(true);
 const gameboard = new Gameboard({ boardLength: [20, 20] });
@@ -94,25 +103,66 @@ function Board({ dimension }: any) {
       offsetX={(dimension.x * (TILE_SIZE + TILE_GAP)) / 2}
       y={window.innerHeight / 2}
       x={window.innerWidth / 2}
-      onMouseOver={(e: KonvaEventObject<MouseEvent>) => {
-        const rect: Shape<RectConfig> | Konva.Stage = e.target;
-        if (typeof rect === typeof Konva.Stage) return;
-        rect.setAttr("fill", "#505050");
-        document.body.style.cursor = "pointer";
-      }}
-      onMouseOut={(e: KonvaEventObject<MouseEvent>) => {
-        const rect: Shape<RectConfig> | Konva.Stage = e.target;
-        if (typeof rect === typeof Konva.Stage) return;
-        rect.setAttr("fill", "#353535");
-        document.body.style.cursor = "default";
-      }}
     >
-      {board.map((tile: TileData) => (
-        <Rect key={tile.id} {...tile} />
+      <Guide length={dimension.x} />
+      <Guide length={dimension.y} isAlphabet />
+      <Group
+        onMouseOver={(e: KonvaEventObject<MouseEvent>) => {
+          const rect: Shape<RectConfig> | Konva.Stage = e.target;
+          if (typeof rect === typeof Konva.Stage) return;
+          rect.setAttr("fill", "#505050");
+          document.body.style.cursor = "pointer";
+        }}
+        onMouseOut={(e: KonvaEventObject<MouseEvent>) => {
+          const rect: Shape<RectConfig> | Konva.Stage = e.target;
+          if (typeof rect === typeof Konva.Stage) return;
+          rect.setAttr("fill", "#353535");
+          document.body.style.cursor = "default";
+        }}
+      >
+        {board.map((tile: TileData) => (
+          <Rect key={tile.id} {...tile} />
+        ))}
+      </Group>
+    </Group>
+  );
+}
+
+function Guide({ length, isAlphabet }: GuideTypes) {
+  let guides: any[] = [];
+  for (let i = 0; i < length; i++) {
+    guides.push({
+      id: nanoid(),
+      text: isAlphabet ? String.fromCharCode(65 + i) : i + 1,
+      y: isAlphabet ? i * (TILE_SIZE + TILE_GAP) : -50,
+      x: isAlphabet ? -50 : i * (TILE_SIZE + TILE_GAP),
+    });
+  }
+
+  return (
+    <Group>
+      {guides.map((guide) => (
+        <Text
+          key={guide.id}
+          text={guide.text}
+          y={guide.y}
+          x={guide.x}
+          fontSize={16}
+          fontStyle={"500"}
+          fontFamily={"Lexend"}
+          fill="#AAAAAA"
+          align="center"
+          verticalAlign="middle"
+          width={TILE_SIZE}
+          height={TILE_SIZE}
+        />
       ))}
     </Group>
   );
 }
+/**
+ * Create numbers on the side?
+ */
 
 // function PrevApp() {
 //   const [grid, setGrid] = useState(INITIAL_STATE);

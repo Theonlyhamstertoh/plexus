@@ -72,6 +72,8 @@ export interface TileData {
   state?: string;
 }
 
+export type GuideTypes = { length: number; isAlphabet: boolean };
+
 export const COLORS = {
   water: "#211f9e",
   ship: "#d6bb36",
