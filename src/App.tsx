@@ -60,7 +60,7 @@ function createTileData(tile: MarkSymbols, y: number, x: number) {
 
 const TILE_SIZE = 50;
 const TILE_GAP = 5;
-
+const GUIDE_SIZE = TILE_SIZE / 2;
 const INITIAL_STATE = generateTiles();
 const player = new Player("weibo");
 
@@ -70,7 +70,7 @@ function App() {
     <div className="app">
       <Stage className="konva" width={window.innerWidth} height={window.innerHeight}>
         <Layer>
-          <Board dimension={{ x: 20, y: 10 }} />
+          <Board dimension={{ x: 20, y: 15 }} />
         </Layer>
       </Stage>
     </div>
@@ -101,10 +101,10 @@ function Board({ dimension }: any) {
     <Group
       offsetY={(dimension.y * (TILE_SIZE + TILE_GAP)) / 2}
       offsetX={(dimension.x * (TILE_SIZE + TILE_GAP)) / 2}
-      y={window.innerHeight / 2}
-      x={window.innerWidth / 2}
+      y={(window.innerHeight + GUIDE_SIZE) / 2}
+      x={(window.innerWidth + GUIDE_SIZE) / 2}
     >
-      <Guide length={dimension.x} />
+      <Guide length={dimension.x} isAlphabet={false} />
       <Guide length={dimension.y} isAlphabet />
       <Group
         onMouseOver={(e: KonvaEventObject<MouseEvent>) => {
