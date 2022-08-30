@@ -1,11 +1,18 @@
 import { nanoid } from "nanoid";
 import React, { createRef } from "react";
 import create from "zustand";
-import { ShipHud, TILE_GAP, TILE_SIZE } from "../../App";
+import { ShipHud } from "../../App";
 import AI from "../classes/AI";
 import Coord from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
 import { PLAYER_COLORS, TileData } from "../types/types";
+
+export const TILE_SIZE = 50;
+export const TILE_GAP = 5;
+export const SMALL_TILE_GAP = 3;
+export const SMALL_TILE_SIZE = 14;
+export const GUIDE_SIZE = TILE_SIZE / 2;
+export const CORNER_RADIUS = 0.16;
 
 const useGameStore = create<GameState>((set) => ({
   direction: false,

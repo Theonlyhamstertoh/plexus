@@ -1,21 +1,25 @@
+import { nanoid } from "nanoid";
+
+// Konva
 import Konva from "konva";
-import { Container } from "konva/lib/Container";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Shape } from "konva/lib/Shape";
 import { RectConfig } from "konva/lib/shapes/Rect";
-import { nanoid } from "nanoid";
-import { forwardRef, useEffect, useRef, useState } from "react";
 import { Group, Layer, Rect, Stage, Text, useStrictMode } from "react-konva";
+
+// classes
 import AI from "./ts/classes/AI";
 import Coord from "./ts/classes/Coord";
 import Gameboard from "./ts/classes/Gameboard";
-import Player from "./ts/classes/Player";
-import Ship from "./ts/classes/Ship";
-import { checkPositionsIfValid } from "./ts/helpers/matrixValidator";
-import { createShipPositions } from "./ts/helpers/shipUtilities";
-import { TileData, GuideTypes, ShipPiece, PLAYER_COLORS, PlayersParam } from "./ts/types/types";
 
-import "../src/ts/components/store";
+//types
+import { TileData } from "./ts/types/types";
+
+// components
+import { CORNER_RADIUS, GUIDE_SIZE, TILE_GAP, TILE_SIZE } from "../src/ts/components/store";
+import ShipHud from "./ts/components/ShipHud";
+import Guide from "./ts/components/Guide";
+
 useStrictMode(true);
 
 /**
@@ -31,36 +35,11 @@ gameboard.players.forEach((p) => {
   p.ships.forEach((s) => gameboard.placeShipRandom(s));
 });
 
-function createTiles() {
-  const grid: TileData[][] = [];
-  for (let y = 0; y < gameboard.length[0]; y++) {
-    grid[y] = [];
-    for (let x = 0; x < gameboard.length[1]; x++) {
-      grid[y][x] = {
-        id: nanoid(),
-        coord: new Coord(y, x),
-        state: gameboard.grid[y][x],
-        hit: false,
-        y: y * (50 + 5),
-        x: x * (50 + 5),
-      };
-    }
-  }
-  return grid;
-}
-
 /**
  *
  * CODE
  *
  */
-
-export const TILE_SIZE = 50;
-export const TILE_GAP = 5;
-const SMALL_TILE_GAP = 3;
-const SMALL_TILE_SIZE = 14;
-const GUIDE_SIZE = TILE_SIZE / 2;
-const CORNER_RADIUS = 0.16;
 
 function App() {
   // const [stage, setStage] = useState({ width: window.innerWidth, height: window.innerHeight });
@@ -123,95 +102,6 @@ function Board({ dimension }: any) {
         ))}
       </Group>
       <ShipHud players={gameboard.players} />
-    </Group>
-  );
-}
-
-export function ShipHud({ players }: PlayersParam) {
-  return (
-    <Group x={-90}>
-      {players.map((player: Player, i: number) => (
-        <SmallShipGroup
-          key={player.id + "-shipGroup"}
-          ships={player.ships}
-          color={player.color}
-          gap={i * 110}
-        />
-      ))}
-    </Group>
-  );
-}
-
-export function SmallShipGroup({ ships, color, gap }: any) {
-  const group = useRef<Konva.Group | null>(null);
-
-  console.log(ships, color);
-  useEffect(() => {
-    if (group.current === null) return;
-    const { width, height } = group.current.getClientRect();
-    group.current.offset({ x: width / 2, y: height });
-  });
-  // create ships for ONLY ONE PLAYER
-  return (
-    <Group ref={group} rotation={180} y={gap}>
-      {ships.map((ship: Ship, i: number) => (
-        <SmallShip
-          key={ship.id}
-          length={ship.length}
-          color={color}
-          y={i * (SMALL_TILE_SIZE + SMALL_TILE_GAP + 2)}
-        />
-      ))}
-    </Group>
-  );
-}
-
-export function SmallShip({ color, length, y }: ShipPiece) {
-  const rects = [];
-  for (let i = 0; i < length; i++) {
-    const data = {
-      id: nanoid(),
-      width: SMALL_TILE_SIZE,
-      height: SMALL_TILE_SIZE,
-      y: 0,
-      x: i * (SMALL_TILE_SIZE + SMALL_TILE_GAP),
-      fill: color,
-      cornerRadius: SMALL_TILE_SIZE * CORNER_RADIUS,
-    };
-    rects.push(<Rect key={data.id} {...data} />);
-  }
-  return <Group y={y}>{rects}</Group>;
-}
-
-function Guide({ length, isAlphabet }: GuideTypes) {
-  let guides: any[] = [];
-  for (let i = 0; i < length; i++) {
-    guides.push({
-      id: nanoid(),
-      text: isAlphabet ? String.fromCharCode(65 + i) : i + 1,
-      y: isAlphabet ? i * (TILE_SIZE + TILE_GAP) : -TILE_SIZE,
-      x: isAlphabet ? -TILE_SIZE : i * (TILE_SIZE + TILE_GAP),
-    });
-  }
-
-  return (
-    <Group>
-      {guides.map((guide) => (
-        <Text
-          key={guide.id}
-          text={guide.text}
-          y={guide.y}
-          x={guide.x}
-          fontSize={16}
-          fontStyle={"500"}
-          fontFamily={"Lexend"}
-          fill="#AAAAAA"
-          align="center"
-          verticalAlign="middle"
-          width={TILE_SIZE}
-          height={TILE_SIZE}
-        />
-      ))}
     </Group>
   );
 }
