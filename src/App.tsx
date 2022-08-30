@@ -13,7 +13,7 @@ import Player from "./ts/classes/Player";
 import Ship from "./ts/classes/Ship";
 import { checkPositionsIfValid } from "./ts/helpers/matrixValidator";
 import { createShipPositions } from "./ts/helpers/shipUtilities";
-import { TileData, GuideTypes, ShipPiece, PLAYER_COLORS } from "./ts/types/types";
+import { TileData, GuideTypes, ShipPiece, PLAYER_COLORS, PlayersParam } from "./ts/types/types";
 
 import "../src/ts/components/store";
 useStrictMode(true);
@@ -26,7 +26,7 @@ useStrictMode(true);
  *
  */
 const gameboard = new Gameboard({ boardLength: [15, 20] });
-gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"));
+gameboard.addPlayer(new AI("bot1"), new AI("bot2"), new AI("bot3"), new AI("bot4"));
 gameboard.players.forEach((p) => {
   p.ships.forEach((s) => gameboard.placeShipRandom(s));
 });
@@ -58,7 +58,7 @@ function createTiles() {
 export const TILE_SIZE = 50;
 export const TILE_GAP = 5;
 const SMALL_TILE_GAP = 3;
-const SMALL_TILE_SIZE = 18;
+const SMALL_TILE_SIZE = 14;
 const GUIDE_SIZE = TILE_SIZE / 2;
 const CORNER_RADIUS = 0.16;
 
@@ -122,21 +122,44 @@ function Board({ dimension }: any) {
           <Rect key={tile.id} {...tile} />
         ))}
       </Group>
-      <ShipHud ships={gameboard.players[0].ships} color={PLAYER_COLORS.yellow_orange} />
+      <ShipHud players={gameboard.players} />
     </Group>
   );
 }
 
-export function ShipHud({ ships, color }: any) {
+export function ShipHud({ players }: PlayersParam) {
+  return (
+    <Group x={-90}>
+      {players.map((player: Player, i: number) => (
+        <SmallShipGroup
+          key={player.id + "-shipGroup"}
+          ships={player.ships}
+          color={player.color}
+          gap={i * 110}
+        />
+      ))}
+    </Group>
+  );
+}
+
+export function SmallShipGroup({ ships, color, gap }: any) {
+  const group = useRef<Konva.Group | null>(null);
+
+  console.log(ships, color);
+  useEffect(() => {
+    if (group.current === null) return;
+    const { width, height } = group.current.getClientRect();
+    group.current.offset({ x: width / 2, y: height });
+  });
   // create ships for ONLY ONE PLAYER
   return (
-    <Group>
+    <Group ref={group} rotation={180} y={gap}>
       {ships.map((ship: Ship, i: number) => (
         <SmallShip
           key={ship.id}
           length={ship.length}
           color={color}
-          y={i * (SMALL_TILE_SIZE + SMALL_TILE_GAP)}
+          y={i * (SMALL_TILE_SIZE + SMALL_TILE_GAP + 2)}
         />
       ))}
     </Group>

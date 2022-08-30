@@ -1,4 +1,5 @@
 import Coord from "../classes/Coord";
+import Player from "../classes/Player";
 
 export type Directions = "down" | "right";
 export type Grid = MarkSymbols[][];
@@ -82,18 +83,34 @@ export const COLORS = {
   attack: "#ff3333",
 };
 
-export const PLAYER_COLORS = {
-  green: "#70B550",
-  teal: "#62E3CC",
-  red: "#C53A3A",
-  yellow_orange: "#FEC24F",
-  orange: "#ED7A39",
-  purple: "#9B4FFE",
-  pink: "#E939E",
-  blue: "#4765B4",
-};
+// export const PLAYER_COLORS = {
+//   green: "#70B550",
+//   teal: "#62E3CC",
+//   red: "#C53A3A",
+//   yellow_orange: "#FEC24F",
+//   orange: "#ED7A39",
+//   purple: "#9B4FFE",
+//   pink: "#E939EA",
+//   blue: "#4765B4",
+// };
+
+export const PLAYER_COLORS = [
+  "#c49f60",
+  "#70B550",
+  "#62E3CC",
+  "#d64949",
+  "#FEC24F",
+  "#ED7A39",
+  "#9B4FFE",
+  "#E939EA",
+  "#5969d4",
+  "#e4e0d8",
+];
+
 export interface ShipPiece {
   color: string;
   length: number;
   y: number;
 }
+
+export type PlayersParam = { players: Player[] };
