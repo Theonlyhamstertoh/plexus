@@ -72,6 +72,7 @@ export interface TileData {
   hit?: boolean;
   state?: string;
   fill?: string;
+  stroke?: string;
 }
 
 export type GuideTypes = { length: number; isAlphabet: boolean };
@@ -107,6 +108,8 @@ export const PLAYER_COLORS = [
   "#e4e0d8",
 ];
 
+export const DEFAULT_TILE_FILL = "#353535";
+export const DEFAULT_TILE_STROKE = "#3c3c3c";
 export interface ShipPiece {
   color: string;
   length: number;

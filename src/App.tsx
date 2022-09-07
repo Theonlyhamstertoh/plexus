@@ -13,12 +13,19 @@ import Coord from "./ts/classes/Coord";
 import Gameboard from "./ts/classes/Gameboard";
 
 //types
-import { TileData } from "./ts/types/types";
+import { DEFAULT_TILE_FILL, DEFAULT_TILE_STROKE, PLAYER_COLORS, TileData } from "./ts/types/types";
 
 // components
-import { CORNER_RADIUS, GUIDE_SIZE, TILE_GAP, TILE_SIZE } from "../src/ts/components/store";
+import useGameStore, {
+  CORNER_RADIUS,
+  GUIDE_SIZE,
+  TILE_GAP,
+  TILE_SIZE,
+} from "../src/ts/components/store";
 import ShipHud from "./ts/components/ShipHud";
 import Guide from "./ts/components/Guide";
+import React, { LegacyRef, useEffect, useRef } from "react";
+import SetupShip from "./ts/components/SetupShip";
 
 useStrictMode(true);
 
@@ -43,37 +50,66 @@ gameboard.players.forEach((p) => {
 
 function App() {
   // const [stage, setStage] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  const [gameMode, setGameMode] = useGameStore((s) => [s.gameMode, s.setGameMode]);
+
   return (
     <div className="app">
-      <Stage className="konva" width={window.innerWidth} height={window.innerHeight * 2}>
+      <Stage className="konva" width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           <Board dimension={{ x: 20, y: 15 }} />
         </Layer>
       </Stage>
+      <button onClick={() => setGameMode("board_setup")}>Place Ship</button>
     </div>
   );
 }
 
 function Board({ dimension }: any) {
-  const board: TileData[] = [];
-  for (let y = 0; y < dimension.y; y++) {
-    for (let x = 0; x < dimension.x; x++) {
-      const tile = {
-        id: nanoid(),
-        coord: new Coord(y, x),
-        y: y * (TILE_SIZE + TILE_GAP),
-        x: x * (TILE_SIZE + TILE_GAP),
-        height: TILE_SIZE,
-        fill: "#353535",
-        width: TILE_SIZE,
-        cornerRadius: TILE_SIZE * CORNER_RADIUS,
-        stroke: "#3c3c3c",
-      };
+  const board = useGameStore((state) => state.board);
+  const [gameMode, setGameMode] = useGameStore((s) => [s.gameMode, s.setGameMode]);
+  const fakeShipRef = useRef<Konva.Group | null>(null);
+  useEffect(() => {
+    // console.log(fakeShipRef);
+  });
+  // const board: TileData[] = [];
+  // for (let y = 0; y < dimension.y; y++) {
+  //   for (let x = 0; x < dimension.x; x++) {
+  //     const tile = {
+  //       id: nanoid(),
+  //       coord: new Coord(y, x),
+  //       y: y * (TILE_SIZE + TILE_GAP),
+  //       x: x * (TILE_SIZE + TILE_GAP),
+  //       width: TILE_SIZE,
+  //       height: TILE_SIZE,
+  //       fill: "#353535",
+  //       cornerRadius: TILE_SIZE * CORNER_RADIUS,
+  //       stroke: "#3c3c3c",
+  //     };
 
-      board.push(tile);
+  //     board.push(tile);
+  //   }
+  // }
+
+  const mouseOver = (e: KonvaEventObject<MouseEvent>) => {
+    const rect: Shape<RectConfig> | Konva.Stage = e.target;
+    if (typeof rect === typeof Konva.Stage) return;
+
+    if (gameMode === "board_setup") {
+      const { y, x } = e.target.attrs;
+      fakeShipRef.current?.x(x);
+      fakeShipRef.current?.y(y);
     }
-  }
+    rect.setAttr("fill", "#505050");
+    document.body.style.cursor = "pointer";
+  };
 
+  const mouseOut = (e: KonvaEventObject<MouseEvent>) => {
+    const rect: Shape<RectConfig> | Konva.Stage = e.target;
+    if (typeof rect === typeof Konva.Stage) return;
+    rect.setAttr("fill", DEFAULT_TILE_FILL);
+    document.body.style.cursor = "default";
+  };
   return (
     <Group
       offsetY={(dimension.y * (TILE_SIZE + TILE_GAP)) / 2}
@@ -83,24 +119,21 @@ function Board({ dimension }: any) {
     >
       <Guide length={dimension.x} isAlphabet={false} />
       <Guide length={dimension.y} isAlphabet />
-      <Group
-        onMouseOver={(e: KonvaEventObject<MouseEvent>) => {
-          const rect: Shape<RectConfig> | Konva.Stage = e.target;
-          if (typeof rect === typeof Konva.Stage) return;
-          rect.setAttr("fill", "#505050");
-          document.body.style.cursor = "pointer";
-        }}
-        onMouseOut={(e: KonvaEventObject<MouseEvent>) => {
-          const rect: Shape<RectConfig> | Konva.Stage = e.target;
-          if (typeof rect === typeof Konva.Stage) return;
-          rect.setAttr("fill", "#353535");
-          document.body.style.cursor = "default";
-        }}
-      >
-        {board.map((tile: TileData) => (
-          <Rect key={tile.id} {...tile} />
-        ))}
+      <Group onMouseOver={mouseOver} onMouseOut={mouseOut}>
+        {board.map((row) =>
+          row.map((tile: TileData) => (
+            <Rect
+              key={tile.id}
+              {...tile}
+              width={TILE_SIZE}
+              height={TILE_SIZE}
+              cornerRadius={CORNER_RADIUS * TILE_SIZE}
+            />
+          ))
+        )}
       </Group>
+      <SetupShip ref={fakeShipRef} />
+
       <ShipHud players={gameboard.players} />
     </Group>
   );
