@@ -1,4 +1,3 @@
-import { expect, test } from "vitest";
 import Coord from "../classes/Coord";
 import Gameboard from "../classes/Gameboard";
 import Player, {

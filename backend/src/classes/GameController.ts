@@ -1,6 +1,6 @@
-import Gameboard from "./Gameboard";
-import { BoardLength, BOARD_SIZE, CONFIG, GameConfigs } from "../types/types";
-import Player from "./Player";
+import Gameboard from "./Gameboard.js";
+import { BoardLength, BOARD_SIZE, CONFIG, GameConfigs } from "../types/types.js";
+import Player from "./Player.js";
 export class Store {}
 type BoardIndex = 0 | 1;
 export class Game {

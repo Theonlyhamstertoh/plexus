@@ -1,5 +1,5 @@
-import Coord from "../classes/Coord";
-import Player from "../classes/Player";
+import Coord from "../../../backend/src/classes/Coord";
+import Player from "../../../backend/src/classes/Player";
 
 export type Directions = "down" | "right";
 export type Grid = MarkSymbols[][];

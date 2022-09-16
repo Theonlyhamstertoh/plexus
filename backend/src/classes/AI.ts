@@ -1,8 +1,8 @@
-import { getRandomNumber } from "../helpers/shipUtilities";
-import { Directions, Grid, MARKS } from "../types/types";
-import Coord from "./Coord";
-import Entity from "./Entity";
-import Gameboard from "./Gameboard";
+import { getRandomNumber } from "../helpers/shipUtilities.js";
+import { Directions, Grid, MARKS } from "../types/types.js";
+import Coord from "./Coord.js";
+import Entity from "./Entity.js";
+import Gameboard from "./Gameboard.js";
 
 export default class AI extends Entity {
   constructor(name: string) {

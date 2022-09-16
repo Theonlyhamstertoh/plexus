@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
-import { createDefaultShips, getRandomNumber } from "../helpers/shipUtilities";
-import { Directions, Grid, MARKS, PLAYER_COLORS } from "../types/types";
-import Coord from "./Coord";
-import Gameboard from "./Gameboard";
-import Ship from "./Ship";
+import { createDefaultShips, getRandomNumber } from "../helpers/shipUtilities.js";
+import { Directions, Grid, MARKS, PLAYER_COLORS } from "../types/types.js";
+import Coord from "./Coord.js";
+import Gameboard from "./Gameboard.js";
+import Ship from "./Ship.js";
 
 export const randomPlayerColor = () =>
   PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)];

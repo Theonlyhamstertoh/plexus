@@ -1,6 +1,6 @@
-import Coord from "../classes/Coord";
-import Ship from "../classes/Ship";
-import { Directions } from "../types/types";
+import Coord from "../classes/Coord.js";
+import Ship from "../classes/Ship.js";
+import { Directions } from "../types/types.js";
 
 export function createShipPositions(
   direction: Directions,

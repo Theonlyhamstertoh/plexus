@@ -1,6 +1,5 @@
 import Gameboard from "../classes/Gameboard";
 
-import { describe, afterEach, beforeEach, test, expect, vitest } from "vitest";
 import Ship from "../classes/Ship";
 import Coord from "../classes/Coord";
 import Player from "../classes/Player";
@@ -59,7 +58,7 @@ describe("gameboard players", () => {
   });
 
   afterEach(() => {
-    vitest.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   test("add player", () => {
@@ -78,7 +77,7 @@ describe("gameboard players", () => {
     gameboard.addPlayer(new Player("weibo2"));
     gameboard.addPlayer(new Player("weibo3"));
 
-    vitest.spyOn(global.Math, "random").mockReturnValue(0);
+    jest.spyOn(global.Math, "random").mockReturnValue(0);
     const oldArray = [...gameboard.players];
     expect(oldArray).not.toEqual(gameboard.shufflePlayers());
   });
@@ -114,14 +113,6 @@ describe("gameboard players", () => {
     player.ships.forEach((ship) => gameboard.placeShipRandom(ship));
     expect(player.isReady()).toBeTruthy();
   });
-});
-
-describe.todo("finding and attacking ships ", () => {
-  const gameboard = new Gameboard({ boardLength: BOARD_SIZE.BIG });
-
-  test.todo("Gameboard should receive attack and damage ship");
-
-  test.todo("bot should be able to receive a attack");
 });
 
 // five ships for each player

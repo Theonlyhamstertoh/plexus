@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import Coord from "./Coord";
+import Coord from "./Coord.js";
 
 export default class Ship {
   readonly length: number;
@@ -17,12 +17,13 @@ export default class Ship {
     return this.#lives !== 0 && this.#lives < this.length;
   }
 
-  isHit(coord: Coord) {
+  isHit(coord?: Coord) {
     if (this.#lives > 0) {
       this.#lives--;
       // this.hits.push(coord);
 
       // move hit coords from position to hits array
+      if (coord === undefined) return;
       const coordIndex = this.positions.findIndex((c) => c.y === coord.y && c.x === coord.x);
       this.hits.push(...this.positions.slice(coordIndex, coordIndex + 1));
     }

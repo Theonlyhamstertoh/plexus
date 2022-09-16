@@ -1,4 +1,3 @@
-import { describe, beforeEach, afterEach, test, expect, vitest } from "vitest";
 import Coord from "../classes/Coord";
 import { Game } from "../classes/GameController";
 import Player from "../classes/Player";
@@ -19,7 +18,7 @@ describe("Game", () => {
   });
 
   afterEach(() => {
-    vitest.restoreAllMocks();
+    jest.restoreAllMocks();
 
     // resetting
     CONFIG.randomizeFirstTurn = false;
@@ -42,7 +41,7 @@ describe("Game", () => {
   });
 
   test("game should randomize first turn", () => {
-    vitest.spyOn(global.Math, "random").mockReturnValue(0.8);
+    jest.spyOn(global.Math, "random").mockReturnValue(0.8);
     const newGame = new Game(CONFIG);
     newGame.config.randomizeFirstTurn = true;
     newGame.applyConfigs();

@@ -6,7 +6,7 @@ import {
   getRandomNumber,
   getRandomPosition,
 } from "../helpers/shipUtilities";
-import { checkPositionsIfValid } from "../helpers/matrixValidator";
+import { checkPositionsIfValid } from "../helpers/matrixValidator.js";
 import {
   Directions,
   Grid,
@@ -15,12 +15,12 @@ import {
   CONFIG,
   GameConfigs,
   MarkTypes,
-} from "../types/types";
+} from "../types/types.js";
 
-import Coord from "./Coord";
-import Player from "./Player";
-import Ship from "./Ship";
-import AI from "./AI";
+import Coord from "./Coord.js";
+import Player from "./Player.js";
+import Ship from "./Ship.js";
+import AI from "./AI.js";
 export default class Gameboard {
   grid: Grid = [];
   players: (Player | AI)[] = [];

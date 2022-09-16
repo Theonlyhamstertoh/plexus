@@ -1,5 +1,5 @@
-import Entity from "./Entity";
-import Gameboard from "./Gameboard";
+import Entity from "./Entity.js";
+import Gameboard from "./Gameboard.js";
 
 export default class Player extends Entity {
   constructor(name: string) {

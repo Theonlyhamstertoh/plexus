@@ -1,5 +1,5 @@
-import Coord from "../classes/Coord";
-import { CoordLocations, Directions, Grid, MARKS } from "../types/types";
+import Coord from "../classes/Coord.js";
+import { CoordLocations, Directions, Grid, MARKS } from "../types/types.js";
 /**
  *  USING INDEX VALUES, NOT ORDER PAIRS. ORDER PAIRS USED IN BOARD
  *
