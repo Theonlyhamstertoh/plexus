@@ -5,7 +5,7 @@ import {
   flipDirectionByCoords,
   getRandomNumber,
   getRandomPosition,
-} from "../helpers/shipUtilities";
+} from "../helpers/shipUtilities.js";
 import { checkPositionsIfValid } from "../helpers/matrixValidator.js";
 import {
   Directions,

@@ -8,6 +8,7 @@ import Player, {
 
 import { CONFIG } from "../types/types";
 
+import { test, expect } from "vitest";
 test.todo("bot should inherit player class", () => {});
 
 const gameboard = new Gameboard(CONFIG);

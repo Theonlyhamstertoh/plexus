@@ -12,6 +12,7 @@ import {
   coordLocationData,
   rowsToCheck,
 } from "../helpers/matrixValidator";
+import { test, expect, describe } from "vitest";
 
 const gameboard = new Gameboard({ boardLength: [12, 18] });
 describe("ship position validator", () => {

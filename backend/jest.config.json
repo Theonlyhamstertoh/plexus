@@ -1,6 +1,0 @@
-{
-  "transform": {
-    "^.+\\.(t|j)sx?$": ["@swc-node/jest"]
-  },
-  "extensionsToTreatAsEsm": [".ts", ".tsx"]
-}

@@ -4,6 +4,7 @@ import Ship from "../classes/Ship";
 import Coord from "../classes/Coord";
 import Player from "../classes/Player";
 import { BOARD_SIZE, MARKS } from "../types/types";
+import { test, expect, describe, beforeEach, afterEach, vitest } from "vitest";
 
 describe("gameboard ship placement", () => {
   let gameboard: Gameboard;
@@ -58,7 +59,7 @@ describe("gameboard players", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vitest.restoreAllMocks();
   });
 
   test("add player", () => {
@@ -77,7 +78,7 @@ describe("gameboard players", () => {
     gameboard.addPlayer(new Player("weibo2"));
     gameboard.addPlayer(new Player("weibo3"));
 
-    jest.spyOn(global.Math, "random").mockReturnValue(0);
+    vitest.spyOn(global.Math, "random").mockReturnValue(0);
     const oldArray = [...gameboard.players];
     expect(oldArray).not.toEqual(gameboard.shufflePlayers());
   });

@@ -4,6 +4,8 @@ import Player from "../classes/Player";
 import Ship from "../classes/Ship";
 import { BOARD_SIZE, CONFIG, MARKS } from "../types/types";
 import AI from "../classes/AI";
+import { test, expect, describe, beforeEach, afterEach, vitest } from "vitest";
+
 describe("Game", () => {
   let game: Game;
   beforeEach(() => {
@@ -18,7 +20,7 @@ describe("Game", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vitest.restoreAllMocks();
 
     // resetting
     CONFIG.randomizeFirstTurn = false;
@@ -41,7 +43,7 @@ describe("Game", () => {
   });
 
   test("game should randomize first turn", () => {
-    jest.spyOn(global.Math, "random").mockReturnValue(0.8);
+    vitest.spyOn(global.Math, "random").mockReturnValue(0.8);
     const newGame = new Game(CONFIG);
     newGame.config.randomizeFirstTurn = true;
     newGame.applyConfigs();
