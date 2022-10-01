@@ -1,5 +1,5 @@
 import Coord from "../classes/Coord";
-import { Game } from "../classes/GameController";
+import Game from "../classes/Game";
 import Player from "../classes/Player";
 import Ship from "../classes/Ship";
 import { BOARD_SIZE, CONFIG, MARKS } from "../types/types";
