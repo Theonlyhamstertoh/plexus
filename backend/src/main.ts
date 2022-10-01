@@ -1,11 +1,17 @@
 import Ship from "./classes/Ship.js";
 import Gameboard from "./classes/Gameboard.js";
-
-console.log(new Gameboard({ boardLength: [10, 10] }));
-
 import UWS from "uWebSockets.js";
+import crypto from "crypto";
 
+// Clients Class
+class Clients {
+  lists: Map<string, UWS.WebSocket> = new Map();
+}
+
+// VARIABLES
 const PORT = 3001;
+const clients = new Clients();
+
 const app: UWS.TemplatedApp = UWS.App({});
 app
   .get("/*", (res, req) => {
@@ -24,7 +30,11 @@ app.ws("/*", {
   maxPayloadLength: 16 * 1024,
   idleTimeout: 0,
   open: (ws) => {
+    // Add Client WS to array
+    ws.id = crypto.randomUUID();
+    clients.lists.set(ws.id, ws);
     console.log("A Websocket connected!");
+    console.log(clients.lists);
   },
 
   message: (ws, message, isBinary) => messageActions(ws, message, isBinary),
