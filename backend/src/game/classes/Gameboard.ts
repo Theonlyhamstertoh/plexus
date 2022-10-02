@@ -81,7 +81,7 @@ export default class Gameboard {
 
   getPlayerByName(name: string) {
     return this.players.find((player) => {
-      if (player.name && player.name === name) {
+      if (player.username && player.username === name) {
         return player;
       }
     });

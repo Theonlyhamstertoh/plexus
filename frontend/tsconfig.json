@@ -16,6 +16,9 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "../backend/src/helpers", "../backend/src/classes", "../backend/src/tests"],
+  "include": [
+    "src",
+    "../backend/src/game/helper../backend/src/game/classesasse../backend/src/game/teststests"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -2,8 +2,8 @@ import Entity from "./Entity.js";
 import Gameboard from "./Gameboard.js";
 
 export default class Player extends Entity {
-  constructor(name: string) {
-    super(name);
+  constructor(username: string) {
+    super(username);
   }
 
   attack(opponentBoard: Gameboard, board: Gameboard, coord?: any) {

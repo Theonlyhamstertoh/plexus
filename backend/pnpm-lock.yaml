@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/jest': ^29.0.2
   '@types/node': ^18.7.17
+  avsc: ^5.7.6
   crypto-random-string: ^5.0.0
   date-fns: ^2.29.3
   jasmine: ^4.4.0
@@ -14,6 +15,7 @@ specifiers:
   vitest: ^0.23.2
 
 dependencies:
+  avsc: 5.7.6
   crypto-random-string: 5.0.0
   date-fns: 2.29.3
   nanoid: 4.0.0
@@ -235,6 +237,11 @@ packages:
 
   /assertion-error/1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
+    dev: false
+
+  /avsc/5.7.6:
+    resolution: {integrity: sha512-jyn9tfd9J3h7pgJSk4qQ/1c1Tk5qiXrvmdCDON2UjcFplqRu/KpmKmpi+Ess8ZKmmqK12U4Y3VHrfwQs1xSMZA==}
+    engines: {node: '>=0.11'}
     dev: false
 
   /balanced-match/1.0.2:

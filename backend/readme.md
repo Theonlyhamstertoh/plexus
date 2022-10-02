@@ -5,3 +5,4 @@
 - [ ] Server should create a new room
 - [ ] Server should create boardgame for room
 - [ ] Server should send data to client
+- [ ] Serialize/Deserialize Data without JSON

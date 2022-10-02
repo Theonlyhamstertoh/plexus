@@ -11,10 +11,10 @@ export const randomPlayerColor = () =>
 export default class Entity {
   ships: Ship[] = createDefaultShips();
   readonly id: string = nanoid();
-  readonly name: string;
+  readonly username: string;
   readonly color: string = randomPlayerColor();
-  constructor(name: string) {
-    this.name = name;
+  constructor(username: string) {
+    this.username = username;
   }
   addShip(...ship: Ship[]) {
     this.ships.push(...ship);
