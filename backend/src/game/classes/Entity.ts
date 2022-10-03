@@ -10,11 +10,12 @@ export const randomPlayerColor = () =>
 
 export default class Entity {
   ships: Ship[] = createDefaultShips();
-  readonly id: string = nanoid();
+  readonly id: string;
   readonly username: string;
   readonly color: string = randomPlayerColor();
-  constructor(username: string) {
+  constructor(username: string, id?: string) {
     this.username = username;
+    this.id = id !== undefined ? id : crypto.randomUUID();
   }
   addShip(...ship: Ship[]) {
     this.ships.push(...ship);

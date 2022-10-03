@@ -2,13 +2,13 @@ export default function App() {
   return <div>Empty</div>;
 }
 
-const CHANNELS = {
+export const CHANNELS = {
   GAME_CHANNEL: "GAME_CHANNEL",
   CLIENT_CHANNEL: "CLIENT_CHANNEL",
   SERVER_CHANNEL: "SERVER_CHANNEL",
 };
 
-const MESSAGE = {
+export const MESSAGE = {
   ROOM: {
     CREATE_ROOM: "CREATE_ROOM",
     REMOVE_ROOM: "REMOVE_ROOM",
@@ -19,7 +19,7 @@ const MESSAGE = {
   },
   CLIENT: {
     SELF_CONNECTED: "SELF_CONNECTED",
-    CONNECTED: "CONNECTED",
+    CONNECTED_TO_ROOM: "CONNECTED_TO_ROOM",
     DISCONNECTED: "DISCONNECTED",
     JOIN_PUBLIC_ROOM: "JOIN_PUBLIC_ROOM",
     JOIN_PRIVATE_ROOM: "JOIN_PRIVATE_ROOM",
@@ -38,9 +38,20 @@ const ws = new WebSocket(DEV_SERVER_URL);
 
 ws.addEventListener("open", () => {
   ws.binaryType = "arraybuffer";
+
+  // Imagine this as data they enter before game
   const message = {
     type: MESSAGE.CLIENT.SELF_CONNECTED,
-    name: "weibo",
+    username: "weibo",
   };
   ws.send(JSON.stringify(message));
+
+  // we will create a room here
+  const create_a_room = {
+    type: MESSAGE.ROOM.CREATE_ROOM,
+  };
+  ws.send(JSON.stringify(create_a_room));
+
+  // join a room here
+  ws.send(JSON.stringify({ type: MESSAGE.CLIENT.CONNECTED_TO_ROOM }));
 });

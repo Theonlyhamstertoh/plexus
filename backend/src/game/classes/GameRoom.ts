@@ -3,12 +3,13 @@ import { BoardLength, BOARD_SIZE, CONFIG, GameConfigs } from "../types/types.js"
 import Player from "./Player.js";
 export class Store {}
 type BoardIndex = 0 | 1;
-export default class Game {
+
+export default class GameRoom {
   gb: Gameboard[] = [];
   #currentBoardIndex: BoardIndex = 0;
   config: GameConfigs;
-  constructor(config: GameConfigs) {
-    this.config = config;
+  constructor(customConfig?: GameConfigs) {
+    this.config = customConfig !== undefined ? customConfig : CONFIG;
     const { boardLength } = this.config;
     this.gb.push(new Gameboard({ boardLength }), new Gameboard({ boardLength }));
   }
@@ -36,6 +37,7 @@ export default class Game {
     this.getCurrentBoard().nextTeammate();
   }
 
+  addBot() {}
   startGame() {}
 
   resetGame() {}
@@ -49,4 +51,8 @@ export default class Game {
   getRandomBoard() {
     return this.gb[Math.round(Math.random())];
   }
+
+  checkWinner() {}
+  checkIfOver() {}
+  checkForDisconnect() {}
 }

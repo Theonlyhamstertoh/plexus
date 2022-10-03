@@ -1,22 +1,22 @@
 import Coord from "../classes/Coord";
-import Game from "../classes/Game";
+import GameRoom from "../classes/GameRoom";
 import Player from "../classes/Player";
 import Ship from "../classes/Ship";
 import { BOARD_SIZE, CONFIG, MARKS } from "../types/types";
 import AI from "../classes/AI";
 import { test, expect, describe, beforeEach, afterEach, vitest } from "vitest";
 
-describe("Game", () => {
-  let game: Game;
+describe("gameRoom", () => {
+  let gameRoom: GameRoom;
   beforeEach(() => {
     CONFIG.boardLength = BOARD_SIZE.BIG;
     const teamOne = [new Player("player1"), new AI("bot2"), new AI("bot3")];
     const teamTwo = [new Player("player4"), new AI("bot5"), new AI("bot6")];
-    game = new Game(CONFIG);
+    gameRoom = new GameRoom(CONFIG);
     // get the list of players from teams and put them into board
-    game.gb[0].addPlayer(...teamOne);
-    game.gb[1].addPlayer(...teamTwo);
-    populateGameWithShips(game);
+    gameRoom.gb[0].addPlayer(...teamOne);
+    gameRoom.gb[1].addPlayer(...teamTwo);
+    populategameRoomWithShips(gameRoom);
   });
 
   afterEach(() => {
@@ -29,96 +29,96 @@ describe("Game", () => {
     CONFIG.boardLength = BOARD_SIZE.SMALL;
   });
 
-  test("game should have created two gameboards", () => {
-    expect(game.gb.length).toEqual(2);
+  test("gameRoom should have created two gameRoomboards", () => {
+    expect(gameRoom.gb.length).toEqual(2);
   });
 
-  test("gameboards should have a list of players each ", () => {
-    expect(game.gb[0].players.length).toBeGreaterThan(0);
-    expect(game.gb[1].players.length).toBeGreaterThan(0);
+  test("gameRoomboards should have a list of players each ", () => {
+    expect(gameRoom.gb[0].players.length).toBeGreaterThan(0);
+    expect(gameRoom.gb[1].players.length).toBeGreaterThan(0);
   });
 
-  test("game should not randomize first turn", () => {
-    expect(game.getCurrentBoard().id).toBe(game.gb[0].id);
+  test("gameRoom should not randomize first turn", () => {
+    expect(gameRoom.getCurrentBoard().id).toBe(gameRoom.gb[0].id);
   });
 
-  test("game should randomize first turn", () => {
+  test("gameRoom should randomize first turn", () => {
     vitest.spyOn(global.Math, "random").mockReturnValue(0.8);
-    const newGame = new Game(CONFIG);
-    newGame.config.randomizeFirstTurn = true;
-    newGame.applyConfigs();
-    expect(newGame.getCurrentBoard().id).toBe(newGame.gb[1].id);
+    const newgameRoom = new GameRoom(CONFIG);
+    newgameRoom.config.randomizeFirstTurn = true;
+    newgameRoom.applyConfigs();
+    expect(newgameRoom.getCurrentBoard().id).toBe(newgameRoom.gb[1].id);
   });
 
-  test("game should pick the first player from current board ", () => {
-    game.config.shufflePlayerOrder = true;
-    game.config.randomizeFirstTurn = true;
-    game.applyConfigs();
+  test("gameRoom should pick the first player from current board ", () => {
+    gameRoom.config.shufflePlayerOrder = true;
+    gameRoom.config.randomizeFirstTurn = true;
+    gameRoom.applyConfigs();
 
-    expect(game.getCurrentBoard().getCurrentPlayer()).not.toBe(undefined);
+    expect(gameRoom.getCurrentBoard().getCurrentPlayer()).not.toBe(undefined);
   });
 
   test("current bot attacks board", () => {
     // move "player1" back so that "bot2" is first
-    game.getCurrentBoard().nextTeammate();
-    const currentPlayer = game.getCurrentBoard().getCurrentPlayer();
+    gameRoom.getCurrentBoard().nextTeammate();
+    const currentPlayer = gameRoom.getCurrentBoard().getCurrentPlayer();
     //prettier-ignore
-    const prevNotHitCoords = game.getOpponentBoard().notHitCoords.length
-    currentPlayer.attack(game.getOpponentBoard(), game.getCurrentBoard())!;
-    expect(game.getOpponentBoard().notHitCoords.length).toBeLessThan(prevNotHitCoords);
+    const prevNotHitCoords = gameRoom.getOpponentBoard().notHitCoords.length
+    currentPlayer.attack(gameRoom.getOpponentBoard(), gameRoom.getCurrentBoard())!;
+    expect(gameRoom.getOpponentBoard().notHitCoords.length).toBeLessThan(prevNotHitCoords);
   });
 
   test("if player attacks and miss, the turn is over", () => {
-    const currentBoard = game.getCurrentBoard();
+    const currentBoard = gameRoom.getCurrentBoard();
     const currentPlayer = currentBoard.getCurrentPlayer();
     const hit = currentPlayer.attack(
-      game.getOpponentBoard(),
-      game.getCurrentBoard(),
+      gameRoom.getOpponentBoard(),
+      gameRoom.getCurrentBoard(),
       new Coord(2, 0)
     );
-    game.nextTurn(hit);
-    expect(game.getCurrentBoard().id).not.toBe(currentBoard.id);
+    gameRoom.nextTurn(hit);
+    expect(gameRoom.getCurrentBoard().id).not.toBe(currentBoard.id);
   });
   test("if player hits, next player in team has turn", () => {
-    const currentPlayer = game.getCurrentBoard().getCurrentPlayer();
+    const currentPlayer = gameRoom.getCurrentBoard().getCurrentPlayer();
     const hit = currentPlayer.attack(
-      game.getOpponentBoard(),
-      game.getCurrentBoard(),
+      gameRoom.getOpponentBoard(),
+      gameRoom.getCurrentBoard(),
       new Coord(0, 0)
     );
-    // console.log(game.getOpponentBoard().findShip(new Coord(0, 0)));
-    game.nextTurn(hit);
-    expect(game.getCurrentBoard().getCurrentPlayer()).not.toBe(currentPlayer);
+    // console.log(gameRoom.getOpponentBoard().findShip(new Coord(0, 0)));
+    gameRoom.nextTurn(hit);
+    expect(gameRoom.getCurrentBoard().getCurrentPlayer()).not.toBe(currentPlayer);
   });
 
   test("get board state", () => {
     CONFIG.boardLength = BOARD_SIZE.BIG;
-    const newGame = new Game(CONFIG);
+    const newgameRoom = new GameRoom(CONFIG);
     const teamOne = [new Player("player1"), new AI("bot2"), new AI("bot3")];
     const teamTwo = [new Player("player4"), new AI("bot5"), new AI("bot6")];
-    newGame.gb[0].addPlayer(...teamOne);
-    newGame.gb[1].addPlayer(...teamTwo);
-    newGame.config.shufflePlayerOrder = false;
-    populateGameRandomly(newGame);
-    newGame.getCurrentBoard().nextTeammate();
+    newgameRoom.gb[0].addPlayer(...teamOne);
+    newgameRoom.gb[1].addPlayer(...teamTwo);
+    newgameRoom.config.shufflePlayerOrder = false;
+    populategameRoomRandomly(newgameRoom);
+    newgameRoom.getCurrentBoard().nextTeammate();
     for (let i = 0; i < 50; i++) {
-      newGame
+      newgameRoom
         .getCurrentBoard()
         .getCurrentPlayer()
-        .attack(newGame.getOpponentBoard(), newGame.getCurrentBoard(), i);
+        .attack(newgameRoom.getOpponentBoard(), newgameRoom.getCurrentBoard(), i);
     }
-    expect(newGame.getOpponentBoard().getBoardState().shipsAlive).toBeGreaterThan(0);
+    expect(newgameRoom.getOpponentBoard().getBoardState().shipsAlive).toBeGreaterThan(0);
   });
 });
 
-const populateGameRandomly = (game: Game) => {
-  return game.gb.forEach((gb) =>
+const populategameRoomRandomly = (gameRoom: GameRoom) => {
+  return gameRoom.gb.forEach((gb) =>
     gb.players.forEach((p) => p.ships.forEach((s) => gb.placeShipRandom(s)))
   );
 };
 
-const populateGameWithShips = (game: Game) => {
-  return game.gb.forEach((gb) =>
+const populategameRoomWithShips = (gameRoom: GameRoom) => {
+  return gameRoom.gb.forEach((gb) =>
     gb.players.forEach((p, i) => {
       p.ships.forEach((s: Ship, j: number) => {
         gb.placeShip(new Coord(j + j * 2, i + i * 5), "right", s);

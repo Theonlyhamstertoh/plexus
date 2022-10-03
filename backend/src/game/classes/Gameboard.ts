@@ -21,6 +21,7 @@ import Coord from "./Coord.js";
 import Player from "./Player.js";
 import Ship from "./Ship.js";
 import AI from "./AI.js";
+
 export default class Gameboard {
   grid: Grid = [];
   players: (Player | AI)[] = [];
