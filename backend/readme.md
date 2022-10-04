@@ -9,3 +9,7 @@
 - [ ] Add bot through Game class
 - [ ] Set max number of people in a gameboard
 - [ ] Refactor code a bit
+
+# Game
+
+- [ ] Add Player Class when Game Starts (so no need of lobby arrays)

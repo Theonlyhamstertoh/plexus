@@ -6,11 +6,12 @@ import GameRoom from "../../game/classes/GameRoom.js";
 
 export default class GameServer {
   rooms: Map<string, GameRoom> = new Map();
-  sockets: Map<string, UWS.WebSocket> = new Map();
+  // sockets: Map<string, UWS.WebSocket> = new Map();
   readonly id = crypto.randomUUID();
 
   createRoom(config?: GameConfigs) {
     const newRoom: GameRoom = new GameRoom(config);
+    this.rooms.set(newRoom.id, newRoom);
     return newRoom;
   }
 

@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 export default function App() {
   return <div>Empty</div>;
 }
@@ -35,23 +36,26 @@ export const MESSAGE = {
 
 const DEV_SERVER_URL = "ws://localhost:3001";
 const ws = new WebSocket(DEV_SERVER_URL);
-
+const decoder = new TextDecoder();
+ws.onmessage = (ev) => {
+  console.log(JSON.parse(ev.data));
+};
 ws.addEventListener("open", () => {
   ws.binaryType = "arraybuffer";
 
   // Imagine this as data they enter before game
   const message = {
     type: MESSAGE.CLIENT.SELF_CONNECTED,
-    username: "weibo",
+    username: faker.internet.emoji(),
   };
   ws.send(JSON.stringify(message));
 
   // we will create a room here
-  const create_a_room = {
-    type: MESSAGE.ROOM.CREATE_ROOM,
-  };
-  ws.send(JSON.stringify(create_a_room));
+  // const create_a_room = {
+  //   type: MESSAGE.ROOM.CREATE_ROOM,
+  // };
+  // ws.send(JSON.stringify(create_a_room));
 
-  // join a room here
-  ws.send(JSON.stringify({ type: MESSAGE.CLIENT.JOIN_PUBLIC_ROOM }));
+  // join a room here~
+  ws.send(JSON.stringify({ type: MESSAGE.CLIENT.JOIN_PRIVATE_ROOM, join_code: "123456" }));
 });

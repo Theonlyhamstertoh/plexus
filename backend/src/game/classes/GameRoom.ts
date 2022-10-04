@@ -2,6 +2,9 @@ import Gameboard from "./Gameboard.js";
 import { BoardLength, BOARD_SIZE, CONFIG, GameConfigs } from "../types/types.js";
 import Player from "./Player.js";
 import { customAlphabet, nanoid } from "nanoid";
+import { UrlWithStringQuery } from "url";
+import crypto from "crypto";
+import { WebSocket } from "uWebSockets.js";
 type BoardIndex = 0 | 1;
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
 const MAX_SIZE = 12;
@@ -9,8 +12,10 @@ const MAX_SIZE = 12;
 export default class GameRoom {
   gb: Gameboard[] = [];
   id: string = crypto.randomUUID();
+  sockets: WebSocket[] = [];
   #currentBoardIndex: BoardIndex = 0;
-  join_code: string = customAlphabet(CHARS, 6)();
+  join_code: string = "123456";
+  // join_code: string = customAlphabet(CHARS, 6)();
   config: GameConfigs;
   constructor(customConfig?: GameConfigs) {
     this.config = customConfig !== undefined ? customConfig : CONFIG;
@@ -63,4 +68,26 @@ export default class GameRoom {
   checkWinner() {}
   checkIfOver() {}
   checkForDisconnect() {}
+
+  // addToLobby(player: Player) {
+  //   this.lobby.push(player);
+  // }
+
+  // removeFromLobby(playerId: string) {
+  //   const player_index: number = this.lobby.findIndex((p) => p.id === playerId);
+  //   if (player_index === -1) return "ERROR: PLAYER NOT FOUND IN LOBBY";
+  //   this.lobby.splice(player_index, 1);
+  // }
+
+  addSocket(ws: WebSocket) {
+    this.sockets.push(ws);
+  }
+
+  removeSocket(id: string) {
+    const player_index: number = this.sockets.findIndex((p) => p.id === id);
+    if (player_index === -1) return "ERROR: PLAYER NOT FOUND IN LOBBY";
+    this.sockets.splice(player_index, 1);
+  }
+
+  clearSockets() {}
 }
