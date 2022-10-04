@@ -1,12 +1,16 @@
 import Gameboard from "./Gameboard.js";
 import { BoardLength, BOARD_SIZE, CONFIG, GameConfigs } from "../types/types.js";
 import Player from "./Player.js";
-export class Store {}
+import { customAlphabet, nanoid } from "nanoid";
 type BoardIndex = 0 | 1;
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
+const MAX_SIZE = 12;
 
 export default class GameRoom {
   gb: Gameboard[] = [];
+  id: string = crypto.randomUUID();
   #currentBoardIndex: BoardIndex = 0;
+  join_code: string = customAlphabet(CHARS, 6)();
   config: GameConfigs;
   constructor(customConfig?: GameConfigs) {
     this.config = customConfig !== undefined ? customConfig : CONFIG;
@@ -35,6 +39,10 @@ export default class GameRoom {
       this.#currentBoardIndex = (1 - this.#currentBoardIndex) as BoardIndex;
     }
     this.getCurrentBoard().nextTeammate();
+  }
+
+  addPlayerToRandomBoard(player: Player) {
+    this.getRandomBoard().addPlayer(player);
   }
 
   addBot() {}

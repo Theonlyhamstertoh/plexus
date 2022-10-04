@@ -53,5 +53,5 @@ ws.addEventListener("open", () => {
   ws.send(JSON.stringify(create_a_room));
 
   // join a room here
-  ws.send(JSON.stringify({ type: MESSAGE.CLIENT.CONNECTED_TO_ROOM }));
+  ws.send(JSON.stringify({ type: MESSAGE.CLIENT.JOIN_PUBLIC_ROOM }));
 });

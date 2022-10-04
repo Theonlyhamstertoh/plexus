@@ -1,8 +1,7 @@
 import crypto from "crypto";
 import UWS from "uWebSockets.js";
 import Player from "../../game/classes/Player";
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
-const MAX_SIZE = 12;
+
 export default class GameRooms {
   id: string = crypto.randomUUID();
   players: Map<string, Player> = new Map();

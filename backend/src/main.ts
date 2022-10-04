@@ -11,20 +11,24 @@ import Player from "./game/classes/Player.js";
 
 export const CHANNELS = {
   GAME_CHANNEL: "GAME_CHANNEL",
-  CLIENT_CHANNEL: "CLIENT_CHANNEL",
+  PLAYER_CHANNEL: "CLIENT_CHANNEL",
   SERVER_CHANNEL: "SERVER_CHANNEL",
 };
 
 export const MESSAGE = {
-  ROOM: {
+  SERVER: {
+    GET_ALL_ROOMS: "GET_ALL_ROOMS",
     CREATE_ROOM: "CREATE_ROOM",
     REMOVE_ROOM: "REMOVE_ROOM",
-    GET_ALL_ROOMS: "GET_ALL_ROOMS",
-    GET_ALL_CLIENTS: "GET_ALL_CLIENTS",
-    REMOVE_CLIENT: "REMOVE_CLIENT",
-    ADD_CLIENT: "ADD_CLIENT",
   },
-  CLIENT: {
+
+  ROOM: {
+    REMOVE_PLAYER: "REMOVE_PLAYER",
+    ADD_PLAYER: "ADD_PLAYER",
+    JOIN_CODE: "JOIN_CODE",
+  },
+  PLAYER: {
+    GET_ALL_PLAYERS: "GET_ALL_PLAYERS",
     SELF_CONNECTED: "SELF_CONNECTED",
     CONNECTED_TO_ROOM: "CONNECTED_TO_ROOM",
     DISCONNECTED: "DISCONNECTED",
@@ -32,6 +36,10 @@ export const MESSAGE = {
     JOIN_PRIVATE_ROOM: "JOIN_PRIVATE_ROOM",
     LEAVE_ROOM: "LEAVE_ROOM",
   },
+  ERROR: {
+    ROOM_NOT_FOUND: "ROOM_NOT_FOUND",
+  },
+  GAME: {},
 };
 
 // Clients Class
@@ -88,27 +96,48 @@ app
 function messageActions(ws: UWS.WebSocket, message_buffer: ArrayBuffer, gameServer: GameServer) {
   const client_msg = JSON.parse(decoder.decode(message_buffer));
   switch (client_msg.type) {
-    case MESSAGE.CLIENT.SELF_CONNECTED:
+    case MESSAGE.PLAYER.SELF_CONNECTED: {
       ws.username = client_msg.username;
       ws.id = crypto.randomUUID();
       ws.roomId = "";
       break;
+    }
     // room.addPlayer(ws, client_msg.username);
     // console.log(room.players.size);
-    case MESSAGE.CLIENT.CONNECTED_TO_ROOM:
+    case MESSAGE.PLAYER.JOIN_PRIVATE_ROOM: {
+      const gameRoom: GameRoom | undefined = gameServer.joinRoomByCode(client_msg.join_code);
+      if (gameRoom === undefined) return ws.send(ROOM_NOT_FOUND_ERROR());
+      gameRoom.addPlayerToRandomBoard(new Player(ws.username, ws.id));
+
+      // subscribe to room topics
+      ws.subscribe(gameRoom.id);
       break;
+    }
+
     /**
      *
      * ROOM CASES
      *
      */
-    case MESSAGE.ROOM.CREATE_ROOM:
-      const newRoom = gameServer.createRoom();
-      const player = new Player(ws.username, ws.id);
-      newRoom.getRandomBoard().addPlayer(player);
+    case MESSAGE.SERVER.CREATE_ROOM:
+      // create a new game room
+      const gameRoom = gameServer.createRoom();
+
+      // send gameRoom data to host
+      const msg = encode({ type: MESSAGE.ROOM.JOIN_CODE, join_code: gameRoom.join_code });
+      ws.send(msg);
       break;
   }
 }
-// app.get("/*", (res, req) => {
-//   res.writeStatus("200 OK").writeHeader("IsExample", "Yes").end("Hello there!");
-// });
+
+const encode = (message: any) => JSON.stringify(message);
+function ROOM_NOT_FOUND_ERROR() {
+  return encode({ type: MESSAGE.ERROR.ROOM_NOT_FOUND, error: "ROOM NOT FOUND" });
+}
+
+interface MessageSchema {
+  type: string;
+  username?: string;
+  join_code?: string;
+  error?: string;
+}
