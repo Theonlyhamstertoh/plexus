@@ -4,5 +4,6 @@ declare module "uWebsockets.js" {
     username: string;
     id: string;
     gameRoomId: string;
+    gameBoardId: string;
   }
 }

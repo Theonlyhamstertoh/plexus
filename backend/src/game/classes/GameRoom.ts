@@ -17,6 +17,7 @@ export default class GameRoom {
   join_code: string = "123456";
   // join_code: string = customAlphabet(CHARS, 6)();
   config: GameConfigs;
+  gameStarted: boolean = false;
   constructor(customConfig?: GameConfigs) {
     this.config = customConfig !== undefined ? customConfig : CONFIG;
     const { boardLength } = this.config;
@@ -63,6 +64,10 @@ export default class GameRoom {
 
   getRandomBoard() {
     return this.gb[Math.round(Math.random())];
+  }
+
+  getGameBoard(id: string): Gameboard {
+    return this.gb.find((gb) => gb.id === id) as Gameboard;
   }
 
   checkWinner() {}

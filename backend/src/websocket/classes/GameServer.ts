@@ -7,6 +7,7 @@ import GameRoom from "../../game/classes/GameRoom.js";
 export default class GameServer {
   rooms: Map<string, GameRoom> = new Map();
   // sockets: Map<string, UWS.WebSocket> = new Map();
+  totalSockets: number = 0;
   readonly id = crypto.randomUUID();
 
   createRoom(config?: GameConfigs) {
@@ -35,9 +36,9 @@ export default class GameServer {
     this.rooms.clear();
   }
 
-  getRoom(id: string): GameRoom {
+  getRoom(id: string): GameRoom | undefined {
     // if (this.rooms.has(id)) {
-    return this.rooms.get(id)!;
+    return this.rooms.get(id);
     // } else {
     // return new Error("NO ROOM FOUND");
     // }

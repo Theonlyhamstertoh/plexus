@@ -9,50 +9,11 @@ import Room from "./websocket/classes/Room.js";
 import GameServer from "./websocket/classes/GameServer.js";
 import Player from "./game/classes/Player.js";
 import { WebSocket } from "uWebSockets.js";
-export const CHANNELS = {
-  GAME_CHANNEL: "GAME_CHANNEL",
-  PLAYER_CHANNEL: "CLIENT_CHANNEL",
-  SERVER_CHANNEL: "SERVER_CHANNEL",
-};
-
-export const MESSAGE = {
-  SERVER: {
-    GET_ALL_ROOMS: "GET_ALL_ROOMS",
-    CREATE_ROOM: "CREATE_ROOM",
-    REMOVE_ROOM: "REMOVE_ROOM",
-  },
-
-  ROOM: {
-    REMOVE_PLAYER: "REMOVE_PLAYER",
-    ADD_PLAYER: "ADD_PLAYER",
-    JOIN_CODE: "JOIN_CODE",
-  },
-  PLAYER: {
-    SELF_CONNECTED: "SELF_CONNECTED",
-    CONNECTED_TO_ROOM: "CONNECTED_TO_ROOM",
-    DISCONNECTED: "DISCONNECTED",
-    JOIN_PUBLIC_ROOM: "JOIN_PUBLIC_ROOM",
-    JOIN_PRIVATE_ROOM: "JOIN_PRIVATE_ROOM",
-    LEAVE_ROOM: "LEAVE_ROOM",
-  },
-  ERROR: {
-    ROOM_NOT_FOUND: "ROOM_NOT_FOUND",
-  },
-  GAME: {},
-  DATA: {
-    GET_ALL_PLAYERS: "GET_ALL_PLAYERS",
-  },
-};
-
-// Clients Class
-class Clients {
-  lists: Map<string, WebSocket> = new Map();
-}
+import messageActions from "./messages.js";
 
 // VARIABLES
 const app: UWS.TemplatedApp = UWS.App({});
 const PORT = 3001;
-const clients = new Clients();
 const decoder = new TextDecoder("utf-8");
 
 // GAME VARIABLES
@@ -78,16 +39,22 @@ app
       ws.username = "";
       ws.id = crypto.randomUUID();
       ws.gameRoomId = "";
+      ws.gameBoardId = "";
+      gameServer.totalSockets++;
     },
 
     message: (ws, message, isBinary) => messageActions(ws, message, gameServer),
     close: (ws, code, message) => {
       console.log("Websocket closed");
-      // .removePlayerById(ws.id);
-      console.log(clients.lists.size);
       const roomId = ws.gameRoomId;
-      const gameRoom = gameServer.getRoom(roomId);
+
+      // remove socket from room
+      const gameRoom: GameRoom | undefined = gameServer.getRoom(roomId);
+      if (gameRoom === undefined) return new Error("No Room Found");
       gameRoom.removeSocket(ws.id);
+      gameServer.totalSockets--;
+
+      // cool leave message
       console.log(
         "%c CLOSED ",
         "background: #111; color: #fa8a55; font-size: 15px; border-radius: 5px",
@@ -105,83 +72,4 @@ app
     } else {
       console.log("Failed to connect to port");
     }
-  })
-  .get("/*", (res, req) => {
-    res.end("Hi");
   });
-
-function messageActions(ws: WebSocket, message_buffer: ArrayBuffer, gameServer: GameServer) {
-  const client_msg = JSON.parse(decoder.decode(message_buffer));
-  console.log("SERVER-SIDE:", client_msg);
-  switch (client_msg.type) {
-    case MESSAGE.PLAYER.SELF_CONNECTED: {
-      ws.username = client_msg.username;
-      break;
-    }
-    // room.addPlayer(ws, client_msg.username);
-    // console.log(room.players.size);
-    case MESSAGE.PLAYER.JOIN_PRIVATE_ROOM: {
-      const gameRoom: GameRoom | undefined = gameServer.joinRoomByCode(client_msg.join_code);
-      gameRoom;
-      if (gameRoom === undefined) return ws.send(ERROR.ROOM_NOT_FOUND);
-      gameRoom.addSocket(ws);
-      // subscribe to room topics
-      ws.subscribe(gameRoom.id);
-      ws.gameRoomId = gameRoom.id;
-      // publish to every player in the room
-      ws.publish(gameRoom.id, SEND.socket_data(ws.username, ws.id));
-
-      // get all players in room
-      ws.send(SEND.all_socket_data(gameRoom.sockets));
-      break;
-    }
-
-    /**
-     *
-     * ROOM CASES
-     *
-     */
-    case MESSAGE.SERVER.CREATE_ROOM:
-      // create a new game room
-      const gameRoom = gameServer.createRoom();
-
-      // send gameRoom data to host
-      const msg = encode({ type: MESSAGE.ROOM.JOIN_CODE, join_code: gameRoom.join_code });
-      const check = ws.send(msg);
-      console.log("ROOM CREATED", check);
-      break;
-  }
-}
-
-const encode = (message: any) => JSON.stringify(message);
-const SEND = (() => {
-  function socket_data(username: string, id: string) {
-    return encode({
-      data: {
-        username,
-        id,
-      },
-    });
-  }
-
-  function all_socket_data(sockets: WebSocket[]) {
-    const data = sockets.map(({ username, id }) => socket_data(username, id));
-    return encode({ type: MESSAGE.DATA.GET_ALL_PLAYERS, data });
-  }
-
-  return {
-    socket_data,
-    all_socket_data,
-  };
-})();
-
-const ERROR = {
-  ROOM_NOT_FOUND: encode({ type: MESSAGE.ERROR.ROOM_NOT_FOUND, error: "ROOM NOT FOUND" }),
-};
-
-interface MessageSchema {
-  type: string;
-  username?: string;
-  join_code?: string;
-  error?: string;
-}
