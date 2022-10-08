@@ -94,5 +94,9 @@ export default class GameRoom {
     this.sockets.splice(player_index, 1);
   }
 
+  getSocket(id: string): WebSocket | undefined {
+    return this.sockets.find((ws) => ws.id === id);
+  }
+
   clearSockets() {}
 }

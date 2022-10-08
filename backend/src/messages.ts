@@ -2,6 +2,7 @@ import GameRoom from "./game/classes/GameRoom.js";
 import { TextDecoder } from "util";
 import GameServer from "./websocket/classes/GameServer.js";
 import { WebSocket } from "uWebSockets.js";
+import { type } from "os";
 export const CHANNELS = {
   GAME_CHANNEL: "GAME_CHANNEL",
   PLAYER_CHANNEL: "CLIENT_CHANNEL",
@@ -23,13 +24,14 @@ export const MESSAGE = {
   PLAYER: {
     SELF_CONNECTED: "SELF_CONNECTED",
     CONNECTED_TO_ROOM: "CONNECTED_TO_ROOM", // for incoming player
-    DISCONNECTED: "DISCONNECTED",
+    DISCONNECTED: "DISCONNECTED_FROM_ROOM",
     JOIN_PUBLIC_ROOM: "JOIN_PUBLIC_ROOM",
     JOIN_PRIVATE_ROOM: "JOIN_PRIVATE_ROOM",
     LEAVE_ROOM: "LEAVE_ROOM",
   },
   ERROR: {
     ROOM_NOT_FOUND: "ROOM_NOT_FOUND",
+    ROOM_ALREADY_JOINED: "ROOM_ALREADY_JOINED",
   },
   GAME: {},
   DATA: {
@@ -45,7 +47,7 @@ export default function messageActions(
   gameServer: GameServer
 ) {
   const client_msg = JSON.parse(decoder.decode(message_buffer));
-  console.log("SERVER-SIDE:", client_msg);
+  console.log(`SOCKET ${ws.number}`, client_msg);
   switch (client_msg.type) {
     case MESSAGE.PLAYER.SELF_CONNECTED: {
       ws.username = client_msg.username;
@@ -55,6 +57,7 @@ export default function messageActions(
       const gameRoom: GameRoom | undefined = gameServer.joinRoomByCode(client_msg.join_code);
       gameRoom;
       if (gameRoom === undefined) return ws.send(ERROR.ROOM_NOT_FOUND);
+      if (gameRoom.getSocket(ws.id) !== undefined) return ws.send(ERROR.ROOM_ALREADY_JOIN);
       gameRoom.addSocket(ws);
       // subscribe to room topics
       ws.subscribe(gameRoom.id);
@@ -74,6 +77,8 @@ export default function messageActions(
       if (gameRoom.gameStarted) {
         gameRoom.getGameBoard(ws.gameBoardId).removePlayer(ws.id);
       }
+      ws.publish(gameRoom.id, SEND.socket_id(ws.id));
+      break;
     }
     /**
      *
@@ -97,30 +102,34 @@ const SEND = (() => {
   function socket_data(username: string, id: string) {
     return encode({
       type: MESSAGE.PLAYER.CONNECTED_TO_ROOM,
-      data: { username, id },
+      sockets: { username, id },
     });
   }
 
-  function all_socket_data(sockets: WebSocket[]) {
-    const data = sockets.map(({ username, id }) => ({ username, id }));
-    return encode({ type: MESSAGE.DATA.GET_ALL_PLAYERS, data });
+  function all_socket_data(data: WebSocket[]) {
+    const sockets = data.map(({ username, id }) => ({ username, id }));
+    return encode({ type: MESSAGE.DATA.GET_ALL_PLAYERS, sockets });
   }
 
+  const socket_id = (id: string) => encode({ type: MESSAGE.PLAYER.DISCONNECTED, sockets: { id } });
   return {
     socket_data,
     all_socket_data,
+    socket_id,
   };
 })();
 
 const ERROR = {
-  ROOM_NOT_FOUND: encode({ type: MESSAGE.ERROR.ROOM_NOT_FOUND, error: "ROOM NOT FOUND" }),
+  ROOM_NOT_FOUND: encode({ type: MESSAGE.ERROR.ROOM_NOT_FOUND }),
+  ROOM_ALREADY_JOIN: encode({ type: MESSAGE.ERROR.ROOM_ALREADY_JOINED }),
+  MULTIPLE_ROOM_WITH_SAME_JOIN_CODE: "",
 };
 
 interface MessageSchema {
   type: string;
   join_code?: string;
   error?: string;
-  data?: SocketData | SocketData[];
+  sockets?: SocketData[] | SocketData;
 }
 
 type SocketData = { username?: string; id?: string };

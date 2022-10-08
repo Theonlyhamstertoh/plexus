@@ -18,7 +18,7 @@ const decoder = new TextDecoder("utf-8");
 
 // GAME VARIABLES
 const gameServer = new GameServer();
-gameServer.createRoom();
+// gameServer.createRoom();
 
 /**
  *
@@ -35,31 +35,38 @@ app
     idleTimeout: 0,
     open: (ws) => {
       // We only get the WS. Data not received here.
-      console.log("A Websocket connected!");
       ws.username = "";
       ws.id = crypto.randomUUID();
       ws.gameRoomId = "";
       ws.gameBoardId = "";
       gameServer.totalSockets++;
+      ws.number = gameServer.totalSockets;
+
+      console.log(
+        "%c SOCKET CONNECTED " + "%c id: " + ws.id,
+        "background: #111; color: #11cfa5; font-size: 15px; border-radius: 3px",
+        "background: #111; color: #cac2ff; font-size: 12px; border-radius: 2px; margin-left: 5px; padding: 0 5px;"
+      );
     },
 
     message: (ws, message, isBinary) => messageActions(ws, message, gameServer),
     close: (ws, code, message) => {
-      console.log("Websocket closed");
       const roomId = ws.gameRoomId;
 
       // remove socket from room
-      const gameRoom: GameRoom | undefined = gameServer.getRoom(roomId);
-      if (gameRoom === undefined) return new Error("No Room Found");
-      gameRoom.removeSocket(ws.id);
+      // if player never joined a room, just exit out
       gameServer.totalSockets--;
 
       // cool leave message
       console.log(
-        "%c CLOSED ",
+        "%c WEBSOCKET CLOSED " + "%c" + ws.username,
         "background: #111; color: #fa8a55; font-size: 15px; border-radius: 5px",
-        gameRoom.sockets
+        "background: #111; border-radius: 2px; margin-left: 5px; padding: 0 5px;"
       );
+
+      const gameRoom: GameRoom | undefined = gameServer.getRoom(roomId);
+      if (gameRoom === undefined) return console.log("Player left without joining a room");
+      gameRoom.removeSocket(ws.id);
     },
   })
   .listen(PORT, (listenSocket) => {
