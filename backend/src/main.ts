@@ -42,9 +42,10 @@ app
       gameServer.totalSockets++;
       ws.number = gameServer.totalSockets;
 
+      ws.send("test");
       console.log(
-        "%c SOCKET CONNECTED " + "%c id: " + ws.id,
-        "background: #111; color: #11cfa5; font-size: 15px; border-radius: 3px",
+        "%c SOCKET CONNECTED | Count: " + gameServer.totalSockets + "%c id: " + ws.id,
+        "background: #111; color: #11cfa5; font-size: 15px; border-radius: 3px; padding-right: 2px",
         "background: #111; color: #cac2ff; font-size: 12px; border-radius: 2px; margin-left: 5px; padding: 0 5px;"
       );
     },
@@ -59,8 +60,8 @@ app
 
       // cool leave message
       console.log(
-        "%c WEBSOCKET CLOSED " + "%c" + ws.username,
-        "background: #111; color: #fa8a55; font-size: 15px; border-radius: 5px",
+        "%c WEBSOCKET CLOSED | Count: " + gameServer.totalSockets + "%c" + ws.username,
+        "background: #111; color: #fa8a55; font-size: 15px; border-radius: 5px;  padding-right: 2px",
         "background: #111; border-radius: 2px; margin-left: 5px; padding: 0 5px;"
       );
 

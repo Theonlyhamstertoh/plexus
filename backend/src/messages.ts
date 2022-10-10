@@ -50,6 +50,7 @@ export default function messageActions(
   console.log(`SOCKET ${ws.number}`, client_msg);
   switch (client_msg.type) {
     case MESSAGE.PLAYER.SELF_CONNECTED: {
+      if (ws.username.length > 0) return;
       ws.username = client_msg.username;
       break;
     }
@@ -78,6 +79,12 @@ export default function messageActions(
         gameRoom.getGameBoard(ws.gameBoardId).removePlayer(ws.id);
       }
       ws.publish(gameRoom.id, SEND.socket_id(ws.id));
+
+      // remove room if empty
+      if (gameRoom.sockets.length === 0) {
+        gameServer.removeRoom(gameRoom.id);
+        console.log(gameServer.rooms);
+      }
       break;
     }
     /**
@@ -92,8 +99,22 @@ export default function messageActions(
       // send gameRoom data to host
       const msg = encode({ type: MESSAGE.ROOM.JOIN_CODE, join_code: gameRoom.join_code });
       const check = ws.send(msg);
-      console.log("ROOM CREATED", check);
+      console.log("ROOM CREATED", gameServer.rooms);
       break;
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     * GAME CASES
+     *
+     *
+     *
+     *
+     */
   }
 }
 

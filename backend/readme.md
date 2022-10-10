@@ -18,3 +18,8 @@
 # Game
 
 - [ ] Add Player Class when Game Starts (so no need of lobby arrays)
+- [ ] The first player in array becomes host
+
+# ERROR
+
+- [ ] WEBSOCKET IS NULL WHEN USER WANTS TO DISCONNECT

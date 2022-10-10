@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { useMemo, useState } from "react";
-
+import { useCallback, useEffect, useMemo, useState } from "react";
+import GameContext from "./ts/hooks/GameContext";
 export const CHANNELS = {
   GAME_CHANNEL: "GAME_CHANNEL",
   CLIENT_CHANNEL: "CLIENT_CHANNEL",
@@ -45,29 +45,29 @@ export const MESSAGE = {
 const DEV_SERVER_URL = "ws://localhost:3001";
 const decoder = new TextDecoder();
 
-var ws = new WebSocket(DEV_SERVER_URL);
-ws.onmessage = (ev) => {
-  console.log(JSON.parse(ev.data));
-};
-ws.addEventListener("open", () => {
-  ws.binaryType = "arraybuffer";
+// var ws = new WebSocket(DEV_SERVER_URL);
+// ws.onmessage = (ev) => {
+//   console.log(JSON.parse(ev.data));
+// };
+// ws.addEventListener("open", () => {
+//   ws.binaryType = "arraybuffer";
 
-  // Imagine this as data they enter before game
-  const message = {
-    type: MESSAGE.PLAYER.SELF_CONNECTED,
-    username: faker.internet.emoji(),
-  };
-  ws.send(JSON.stringify(message));
+//   // Imagine this as data they enter before game
+//   const message = {
+//     type: MESSAGE.PLAYER.SELF_CONNECTED,
+//     username: faker.internet.emoji(),
+//   };
+//   ws.send(JSON.stringify(message));
 
-  // we will create a room here
-  // const create_a_room = {
-  //   type: MESSAGE.ROOM.CREATE_ROOM,
-  // };
-  // ws.send(JSON.stringify(create_a_room));
+// we will create a room here
+// const create_a_room = {
+//   type: MESSAGE.ROOM.CREATE_ROOM,
+// };
+// ws.send(JSON.stringify(create_a_room));
 
-  // join a room here~
-  // ws.send(JSON.stringify({ type: MESSAGE.PLAYER.JOIN_PRIVATE_ROOM, join_code: "123456" }));
-});
+// join a room here~
+// ws.send(JSON.stringify({ type: MESSAGE.PLAYER.JOIN_PRIVATE_ROOM, join_code: "123456" }));
+// });
 
 /**
  *
@@ -84,16 +84,18 @@ ws.addEventListener("open", () => {
  *
  *
  */
-export default function App() {
-  const [roomCode, setRoomCode] = useState("");
 
-  const disconnectFromRoom = () => ws.send(JSON.stringify({ type: MESSAGE.PLAYER.LEAVE_ROOM }));
-  const createRoom = () => ws.send(JSON.stringify({ type: MESSAGE.SERVER.CREATE_ROOM }));
-  const joinRoom = () =>
-    ws.send(JSON.stringify({ type: MESSAGE.PLAYER.JOIN_PRIVATE_ROOM, join_code: roomCode }));
+export default function App() {
+  // const [roomCode, setRoomCode] = useState("");
+
+  // const disconnectFromRoom = () => ws.send(JSON.stringify({ type: MESSAGE.PLAYER.LEAVE_ROOM }));
+  // const createRoom = () => ws.send(JSON.stringify({ type: MESSAGE.SERVER.CREATE_ROOM }));
+  // const joinRoom = () => ws.send(JSON.stringify({ type: MESSAGE.PLAYER.JOIN_PRIVATE_ROOM, join_code: roomCode }));
+
   return (
     <div>
-      <button onClick={disconnectFromRoom}>Leave Room</button>
+      <GameContext />
+      {/* <button onClick={disconnectFromRoom}>Leave Room</button>
       <button onClick={createRoom}>Create Room</button>
 
       <div>
@@ -109,7 +111,7 @@ export default function App() {
 
       <div>
         <div>Join Code: {roomCode}</div>
-      </div>
+      </div> */}
     </div>
   );
 }
