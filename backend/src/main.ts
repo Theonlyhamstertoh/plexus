@@ -4,17 +4,15 @@ import GameRoom from "./game/classes/GameRoom.js";
 import UWS from "uWebSockets.js";
 import crypto from "crypto";
 import { TextDecoder } from "util";
-import { BOARD_SIZE } from "./game/types/types.js";
 import Room from "./websocket/classes/Room.js";
 import GameServer from "./websocket/classes/GameServer.js";
 import Player from "./game/classes/Player.js";
-import { WebSocket } from "uWebSockets.js";
-import messageActions from "./messages.js";
+import messageActions from "./websocket/messages.js";
+import { encode, exitRoom } from "./websocket/helpers/helpers.js";
 
 // VARIABLES
 const app: UWS.TemplatedApp = UWS.App({});
 const PORT = 3001;
-const decoder = new TextDecoder("utf-8");
 
 // GAME VARIABLES
 const gameServer = new GameServer();
@@ -52,8 +50,6 @@ app
 
     message: (ws, message, isBinary) => messageActions(ws, message, gameServer),
     close: (ws, code, message) => {
-      const roomId = ws.gameRoomId;
-
       // remove socket from room
       // if player never joined a room, just exit out
       gameServer.totalSockets--;
@@ -65,9 +61,7 @@ app
         "background: #111; border-radius: 2px; margin-left: 5px; padding: 0 5px;"
       );
 
-      const gameRoom: GameRoom | undefined = gameServer.getRoom(roomId);
-      if (gameRoom === undefined) return console.log("Player left without joining a room");
-      gameRoom.removeSocket(ws.id);
+      exitRoom(gameServer, ws, app);
     },
   })
   .listen(PORT, (listenSocket) => {
